@@ -28,7 +28,7 @@
             :exit="{ opacity: 0, top: '30%' }"
           >
           <DialogTitle class="font-semibold mb-5 leading-normal">
-            Strength Excercise
+            Strength exercise
           </DialogTitle>
 <!-- ComboxRoot -->
 

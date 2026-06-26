@@ -53,7 +53,7 @@ async function queryData() {
         >
           <h3 class="font-bold flex items-center gap-2 font-sans text-base">
             <div class="i-mdi:dumbbell" />
-            {{ items.excercise }}
+            {{ items.exercise }}
           </h3>
           <div class="text-sm">
             {{ dayjs(`${items.date}`).format("DD/MM/YYYY") }}
