@@ -39,13 +39,26 @@
 
     <div>
       <label class="mb-1 block text-sm font-medium">Sets</label>
-      <textarea
-        v-model="setsInput"
-        rows="5"
-        placeholder="7 reps x 30 kg\n5 reps x 20 kg\n7 reps x 30 kg"
-        class="w-full rounded-lg border px-3 py-2"
-      />
-      <p class="mt-1 text-xs text-stone-300">One set per line. Format: &lt;reps&gt; reps x &lt;weight&gt; kg</p>
+      <div class="space-y-2">
+        <div class="grid grid-cols-[1fr_auto_1fr_auto] items-center gap-2">
+          <input v-model.number="reps1" type="number" min="0" step="1" placeholder="reps" class="w-full rounded-lg border px-3 py-2">
+          <span class="text-sm">reps x</span>
+          <input v-model.number="kg1" type="number" min="0" step="0.5" placeholder="kg" class="w-full rounded-lg border px-3 py-2">
+          <span class="text-sm">kg</span>
+        </div>
+        <div class="grid grid-cols-[1fr_auto_1fr_auto] items-center gap-2">
+          <input v-model.number="reps2" type="number" min="0" step="1" placeholder="reps" class="w-full rounded-lg border px-3 py-2">
+          <span class="text-sm">reps x</span>
+          <input v-model.number="kg2" type="number" min="0" step="0.5" placeholder="kg" class="w-full rounded-lg border px-3 py-2">
+          <span class="text-sm">kg</span>
+        </div>
+        <div class="grid grid-cols-[1fr_auto_1fr_auto] items-center gap-2">
+          <input v-model.number="reps3" type="number" min="0" step="1" placeholder="reps" class="w-full rounded-lg border px-3 py-2">
+          <span class="text-sm">reps x</span>
+          <input v-model.number="kg3" type="number" min="0" step="0.5" placeholder="kg" class="w-full rounded-lg border px-3 py-2">
+          <span class="text-sm">kg</span>
+        </div>
+      </div>
     </div>
 
     <p v-if="errorMsg" class="text-sm text-red-600">{{ errorMsg }}</p>
@@ -96,37 +109,46 @@ import { ref } from 'vue'
 const supabase = useSupabaseClient()
 
 const exercise = ref<StrengthExercise | null>(null)
-const setsInput = ref('')
+const setsInput = ref<number[][]>([])
+
+const reps1 = ref<number | null>(null)
+const kg1 = ref<number | null>(null)
+const reps2 = ref<number | null>(null)
+const kg2 = ref<number | null>(null)
+const reps3 = ref<number | null>(null)
+const kg3 = ref<number | null>(null)
 
 const loading = ref(false)
 const errorMsg = ref('')
 const successMsg = ref('')
 
-function parseSets(input: string): number[][] {
-  const lines = input
-    .split(/\r?\n/)
-    .map(l => l.trim())
-    .filter(Boolean)
+function buildSetsFromInputs(): number[][] {
+  const pairs: Array<[number | null, number | null]> = [
+    [reps1.value, kg1.value],
+    [reps2.value, kg2.value],
+    [reps3.value, kg3.value],
+  ]
 
-  if (lines.length === 0) {
+  const built: number[][] = []
+
+  for (let i = 0; i < pairs.length; i++) {
+    const [reps, kg] = pairs[i]
+    const bothEmpty = (reps == null || Number.isNaN(reps)) && (kg == null || Number.isNaN(kg))
+
+    if (bothEmpty) continue
+
+    if (reps == null || Number.isNaN(reps) || kg == null || Number.isNaN(kg)) {
+      throw new Error(`Set ${i + 1} is incomplete. Please provide both reps and kg.`)
+    }
+
+    built.push([reps, kg])
+  }
+
+  if (built.length === 0) {
     throw new Error('Please add at least one set.')
   }
 
-  return lines.map((line, idx) => {
-    const m = line.match(/^([0-9]*\.?[0-9]+)\s*reps\s*x\s*([0-9]*\.?[0-9]+)\s*kg$/i)
-    if (!m) {
-      throw new Error(`Invalid set format on line ${idx + 1}. Use: 7 reps x 30 kg`)
-    }
-
-    const reps = Number(m[1])
-    const weight = Number(m[2])
-
-    if (!Number.isFinite(reps) || !Number.isFinite(weight)) {
-      throw new Error(`Invalid numeric values on line ${idx + 1}.`)
-    }
-
-    return [reps, weight]
-  })
+  return built
 }
 
 async function onSubmit() {
@@ -140,7 +162,8 @@ async function onSubmit() {
 
   let parsedSets: number[][]
   try {
-    parsedSets = parseSets(setsInput.value)
+    parsedSets = buildSetsFromInputs()
+    setsInput.value = parsedSets
   } catch (e: any) {
     errorMsg.value = e?.message ?? 'Invalid sets input.'
     return
@@ -157,7 +180,13 @@ async function onSubmit() {
 
     successMsg.value = 'Workout saved.'
     exercise.value = null
-    setsInput.value = ''
+    setsInput.value = []
+    reps1.value = null
+    kg1.value = null
+    reps2.value = null
+    kg2.value = null
+    reps3.value = null
+    kg3.value = null
   } catch (e: any) {
     errorMsg.value = e?.message ?? 'Failed to save workout.'
   } finally {
