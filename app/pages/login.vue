@@ -5,6 +5,15 @@ const redirectTo = process.dev
   ? 'http://localhost:3000/confirm'
   : 'https://hby-loc.vercel.app/confirm'
 
+const user = useSupabaseUser()
+
+watch(user, () => {
+  if (user.value) {
+      // Redirect to protected page
+      return navigateTo('/')
+  }
+}, { immediate: true })
+
 const email = ref('')
 const loadingEmail = ref(false)
 const loadingGitHub = ref(false)
