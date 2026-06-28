@@ -62,13 +62,13 @@ async function queryData() {
             {{ dayjs(`${items.date}`).format("DD/MM/YYYY") }}
           </div>
 
-          <!-- {{ items.muscle }} -->
+          <!-- {{ items.muscles }} -->
 
-          <!-- <ul>
-            <li v-for="[reps, weight] in items.sets">
-              {{ reps }} reps - {{ weight }}kg
+          <ul class="flex flex-wrap gap-1 text-xs mt-4">
+            <li v-for="muscle in items.muscles" class="w-max rounded-lg px-2 py-1 bg-purple-400/10 hover:bg-purple-400/50 transition-all duration-200">
+              {{ muscle }}
             </li>
-          </ul> -->
+          </ul>
         </li>
         <li
           v-if="todayStrengthExercises.length < 3"

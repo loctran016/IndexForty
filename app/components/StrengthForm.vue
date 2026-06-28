@@ -36,7 +36,10 @@
       <label class="mb-1 block text-sm font-medium">Exercise</label>
       <ExerciseComboBox v-model="exercise" />
     </div>
-
+    <!-- <div>
+        <label class="mb-1 block text-sm font-medium">Muscles: </label>
+        <ul class="inline-flex"><li v-for="muscle in ([...EXERCISE_TO_MUSCLES[`${exercise}`]] ?? null)">{{ muscle }}</li></ul>
+    </div> -->
     <div>
       <label class="mb-1 block text-sm font-medium">Sets</label>
       <div class="space-y-2">
@@ -187,7 +190,7 @@ async function onSubmit() {
     const { error } = await supabase.from('strength').insert({
       exercise: exercise.value,
       sets: parsedSets,
-			muscles: [...EXERCISE_TO_MUSCLES[`${exercise.value}`]]
+      muscles: [...EXERCISE_TO_MUSCLES[`${exercise.value}`]]
     })
 
     if (error) throw error
