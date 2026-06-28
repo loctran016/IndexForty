@@ -1,5 +1,5 @@
 <template>
-  <DialogRoot>
+  <DialogRoot v-model:open="open">
     <DialogTrigger
       class="inline-flex items-center justify-center focus:shadow-black focus:outline-none cursor-pointer ml-6 border border-transparent border-1 hover:pb-1 focus:pb-1 hover:border-b-purple-600 focus:border-b-purple-600 group"
     >
@@ -65,13 +65,13 @@
     <p v-if="successMsg" class="text-sm text-emerald-600">{{ successMsg }}</p>
 
 
-    <DialogClose>
-              <button
-                class="inline-flex h-[35px] items-center justify-center rounded-[4px] px-[15px] font-semibold leading-none focus:shadow-[0_0_0_2px] focus:outline-none cursor-pointer disabled:opacity-60"
-              >
-                {{ loading ? 'Saving...' : 'Save workout' }}
-              </button>
-            </DialogClose>
+    <button
+      type="submit"
+      :disabled="loading"
+      class="inline-flex h-[35px] items-center justify-center rounded-[4px] px-[15px] font-semibold leading-none focus:shadow-[0_0_0_2px] focus:outline-none cursor-pointer disabled:opacity-60"
+    >
+      {{ loading ? 'Saving...' : 'Save workout' }}
+    </button>
   </form>
 
           <!-- <div class="mt-[25px] flex justify-end">
@@ -108,6 +108,7 @@ import { ref } from 'vue'
 
 const supabase = useSupabaseClient()
 
+const open = ref(false)
 const exercise = ref<StrengthExercise | null>(null)
 const setsInput = ref<number[][]>([])
 
@@ -151,6 +152,17 @@ function buildSetsFromInputs(): number[][] {
   return built
 }
 
+function resetForm() {
+  exercise.value = null
+  setsInput.value = []
+  reps1.value = null
+  kg1.value = null
+  reps2.value = null
+  kg2.value = null
+  reps3.value = null
+  kg3.value = null
+}
+
 async function onSubmit() {
   errorMsg.value = ''
   successMsg.value = ''
@@ -179,14 +191,11 @@ async function onSubmit() {
     if (error) throw error
 
     successMsg.value = 'Workout saved.'
-    exercise.value = null
-    setsInput.value = []
-    reps1.value = null
-    kg1.value = null
-    reps2.value = null
-    kg2.value = null
-    reps3.value = null
-    kg3.value = null
+    resetForm()
+
+    await new Promise((resolve) => setTimeout(resolve, 1000))
+    open.value = false
+    successMsg.value = ''
   } catch (e: any) {
     errorMsg.value = e?.message ?? 'Failed to save workout.'
   } finally {
