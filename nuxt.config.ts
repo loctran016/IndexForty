@@ -21,6 +21,7 @@ export default defineNuxtConfig({
     pageTransition: { name: "page", mode: "out-in" },
   },
   supabase: {
-    useSsrCookies: true // This should be true for SSR support
+      useSsrCookies: true, // This should be true for SSR support
+      redirect: false,
   }
 });
