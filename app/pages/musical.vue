@@ -16,9 +16,9 @@ Q:1/4=115
 M:4/4
 K:C
 %%stretchlast true
-V:1 treble nm="Piano" snm="Pno"
+V:1 treble nm="     " snm="   "
 %%MIDI program 0
-V:2 bass nm="Piano" snm="Pno"
+V:2 bass nm="     " snm="   "
 %%MIDI program 0
 V:1
  z4 ED E2 | E4 DE G2 | G4 ED E2 | E4 EE G2 |

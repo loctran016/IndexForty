@@ -1,6 +1,6 @@
 <template>
   <ul
-    class="fixed left-1/2 -translate-x-1/2 border-rounded-full bg-gray-800/10 border-gray-400/10 dark:bg-gray-300/10 dark:border-gray-100/10 w-max  flex gap-3 items-center justify-center top-4  border-1 backdrop-blur-2xl transition-all duration-300 scale-90 -translate-y-1 hover:translate-y-0 hover:scale-100"
+    class="fixed left-1/2 -translate-x-1/2 border-rounded-full bg-gray-800/10 border-gray-400/10 dark:bg-gray-300/10 dark:border-gray-100/10 w-max  flex gap-3 items-center justify-center top-4 z-100 border-1 backdrop-blur-2xl transition-all duration-300 scale-90 -translate-y-1 hover:translate-y-0 hover:scale-100 backdrop-blur-md -backdrop-brightness-10"
 
   >
     <li>
@@ -22,11 +22,11 @@
           <div class="i-mdi:music-clef-treble" /> </IconNavBarWrapper
       ></NuxtLink>
     </li>
-    <li>
+    <!-- <li>
       <NuxtLink to="/cooking"
         ><IconNavBarWrapper><div class="i-mdi:pot-steam" /></IconNavBarWrapper
       ></NuxtLink>
-    </li>
+    </li> -->
     <li>
       <NuxtLink to="/gallery"
         ><IconNavBarWrapper><div class="i-solar:gallery-round-bold" /></IconNavBarWrapper

@@ -27,8 +27,8 @@ onMounted(async () => {
   if (sheetMusic.value) {
     abcjs.renderAbc(sheetMusic.value, props.abcNotation, {
         responsive: 'resize',
-      selectionColor: 'oklch(71.4% 0.203 305.504)'
-    //   selectionColor: 'oklch(55.8% 0.288 302.321)'
+    //   selectionColor: 'oklch(71.4% 0.203 305.504)'
+      selectionColor: 'oklch(55.8% 0.288 302.321)'
     });
   }
 });
