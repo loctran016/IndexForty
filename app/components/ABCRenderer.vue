@@ -3,7 +3,7 @@
 <template>
   <div>
     <!-- The container where abcjs will inject the sheet music -->
-    <div ref="sheetMusic"></div>
+    <div ref="sheetMusic" class=""></div>
   </div>
 </template>
 
@@ -26,7 +26,9 @@ onMounted(async () => {
   // Render the music into the DOM ref
   if (sheetMusic.value) {
     abcjs.renderAbc(sheetMusic.value, props.abcNotation, {
-      responsive: 'resize'
+        responsive: 'resize',
+      selectionColor: 'oklch(71.4% 0.203 305.504)'
+    //   selectionColor: 'oklch(55.8% 0.288 302.321)'
     });
   }
 });

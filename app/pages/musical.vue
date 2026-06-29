@@ -16,30 +16,29 @@ Q:1/4=115
 M:4/4
 K:C
 %%stretchlast true
-V:1 treble nm="" snm=""
+V:1 treble nm="Piano" snm="Pno"
 %%MIDI program 0
-V:2 bass nm="" snm=""
+V:2 bass nm="Piano" snm="Pno"
 %%MIDI program 0
 V:1
- z4 ed e2 | e4 de g2 | g4 ed e2 | e4 ee g2 |
- g4 eg gg | a2 g a2 g2 g | gg a c4 A | f2 ff gd cd- |
- d7/2 z/ c2 d2 | e4 g2 gg | d4 e2 ga | c'3 c' d'2 c'a |
- g4 ee ga | c'2 c' c'2 c' c'd' | e'3 c'2 z c'c' | c'2 c' a2 g2 d'- |
- d'4- d'3/2 z3/2 [gd'f']- | [gd'f']7/2 z/ ed cd | e2 ee c2 G2 | d3 c de d2 |
- c2 cc cc cd | G4 GA G2 | A4 Ac A2 | G2 z2 E E2 D |
+ z4 ED E2 | E4 DE G2 | G4 ED E2 | E4 EE G2 |
+ G4 EG GG | A2 G A2 G2 G | GG A C4 A, | F2 FF GD CD- |
+ D7/2 z/ C2 D2 | E4 G2 GG | D4 E2 GA | c3 c d2 cA |
+ G4 EE GA | c2 c c2 c cd | e3 c2 z cc | c2 c A2 G2 d- |
+ d15/2 z/ | z4 ed cd | e2 ee c2 G2 | d3 c de d2 |
+ c2 cc cc cd | G4 GA G2 | A4 Ac A2 | G4 E E2 D |
  E2 c c2 G2 d- | d7/2 z/ ed cd | e2 ee c2 G2 | d4 ed cd |
  c2 cc cc cd | G4 AG AB | c2 c c2 c2 g- | gg a2 c3 G |
- g2 g a2 e2 d- | d2 ec c2 d2 | c4 Gc eg | (24:23:2c'8 z/ |]
+ g2 g a2 e2 d- | d2 ec c2 d2 | c4- c3/2 z/ E2 | (24:23:2C8 z/ |]
 V:2
- z8 | C,G, CE G4 | G,,D, G,B, D4 | A,,E, A,C E4 |
- G,,D, _B,2 C,G, _B,2 | F,,C, F,A, C4 | E,B, G2 A,,E, A,C | D,A, F2 C,G, E2 |
- z [G,B,D] [G,B,D]4- [G,B,D]3/2 z/ | C,G, CE G2 E2 | G,,D, G,B, D2 B,2 | A,,E, A,C E2 C2 |
- G,,D, _B,2 C,G, _B,E | F,,C, F,A, C2 A,2 | E,B, G2 A,,E, A,C | D,A, F2 C,G, CE |
- z [G,B,D] [G,B,D]2 [G,B,D] [G,B,D]3 | G,,,15/2 z/ | C,G, CE G2 E2 | G,,D, G,B, D2 B,2 |
- A,,E, A,C E2 C2 | G,,D, B,2 C,G, _B,E | F,,C, F,A, C2 A,2 | E,B, G2 A,,E, A,C |
- D,,A,, D,F, A,2 F,2 | G,,D, G,B, D2 B,2 | C,G, CE G2 E2 | G,,D, G,B, D2 B,2 |
- A,,E, A,C E2 C2 | G,,D, B,2 C,G, _B,E | F,,C, F,A, C2 A,2 | E,B, G2 A,,E, A,C |
- D,,A,, D,F, A,2 F,2 | G,,D, G,B, D2 B,2 | C,G, C E4- E/ z/ | C,,2 (24:17:2C,,,8 z/ |]
-
+ z8 | C,2 G,2 C4 | G,,2 D,2 G,4 | A,,2 E,2 A,4 |
+ G,2 _B,2 C,2 _B,2 | F,,2 C,2 F,4 | E,4 A,,4 | D,4 C,4 |
+ G,,2 D,2 G,2 B,2 | C,2 G,2 C4 | G,,2 D,2 G,4 | A,,2 E,2 A,4 |
+ G,2 _B,2 C,2 _B,2 | F,,2 C,2 F,4 | E,2 B,2 A,,2 E,2 | D,2 F,2 C,2 E,2 |
+ G,,2 D,2 G,2 B,2- | B,15/2 z/ | C,2 G,2 C2 G,2 | G,,2 D,2 G,2 D,2 |
+ A,,2 E,2 A,2 E,2 | G,,2 D,2 C,4 | F,,2 C,2 F,2 C,2 | E,2 B,2 A,,2 E,2 |
+ D,2 A,2 D4 | G,,2 D,2 G,4 | C,2 G,2 C2 G,2 | G,,2 D,2 G,2 D,2 |
+ A,,2 E,2 A,2 E,2 | G,,2 D,2 C,2 G,2 | F,,2 C,2 F,2 C,2 | E,2 B,2 A,,2 E,2 |
+ D,2 A,2 D4 | G,,2 D,2 G,4 | C,2 G,2 C4 | (24:23:2C,8 z/ |]
 `;
 </script>
