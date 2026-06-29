@@ -87,7 +87,7 @@ async function queryData() {
 
 
             <div
-            class="lg:col-span-6 w-full h-max border-gray-900/15 border-gray-100/10 border-1 p-4 border-rounded-lg"
+            class="lg:col-span-6 w-full h-max border-gray-900/15 dark:border-gray-100/10 border-1 p-4 border-rounded-lg"
           >
             <h2
               class="border-rounded-full w-max px-3 py-2 hover:bg-gray-400/30 transition-all duration-300 flex items-center gap-2 font-bold cursor-pointer font-sans text-base"
