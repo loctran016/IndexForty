@@ -15,7 +15,6 @@ import {
 } from 'reka-ui'
 
 type SoundMode = 'beep' | 'wood'
-type PositionMode = 'fixed' | 'absolute'
 
 const STORAGE_KEY = 'metronome:v2'
 
@@ -31,7 +30,10 @@ const currentBeat = ref(0)
 
 // -------- Audio scheduling internals --------
 let audioCtx: AudioContext | null = null
+let masterGain: GainNode | null = null
 let schedulerId: ReturnType<typeof setInterval> | null = null
+
+const isAudioUnlocked = ref(false)
 
 let nextNoteTime = 0 // in AudioContext time (seconds)
 let beatIndex = 0
@@ -46,6 +48,34 @@ function secondsPerBeat() {
 function ensureAudioContext() {
   if (!audioCtx) {
     audioCtx = new (window.AudioContext || (window as any).webkitAudioContext)()
+  }
+  if (audioCtx && !masterGain) {
+    masterGain = audioCtx.createGain()
+    masterGain.gain.value = 1
+    masterGain.connect(audioCtx.destination)
+  }
+}
+
+async function unlockAudio() {
+  ensureAudioContext()
+  if (!audioCtx) return false
+
+  try {
+    if (audioCtx.state !== 'running') {
+      await audioCtx.resume()
+    }
+
+    const buffer = audioCtx.createBuffer(1, 1, 22050)
+    const src = audioCtx.createBufferSource()
+    src.buffer = buffer
+    src.connect(masterGain ?? audioCtx.destination)
+    src.start(0)
+
+    isAudioUnlocked.value = audioCtx.state === 'running'
+    return isAudioUnlocked.value
+  } catch {
+    isAudioUnlocked.value = false
+    return false
   }
 }
 
@@ -75,7 +105,7 @@ function playClick(time: number, accent = false) {
 
     osc.connect(filter)
     filter.connect(gain)
-    gain.connect(audioCtx.destination)
+    gain.connect(masterGain ?? audioCtx.destination)
     osc.start(time)
     osc.stop(time + decay + 0.01)
     return
@@ -100,7 +130,7 @@ function playClick(time: number, accent = false) {
 
   osc.connect(filter)
   filter.connect(gain)
-  gain.connect(audioCtx.destination)
+  gain.connect(masterGain ?? audioCtx.destination)
   osc.start(time)
   osc.stop(time + decay + 0.01)
 }
@@ -133,9 +163,8 @@ function scheduler() {
 
 // -------- Controls --------
 async function start() {
-  ensureAudioContext()
-  if (!audioCtx) return
-  if (audioCtx.state === 'suspended') await audioCtx.resume()
+  const ok = await unlockAudio()
+  if (!ok || !audioCtx) return
 
   stopSchedulerOnly()
 
@@ -161,9 +190,9 @@ function stopSchedulerOnly() {
   }
 }
 
-function toggle() {
+async function toggle() {
   if (isPlaying.value) stop()
-  else start()
+  else await start()
 }
 
 function restartIfPlaying() {
@@ -271,6 +300,7 @@ onBeforeUnmount(async () => {
   if (audioCtx) {
     await audioCtx.close()
     audioCtx = null
+    masterGain = null
   }
 })
 </script>
@@ -298,7 +328,7 @@ onBeforeUnmount(async () => {
 
     <ContextMenuPortal>
       <ContextMenuContent
-        class="min-w-68 max-h-[70vh] overflow-y-auto rounded-xl border border-neutral-200 bg-white p-1 pt-2 shadow-xl outline-none dark:border-neutral-700 dark:bg-neutral-900 scrollbar-thin scrollbar-track-op-0"
+        class="min-w-68 max-h-[70vh] overflow-y-auto rounded-xl border border-neutral-200 bg-white p-1 pt-2 shadow-xl outline-none dark:border-neutral-700 dark:bg-neutral-900"
       >
         <ContextMenuLabel class="px-2 py-1 text-xs text-neutral-500">
           Metronome (Space to toggle)
