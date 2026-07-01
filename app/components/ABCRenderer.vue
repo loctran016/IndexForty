@@ -1,35 +1,40 @@
-
-
 <template>
   <div>
-    <!-- The container where abcjs will inject the sheet music -->
-    <div ref="sheetMusic" class=""></div>
+    <div ref="sheetMusic"></div>
   </div>
 </template>
 
-<script setup>
-import { ref, onMounted } from 'vue';
+<script setup lang="ts">
+import { ref, watchEffect, onBeforeUnmount } from 'vue'
 
-const props = defineProps({
-  abcNotation: {
-    type: String,
-    required: true
+const props = defineProps<{
+  abcNotation: string
+}>()
+
+const sheetMusic = ref<HTMLElement | null>(null)
+let abcjs: typeof import('abcjs') | null = null
+
+async function renderAbc() {
+  if (!sheetMusic.value || !props.abcNotation) return
+
+  if (!abcjs) {
+    abcjs = await import('abcjs')
   }
-});
 
-const sheetMusic = ref(null);
+  sheetMusic.value.innerHTML = ''
+  abcjs.renderAbc(sheetMusic.value, props.abcNotation, {
+    responsive: 'resize',
+    selectionColor: 'oklch(55.8% 0.288 302.321)',
+  })
+}
 
-onMounted(async () => {
-  // Import abcjs only on the client side to avoid SSR errors
-  const abcjs = await import('abcjs');
+watchEffect(() => {
+  void renderAbc()
+})
 
-  // Render the music into the DOM ref
+onBeforeUnmount(() => {
   if (sheetMusic.value) {
-    abcjs.renderAbc(sheetMusic.value, props.abcNotation, {
-        responsive: 'resize',
-    //   selectionColor: 'oklch(71.4% 0.203 305.504)'
-      selectionColor: 'oklch(55.8% 0.288 302.321)'
-    });
+    sheetMusic.value.innerHTML = ''
   }
-});
+})
 </script>

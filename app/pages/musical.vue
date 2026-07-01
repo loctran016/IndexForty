@@ -2,7 +2,7 @@
   <main class="p-8">
     <ComboboxRoot v-model="selectedTune" class="relative">
       <ComboboxAnchor
-        class="min-w-[160px] inline-flex items-center justify-between rounded-lg border border-stone-800/30 px-4 text-xs leading-none h-[35px] gap-[5px] bg-white/50 hover:bg-stone-50/50 transition-all duration-200 shadow-sm focus:shadow-[0_0_0_2px] focus:shadow-black outline-none"
+        class="min-w-24 inline-flex items-center justify-between rounded-lg border border-stone-800/30 px-4 text-xs leading-none h-[35px] gap-[5px] bg-white/50 hover:bg-stone-50/50 transition-all duration-200 shadow-sm focus:shadow-[0_0_0_2px] focus:shadow-black outline-none"
       >
         <ComboboxInput
           class="!bg-transparent outline-none h-full placeholder-stone-400 text-sm"
@@ -10,12 +10,14 @@
           :display-value="(tune) => tune?.title ?? ''"
         />
         <ComboboxTrigger>
-          <Icon icon="radix-icons:chevron-down" class="h-4 w-4" />
+          <div
+            class="i-tabler:chevron-down h-4 w-4 rotate-180 transition-all duration-200 hover:rotate-0 cursor-pointer"
+          />
         </ComboboxTrigger>
       </ComboboxAnchor>
 
       <ComboboxContent
-        class="absolute z-10 w-full mt-1 min-w-[160px] bg-white overflow-hidden rounded-lg shadow-sm border border-stone-800/40 will-change-[opacity,transform]"
+        class="absolute z-10 w-full max-w-62 mt-1 min-w-24 bg-white overflow-hidden rounded-lg shadow-sm border border-stone-800/40 will-change-[opacity,transform]"
       >
         <ComboboxViewport class="p-[5px]">
           <ComboboxEmpty class="text-xs font-medium text-center py-2 text-stone-400" />
@@ -25,13 +27,13 @@
             :key="tune.path"
             :value="tune"
             :textValue="tune.title"
-            class="text-sm leading-none rounded-[3px] flex items-center h-[25px] pr-[35px] pl-[25px] relative select-none data-[disabled]:pointer-events-none data-[highlighted]:outline-none data-[highlighted]:bg-stone-100"
+            class="text-sm leading-none rounded-[3px] flex items-center h-[25px] px-8 select-none data-[disabled]:pointer-events-none data-[highlighted]:outline-none data-[highlighted]:bg-stone-100"
           >
-            <!-- <ComboboxItemIndicator
-              class="absolute left-0 w-[25px] inline-flex items-center justify-center"
+            <ComboboxItemIndicator
+              class="absolute left-0 w-10 inline-flex items-center justify-center"
             >
-              <Icon icon="radix-icons:check" />
-            </ComboboxItemIndicator> -->
+              <div class="i-tabler:check" />
+            </ComboboxItemIndicator>
             <span>{{ tune.title }}</span>
           </ComboboxItem>
         </ComboboxViewport>
@@ -43,7 +45,7 @@
     </div>
   </main>
   <div class="fixed bottom-4 right-4">
-      <MetronomeButton />
+    <MetronomeButton />
   </div>
 </template>
 
