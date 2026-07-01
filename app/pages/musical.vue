@@ -42,6 +42,9 @@
       <ABCRenderer v-if="tuneAbc" :abcNotation="tuneAbc" />
     </div>
   </main>
+  <div class="fixed bottom-4 right-4">
+      <MetronomeButton />
+  </div>
 </template>
 
 <script setup lang="ts">
