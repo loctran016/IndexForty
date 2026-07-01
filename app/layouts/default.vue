@@ -1,6 +1,10 @@
 <script setup>
-// definePageMeta({
-//   colorMode: 'light',
+const { $pwa } = useNuxtApp()
+
+// const toast = useToast()
+
+// onMounted(() => {
+//   if ($pwa.offlineReady) toast.success('App ready to work offline')
 // })
 </script>
 
@@ -11,6 +15,15 @@
     <NavBar />
     <slot />
   </div>
+  <!-- <div
+    v-show="$pwa.needRefresh"
+    class="fixed bottom-2 right-2 bg-stone-400/50 backdrop-blur-2xl border-stone-500/30 p-4"
+  >
+    <span> New content available, click on reload button to update. </span>
+
+    <button @click="$pwa.updateServiceWorker()">Reload</button>
+  </div> -->
+  <NuxtPwaManifest />
 </template>
 
 <style>

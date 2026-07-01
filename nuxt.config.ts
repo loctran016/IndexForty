@@ -11,7 +11,9 @@ export default defineNuxtConfig({
     "@nuxt/image",
     "@nuxtjs/supabase",
     "@nuxtjs/color-mode",
-    "nuxt-echarts",'@nuxt/eslint'
+    "nuxt-echarts",
+    '@nuxt/eslint',
+    "@vite-pwa/nuxt"
   ],
   runtimeConfig: {
     public: {

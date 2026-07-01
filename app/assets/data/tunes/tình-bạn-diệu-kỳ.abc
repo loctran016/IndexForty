@@ -1,0 +1,59 @@
+X:1
+T:Tinh Ban Dieu Ky
+%%score ( 1 2 ) 3
+L:1/8
+Q:1/4=135
+M:4/4
+K:E
+%%stretchlast true
+V:1 treble nm="Piano" snm="Pno"
+%%MIDI program 0
+V:2 treble
+%%MIDI program 0
+V:3 bass nm="Piano" snm="Pno"
+%%MIDI program 0
+V:1
+ A4 A2 AB | ^G4 ^G2 ^GA | ^F4 ^F2 ^FE | ^C4{/^C} z3 E |
+[K:E][M:4/4][Q:1/4=135][Q:1/4=135] A4 A2 AB | ^G4 ^G2 ^GA | ^F4 ^F2 ^FE | ^C4 z2 (6:5:2^C2 z/ |
+ E^C ^C4 ^C_E | EB, B, ^G,2 z ^G,E | _E_E _E4 _E^C | E^C ^C B,2 z (6:5:2^C2 z/ |
+[Q:1/4=135] E^C ^C4 ^C_E | EB, B, ^G,2 z ^G,E | _E_E _E4 _E^C | E^C ^C B,2 E EE |
+ ^C4- C3/2 z/ EE | EB, ^G4{/B,} z ^G | ^F^F ^F4 ^FE | (3:2:2^F/^GE E ^C2 E EE |
+[Q:1/4=135] ^C4- C3/2 z/ EE | EB, ^G4{/B,} z ^G | ^F^F ^F4 ^FE | (3:2:2^F/^GE E ^C2 z3 |
+ A4 A2 AB | ^G4 ^G2 ^GA | ^F4 ^F2 ^FE | ^C4{/^C} z3 E |
+[Q:1/4=135] A4 A2 AB | ^G4 ^G2 ^GA | ^F4 ^F2 ^FE | ^C4 z4 |
+ (3:2:1^f/^g (3:2:1z/4 ^f3/2 e e2 B2 | (3:2:1^f/^g (3:2:1z/4 ^f3/2 e e2 z ^c/e/ | _e3 _e _e^c _e(3:2:2_e/=e- | e(3:2:2B/^c- c ^c4 z |
+ (3:2:1^f/^g (3:2:1z/4 ^f3/2 e e2 B2 | (3:2:1^f/^g (3:2:1z/4 ^f3/2 e e2 z ^c/e/ | _e4 =e4 | ^f4 (3:2:2^f/^g-g b2 |
+ (24:23:2^c'8 z/ | G E2 E2 E ^FE | B2 B2 B2 _E_E- | E E2{/E} z2 _E =E_E |
+ (24:23:2a8 z/ | [G^g] (24:23:2^g160/23 z/ | (24:23:2b8 z/ | [e^g] (24:17:4^g112/17 z/ ^C2 z/ |
+ E^C ^C4 ^C_E | EB, B, ^G,2 z ^G,E | _E_E _E4 _E^C | E^C ^C B,2 z (6:5:2^C2 z/ |
+[Q:1/4=135] E^C ^C4 ^C_E | EB, B, ^G,2 z ^G,E | _E_E _E4 _E^C | E^C (12:11:2^C4 z4 |]
+V:2
+ x8 | x8 | x8 | x8 |
+[K:E][M:4/4] x8 | x8 | x8 | z7 _E |
+ x8 | x8 | x8 | z7 _E |
+ x8 | x8 | x8 | x8 |
+ x8 | x8 | x8 | x8 |
+ x8 | x8 | x8 | x8 |
+ x8 | x8 | x8 | x8 |
+ x8 | x8 | x8 | x8 |
+ x8 | x8 | x8 | x8 |
+ x8 | x8 | x8 | x8 |
+ A2 A2 A2 A^G- | x8 | x8 | x8 |
+ A2 A2 A2 A^G- | z E2 E2 E ^FE | B2 B2 B2 _e_e- | z e2 e2 z2 _E |
+ x8 | x8 | x8 | z7 _E |
+ x8 | x8 | x8 | x8 |]
+V:3
+ A,,2 E,2 A,4 | E,,2 B,,2 E,4 | G,,2 _E,2 G,4 | C,2 G,2 C4 |
+[K:E] A,,2 E,2 A,4 | E,,2 B,,2 E,4 | G,,2 _E,2 G,4 | C,2 G,2 C2 z2 |
+ A,,2 E,2 A,4 | E,,2 B,,2 E,4 | G,,2 _E,2 G,4 | C,2 G,2 C2 z2 |
+ A,,2 E,2 A,4 | E,,2 B,,2 E,4 | G,,2 _E,2 G,4 | C,2 G,2 C4 |
+ [A,,,A,,] z [A,,E,][A,,,A,,] z [A,,,A,,]/ z/ [A,,E,]2 | [E,,E,] z [E,B,][E,,E,] z [E,,E,]/ z/ [E,B,]2 | [G,,,G,,] z [G,,_E,][G,,,G,,] z [G,,,G,,]/ z/ [G,,_E,]2 | [C,,C,] z [C,G,][C,,C,] z [C,,C,]/ z/ [C,G,]2 |
+ [A,,,A,,] z [A,,E,][A,,,A,,] z [A,,,A,,]/ z/ [A,,E,]2 | [E,,E,] z [E,B,][E,,E,] z [E,,E,]/ z/ [E,B,]2 | [G,,,G,,] z [G,,_E,][G,,,G,,] z [G,,,G,,]/ z/ [G,,_E,]2 | [C,,C,]4- [C,,C,]3/2 z/ G,,2 |
+ A,,2 E,2 A,4 | E,,2 B,,2 E,4 | G,,2 _E,2 G,4 | C,2 G,2 C4 |
+ A,,2 E,2 A,4 | E,,2 B,,2 E,4 | G,,2 _E,2 G,4 | C,2 G,2 C4 |
+ [A,,,A,,] z [A,,E,][A,,,A,,] z [A,,,A,,]/ z/ [A,,E,]2 | [E,,E,] z [E,B,][E,,E,] z [E,,E,]/ z/ [E,B,]2 | [G,,,G,,] z [G,,_E,][G,,,G,,] z [G,,,G,,]/ z/ [G,,_E,]2 | [C,,C,] z [C,G,][C,,C,] z [C,,C,]/ z/ [C,G,]2 |
+ [A,,,A,,] z [A,,E,][A,,,A,,] z [A,,,A,,]/ z/ [A,,E,]2 | [E,,E,] z [E,B,][E,,E,] z [E,,E,]/ z/ [E,B,]2 | [G,,,G,,] z [G,,_E,][G,,,G,,] z2 [G,,_E,]2 | [G,,,G,,]4 z4 |
+ A,,E, A,C EC A,E, | E,,B,, E,G, B,G, E,B,, | G,,_E, G,B, _EB, G,_E, | C, G, C =E2 G E C G, |
+ A,,E, A,C EC A,E, | E,,B,, E,G, B,G, E,B,, | G,,_E, G,B, _EB, G,_E, | C,G, CG, C2 z2 |
+ A,,2 E,2 A,4 | E,,2 B,,2 E,4 | G,,2 _E,2 G,4 | C,2 G,2 C2 z2 |
+ A,,2 E,2 A,4 | E,,2 B,,2 E,4 | G,,2 _E,2 G,4 | (24:23:2C,8 z/ |]

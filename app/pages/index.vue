@@ -29,7 +29,7 @@ const selectedDate = ref()
 <template>
   <div class="min-h-screen">
     <div
-      class="grid lg:grid-cols-6 mt-6 gap-4 max-w-9/10 lg:max-w-4/5 px-4 pt-20 py-4 mx-auto font-sans dark:text-gray-100"
+      class="grid lg:grid-cols-6 gap-4 max-w-9/10 lg:max-w-4/5 px-4 pt-20 py-4 mx-auto font-sans dark:text-gray-100"
     >
       <CalendarRoot
         v-slot="{ weekDays, grid }"
