@@ -1,6 +1,6 @@
 <template>
   <li
-    class="duration-200 w-full border-rounded-md cursor-pointer p-4 relative group"
+    class="duration-200 w-full border-rounded-md cursor-pointer p-4 group"
     :class="cardClass"
   >
     <h3 class="font-bold flex items-center gap-2 font-sans text-base">
@@ -17,9 +17,9 @@
     </div>
 
     <div
-      class="absolute top-4 right-4 py-1 px-2 text-xs rounded-lg opacity-80 transition-all duration-200 group-hover:opacity-100"
+      class="py-1 px-2 text-sm font-bold rounded-lg transition-all duration-200 group-hover:opacity-100"
       :class="
-        EXERCISE_TO_SPLIT[exercise.exercise] === 'Pull' ? 'bg-purple-600/40' : 'bg-pink-600/40'
+        EXERCISE_TO_SPLIT[exercise.exercise] === 'Pull' ? 'text-purple-600' : 'text-pink-600'
       "
     >
       {{ EXERCISE_TO_SPLIT[exercise.exercise].toUpperCase() }}
