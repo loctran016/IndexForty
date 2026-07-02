@@ -6,17 +6,6 @@ const { $pwa } = useNuxtApp()
 // onMounted(() => {
 //   if ($pwa.offlineReady) toast.success('App ready to work offline')
 // })
-useHead({
-  meta: [
-    { name: 'viewport', content: 'width=device-width,initial-scale=1' },
-    { name: 'theme-color', content: '#ffffff' },
-  ],
-  link: [
-    { rel: 'icon', href: '/favicon.ico' },
-    { rel: 'apple-touch-icon', href: '/apple-touch-icon.png', sizes: '180x180' },
-    { rel: 'mask-icon', href: '/mask-icon.svg', color: '#FFFFFF' },
-  ],
-})
 </script>
 
 <template>

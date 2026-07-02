@@ -32,4 +32,15 @@ export default defineNuxtConfig({
       baseURL: 'https://res.cloudinary.com/loctran016/image/upload',
     },
   },
+  pwa: {
+    manifest: {
+      name: 'IndexForty',
+      theme_color: '#ffffff',
+      // icons are auto-injected — no need to list them manually
+    },
+    pwaAssets: {
+      config: true, // reads pwa-assets.config.ts automatically
+      // overrideManifestIcons: true  ← set if you already have icons defined
+    },
+  },
 })

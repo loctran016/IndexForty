@@ -18,20 +18,20 @@
         fill: url(#linear-gradient-3);
       }
     </style>
-    <linearGradient id="linear-gradient" x1="101.1" y1="272.98" x2="149.14" y2="224.95" gradientUnits="userSpaceOnUse">
+    <linearGradient id="linear-gradient" x1="41.12" y1="279.56" x2="107.76" y2="212.92" gradientUnits="userSpaceOnUse">
       <stop offset="0" stop-color="#1a003f" stop-opacity=".8"/>
       <stop offset="1" stop-color="#9c15ff"/>
     </linearGradient>
-    <linearGradient id="linear-gradient-2" x1="221.51" y1="290.49" x2="302.41" y2="209.59" gradientUnits="userSpaceOnUse">
+    <linearGradient id="linear-gradient-2" x1="208.15" y1="303.85" x2="320.39" y2="191.61" gradientUnits="userSpaceOnUse">
       <stop offset="0" stop-color="#1a003f" stop-opacity=".8"/>
       <stop offset="1" stop-color="#9c15ff"/>
     </linearGradient>
-    <linearGradient id="linear-gradient-3" x1="376.93" y1="272.98" x2="424.97" y2="224.95" gradientUnits="userSpaceOnUse">
+    <linearGradient id="linear-gradient-3" x1="423.76" y1="279.56" x2="490.4" y2="212.92" gradientUnits="userSpaceOnUse">
       <stop offset="0" stop-color="#1a003f" stop-opacity=".8"/>
       <stop offset="1" stop-color="#9c15ff"/>
     </linearGradient>
   </defs>
-  <path class="cls-1" d="M84.12,141.91h67.94v24.63h-50.56l10.89-10.37v199.66l-10.89-10.63h50.56v24.89h-67.94v-228.19Z"/>
-  <path class="cls-2" d="M198.79,170.06h114.42v24.31h-114.42v-24.31ZM198.79,317.38h114.42v24.55h-114.42v-24.55ZM242.25,180.62h27.5v149.77h-27.5v-149.77Z"/>
-  <path class="cls-3" d="M359.95,370.09v-24.89h50.56l-10.89,10.63v-199.66l10.89,10.37h-50.56v-24.63h67.94v228.19h-67.94Z"/>
+  <path class="cls-1" d="M17.56,97.73h94.24v34.17H41.66l15.11-14.39v276.98l-15.11-14.75h70.14v34.53H17.56V97.73Z"/>
+  <path class="cls-2" d="M176.64,136.79h158.72v33.72h-158.72v-33.72ZM176.64,341.15h158.72v34.06h-158.72v-34.06ZM236.93,151.43h38.15v207.77h-38.15v-207.77Z"/>
+  <path class="cls-3" d="M400.2,414.27v-34.53h70.14l-15.11,14.75V117.51l15.11,14.39h-70.14v-34.17h94.24v316.55h-94.24Z"/>
 </svg>
