@@ -10,7 +10,6 @@ export default defineNuxtConfig({
     '@vee-validate/nuxt',
     '@nuxt/image',
     '@nuxtjs/supabase',
-    '@nuxtjs/color-mode',
     'nuxt-echarts',
     '@nuxt/eslint',
     '@vite-pwa/nuxt',
@@ -32,12 +31,5 @@ export default defineNuxtConfig({
     cloudinary: {
       baseURL: 'https://res.cloudinary.com/loctran016/image/upload',
     },
-  },
-  colorMode: {
-    preference: 'light',
-    fallback: 'light',
-    classSuffix: '',
-    storage: 'cookie', // ✅
-    // storage: 'localStorage',
   },
 })

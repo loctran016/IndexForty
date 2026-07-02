@@ -23,6 +23,21 @@ const isDateUnavailable: CalendarRootProps['isDateUnavailable'] = (date) => {
   return date.day === 317
 }
 
+useHead({
+  title: 'IndexForty',
+  meta: [
+    {
+      name: 'description',
+      content:
+        'The ultimate modular dashboard. IndexForty indexes your tasks, renders your music notation, logs your fitness metrics, and hosts your media gallery from a single, lightweight application.',
+    },
+  ],
+  //   bodyAttrs: {
+  //     class: 'test',
+  //   },
+  //   script: [{ innerHTML: 'console.log(\'Hello world\')' }],
+})
+
 const selectedDate = ref()
 </script>
 

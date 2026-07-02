@@ -1,6 +1,5 @@
 <script setup>
-import { parseDateTime, DateFormatter, CalendarDate, getDayOfWeek } from '@internationalized/date'
-
+import { parseDateTime, DateFormatter, today, getDayOfWeek } from '@internationalized/date'
 // Create the formatter once
 const df = new DateFormatter('en-GB', {
   weekday: 'short',
@@ -43,14 +42,10 @@ const {
 
 // Filter today's entries reactively
 const todayStrengthExercises = computed(() => {
-  // 1. Get today's raw date components (e.g., Year 2026, Month 6, Day 30)
-  const now = new Date()
-  const currentDate = new CalendarDate(now.getFullYear(), now.getMonth() + 1, now.getDate())
+  const currentDate = today('UTC')
 
   return (strengthExercises.value ?? []).filter((item) => {
-    if (!item.date) return false
-
-    // 2. Parse the DB string and compare just the date components
+    if (!item?.date) return false
     const itemDate = parseDateTime(item.date)
     return itemDate.compare(currentDate) === 0
   })
@@ -90,6 +85,7 @@ const todayStrengthExercises = computed(() => {
             <ul class="flex flex-wrap gap-1 text-xs mt-4">
               <li
                 v-for="muscle in items.muscles"
+                :key="`${items.id}-${muscle}`"
                 class="w-max rounded-lg px-2 py-1 bg-purple-400/10 hover:bg-purple-400/50 transition-all duration-200"
               >
                 {{ muscle }}
@@ -160,6 +156,7 @@ const todayStrengthExercises = computed(() => {
             <ul class="flex flex-wrap gap-1 text-xs mt-4">
               <li
                 v-for="muscle in items.muscles"
+                :key="`${items.id}-${muscle}`"
                 class="w-max rounded-lg px-2 py-1 bg-purple-600/20 hover:bg-purple-400/50 dark:bg-purple-400/10 dark:hover:bg-purple-400/50 transition-all duration-200"
               >
                 {{ muscle }}
