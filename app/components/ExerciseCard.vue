@@ -15,7 +15,7 @@
       />
       {{ df.format(parseDateTime(exercise.date).toDate('Asia/Ho_Chi_Minh')) }}
     </div>
-
+<div class="flex justify-between">
     <div
       class="mt-4 text-sm font-bold"
       :class="
@@ -37,7 +37,7 @@
       {{ df.format(parseDateTime(exercise.date).toDate('Asia/Ho_Chi_Minh')) }}
     </div> -->
 
-    <ul class="flex flex-wrap gap-1 text-xs mt-1">
+    <ul class="flex flex-wrap items-left gap-1 text-xs mt-1">
       <li
         v-for="muscle in exercise.muscles"
         :key="`${exercise.id}-${muscle}`"
@@ -46,7 +46,7 @@
       >
         {{ muscle }}
       </li>
-    </ul>
+    </ul></div>
   </li>
 </template>
 
