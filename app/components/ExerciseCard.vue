@@ -17,9 +17,9 @@
     </div>
 
     <div
-      class="py-1 px-2 text-sm font-bold rounded-lg transition-all duration-200 group-hover:opacity-100"
+      class="my-1 text-sm font-bold"
       :class="
-        EXERCISE_TO_SPLIT[exercise.exercise] === 'Pull' ? 'text-purple-600' : 'text-pink-600'
+        EXERCISE_TO_SPLIT[exercise.exercise] === 'Pull' ? 'text-purple-600 dark:text-purple-300' : 'text-pink-600 dark:text-pink-300'
       "
     >
       {{ EXERCISE_TO_SPLIT[exercise.exercise].toUpperCase() }}
