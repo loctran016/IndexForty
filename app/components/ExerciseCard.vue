@@ -17,7 +17,7 @@
     </div>
 
     <div
-      class="my-1 text-sm font-bold"
+      class="mt-4 text-sm font-bold"
       :class="
         EXERCISE_TO_SPLIT[exercise.exercise] === 'Pull' ? 'text-purple-600 dark:text-purple-300' : 'text-pink-600 dark:text-pink-300'
       "
@@ -37,7 +37,7 @@
       {{ df.format(parseDateTime(exercise.date).toDate('Asia/Ho_Chi_Minh')) }}
     </div> -->
 
-    <ul class="flex flex-wrap gap-1 text-xs mt-5">
+    <ul class="flex flex-wrap gap-1 text-xs mt-1">
       <li
         v-for="muscle in exercise.muscles"
         :key="`${exercise.id}-${muscle}`"
