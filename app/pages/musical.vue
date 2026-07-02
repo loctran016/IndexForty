@@ -90,9 +90,11 @@ const tuneList: Tune[] = Object.keys(tuneModules).map((path) => {
 const selectedTune = ref<Tune | null>(tuneList[0] ?? null)
 const tuneAbc = ref<string | null>(null)
 const tuneCache = new Map<string, string>()
+let loadId = 0 // increment on each load to discard stale results
 
 async function loadTune(path: string) {
   if (!path) return
+  const id = ++loadId
 
   const cached = tuneCache.get(path)
   if (cached) {
@@ -101,9 +103,14 @@ async function loadTune(path: string) {
   }
 
   const mod = (await tuneModules[path]()) as { default: string }
+  if (id !== loadId) return // stale, component may be gone
   tuneCache.set(path, mod.default)
   tuneAbc.value = mod.default
 }
+
+onBeforeUnmount(() => {
+  loadId++ // invalidates any in-flight load
+})
 
 watch(
   selectedTune,
