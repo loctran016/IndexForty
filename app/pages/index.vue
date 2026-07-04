@@ -71,7 +71,7 @@ const selectedDate = ref()
               <div class="i-mdi:arrow-right" />
             </CalendarNext>
           </CalendarHeader>
-          <div class="flex flex-col space-y-4 pt-4 sm:flex-row sm:space-x-4 sm:space-y-0">
+          <div class="flex flex-col text-head space-y-4 pt-4 sm:flex-row sm:space-x-4 sm:space-y-0">
             <CalendarGrid
               v-for="month in grid"
               :key="month.value.toString()"
