@@ -7,19 +7,26 @@ export default defineNuxtConfig({
     '@formkit/auto-animate',
     '@vueuse/nuxt',
     'motion-v/nuxt',
-    '@vee-validate/nuxt',
     '@nuxt/image',
     '@nuxtjs/supabase',
     'nuxt-echarts',
     '@nuxt/eslint',
     '@vite-pwa/nuxt',
     '@regle/nuxt',
+    '@nuxtjs/cloudinary',
+    'nuxt-easy-lightbox',
   ],
+  //   runtimeConfig: {
+  //     public: {
+  //       supabaseUrl: process.env.SUPABASE_URL,
+  //       supabaseKey: process.env.SUPABASE_KEY,
+  //     },
+  //   },
   runtimeConfig: {
-    public: {
-      supabaseUrl: process.env.SUPABASE_URL,
-      supabaseKey: process.env.SUPABASE_KEY,
-    },
+    // server-only, never sent to the client
+    cloudinaryCloudName: process.env.CLOUDINARY_CLOUD_NAME,
+    cloudinaryApiKey: process.env.CLOUDINARY_API_KEY,
+    cloudinaryApiSecret: process.env.CLOUDINARY_API_SECRET,
   },
   app: {
     pageTransition: { name: 'page', mode: 'out-in' },
