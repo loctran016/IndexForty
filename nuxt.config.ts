@@ -13,6 +13,7 @@ export default defineNuxtConfig({
     'nuxt-echarts',
     '@nuxt/eslint',
     '@vite-pwa/nuxt',
+    '@regle/nuxt',
   ],
   runtimeConfig: {
     public: {

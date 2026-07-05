@@ -30,79 +30,84 @@
               <form class="space-y-4" @submit.prevent="onSubmit">
                 <div>
                   <label class="mb-1 block text-sm font-medium">Exercise</label>
-                  <ExerciseComboBox v-model="exercise" />
+                  <ExerciseComboBox v-model="form.exercise" />
+                  <p v-if="r$.exercise.$error" class="text-sm text-red-600 dark:text-red-400 mt-1">
+                    {{ r$.exercise.$errors[0] }}
+                  </p>
                 </div>
 
                 <div>
                   <label class="mb-1 block text-sm font-medium">Sets</label>
                   <div class="space-y-2">
-                    <div class="grid grid-cols-[1fr_auto_1fr_auto] items-center gap-2">
-                      <input
-                        v-model.number="reps1"
-                        type="number"
-                        min="0"
-                        step="1"
-                        placeholder="reps"
-                        class="w-full focus:outline-none border-b-gray-500/30 dark:border-b-gray-100/50 focus:border-purple-600 transition-all duration-200 border px-3 py-2 border-0 border-b-2"
-                      />
-                      <span class="text-sm">reps x</span>
-                      <input
-                        v-model.number="kg1"
-                        type="number"
-                        min="0"
-                        step="0.5"
-                        placeholder="kg"
-                        class="w-full focus:outline-none focus:border-purple-600 border-b-gray-500/30 dark:border-b-gray-100/50 transition-all duration-200 border px-3 py-2 border-0 border-b-2"
-                      />
-                      <span class="text-sm">kg</span>
+                    <div
+                      v-for="(set, index) in form.sets"
+                      :key="r$.sets.$each[index]?.$id ?? index"
+                      class="space-y-1"
+                    >
+                      <div class="grid grid-cols-[1fr_auto_1fr_auto_auto] items-center gap-2">
+                        <input
+                          v-model.number="set.reps"
+                          type="number"
+                          min="0"
+                          step="1"
+                          placeholder="reps"
+                          class="w-full focus:outline-none border-b-gray-500/30 dark:border-b-gray-100/50 focus:border-purple-600 transition-all duration-200 border px-3 py-2 border-0 border-b-2"
+                        />
+                        <span class="text-sm">reps x</span>
+                        <input
+                          v-model.number="set.kg"
+                          type="number"
+                          min="0"
+                          step="0.5"
+                          placeholder="kg"
+                          class="w-full focus:outline-none focus:border-purple-600 border-b-gray-500/30 dark:border-b-gray-100/50 transition-all duration-200 border px-3 py-2 border-0 border-b-2"
+                        />
+                        <span class="text-sm">kg</span>
+                        <button
+                          v-if="form.sets.length > 2"
+                          type="button"
+                          class="text-sm text-gray-500 hover:text-red-600 dark:hover:text-red-400"
+                          aria-label="Remove set"
+                          @click="removeSet(index)"
+                        >
+                          ✕
+                        </button>
+                      </div>
+
+                      <p
+                        v-if="r$.sets.$each[index]?.reps.$error"
+                        class="text-xs text-red-600 dark:text-red-400"
+                      >
+                        {{ r$.sets.$each[index].reps.$errors[0] }}
+                      </p>
+                      <p
+                        v-if="r$.sets.$each[index]?.kg.$error"
+                        class="text-xs text-red-600 dark:text-red-400"
+                      >
+                        {{ r$.sets.$each[index].kg.$errors[0] }}
+                      </p>
                     </div>
 
-                    <div class="grid grid-cols-[1fr_auto_1fr_auto] items-center gap-2">
-                      <input
-                        v-model.number="reps2"
-                        type="number"
-                        min="0"
-                        step="1"
-                        placeholder="reps"
-                        class="w-full focus:outline-none focus:border-purple-600 transition-all duration-200 border px-3 py-2 border-0 border-b-2 border-b-gray-500/30 dark:border-b-gray-100/50"
-                      />
-                      <span class="text-sm">reps x</span>
-                      <input
-                        v-model.number="kg2"
-                        type="number"
-                        min="0"
-                        step="0.5"
-                        placeholder="kg"
-                        class="w-full focus:outline-none focus:border-purple-600 transition-all duration-200 border px-3 py-2 border-0 border-b-2 border-b-gray-500/30 dark:border-b-gray-100/50"
-                      />
-                      <span class="text-sm">kg</span>
-                    </div>
+                    <button
+                      type="button"
+                      class="text-sm text-purple-600 hover:underline"
+                      @click="addSet"
+                    >
+                      + Add set
+                    </button>
 
-                    <div class="grid grid-cols-[1fr_auto_1fr_auto] items-center gap-2">
-                      <input
-                        v-model.number="reps3"
-                        type="number"
-                        min="0"
-                        step="1"
-                        placeholder="reps"
-                        class="w-full focus:outline-none focus:border-purple-600 transition-all duration-200 border px-3 py-2 border-0 border-b-2 border-b-gray-500/30 dark:border-b-gray-100/50"
-                      />
-                      <span class="text-sm">reps x</span>
-                      <input
-                        v-model.number="kg3"
-                        type="number"
-                        min="0"
-                        step="0.5"
-                        placeholder="kg"
-                        class="w-full focus:outline-none focus:border-purple-600 transition-all duration-200 border px-3 py-2 border-0 border-b-2 border-b-gray-500/30 dark:border-b-gray-100/50"
-                      />
-                      <span class="text-sm">kg</span>
-                    </div>
+                    <p v-if="r$.sets.$self.$error" class="text-xs text-red-600 dark:text-red-400">
+                      {{ r$.sets.$self.$errors[0] }}
+                    </p>
                   </div>
                 </div>
 
-                <p v-if="errorMsg" class="text-sm text-red-600">{{ errorMsg }}</p>
-                <p v-if="successMsg" class="text-sm text-emerald-600">{{ successMsg }}</p>
+                <p v-if="errorMsg" class="text-sm text-red-600 dark:text-red-400 bg-red-950/60">
+                  <div class="i-tabler:alert-circle inline mr-1"></div>{{ errorMsg }}
+                </p>
+                <p v-if="successMsg" class="text-sm text-emerald-600 dark:text-emerald-400">
+                  {{ successMsg }}
+                </p>
 
                 <button
                   type="submit"
@@ -142,51 +147,74 @@ import {
 } from 'reka-ui'
 import { AnimatePresence, Motion } from 'motion-v'
 import { ref, watch } from 'vue'
+import { useRegle } from '@regle/core'
+import { required, requiredIf, numeric, minValue, minLength, withMessage } from '@regle/rules'
 import { EXERCISE_TO_MUSCLES, type StrengthExercise, type Database } from '~/types/database.types'
 
 const supabase = useSupabaseClient()
 
 const open = ref(false)
-const exercise = ref<StrengthExercise | null>(null)
-const setsInput = ref<number[][]>([])
 
-const reps1 = ref<number | null>(null)
-const kg1 = ref<number | null>(null)
-const reps2 = ref<number | null>(null)
-const kg2 = ref<number | null>(null)
-const reps3 = ref<number | null>(null)
-const kg3 = ref<number | null>(null)
+interface SetInput {
+  reps: number | null
+  kg: number | null
+}
+
+const form = ref<{ exercise: StrengthExercise | null; sets: SetInput[] }>({
+  exercise: null,
+  sets: [
+    { reps: null, kg: null },
+    { reps: null, kg: null },
+  ],
+})
+
+const { r$ } = useRegle(form, {
+  exercise: {
+    required: withMessage(required, 'Please select an exercise.'),
+  },
+  sets: {
+    minLength: withMessage(minLength(2), 'Add at least two sets with reps and weight.'),
+    atLeastTwoComplete: withMessage(
+      (value: SetInput[]) => value.filter((s) => s.reps != null && s.kg != null).length >= 2,
+      'Add at least two complete sets (reps and kg).',
+    ),
+    $each: (item) => ({
+      reps: {
+        requiredIf: withMessage(
+          requiredIf(() => item.value.kg != null),
+          'Enter reps for this set.',
+        ),
+        numeric,
+        minValue: minValue(1),
+      },
+      kg: {
+        requiredIf: withMessage(
+          requiredIf(() => item.value.reps != null),
+          'Enter weight for this set.',
+        ),
+        numeric,
+        minValue: minValue(0),
+      },
+    }),
+  },
+})
 
 const loading = ref(false)
 const errorMsg = ref('')
 const successMsg = ref('')
 
-function buildSetsFromInputs(): number[][] {
-  const pairs: Array<[number | null, number | null]> = [
-    [reps1.value, kg1.value],
-    [reps2.value, kg2.value],
-    [reps3.value, kg3.value],
-  ]
+function addSet() {
+  form.value.sets.push({ reps: null, kg: null })
+}
 
-  const built: number[][] = []
-  for (const [reps, kg] of pairs) {
-    const bothEmpty = (reps == null || Number.isNaN(reps)) && (kg == null || Number.isNaN(kg))
-    if (bothEmpty) continue
-    if (reps == null || Number.isNaN(reps) || kg == null || Number.isNaN(kg)) continue
-    built.push([reps, kg])
-  }
-  return built
+function removeSet(index: number) {
+  form.value.sets.splice(index, 1)
 }
 
 function resetForm() {
-  exercise.value = null
-  setsInput.value = []
-  reps1.value = null
-  kg1.value = null
-  reps2.value = null
-  kg2.value = null
-  reps3.value = null
-  kg3.value = null
+  form.value.exercise = null
+  form.value.sets = [{ reps: null, kg: null }]
+  r$.$reset({ toInitialState: true })
 }
 
 watch(open, (v) => {
@@ -200,18 +228,18 @@ async function onSubmit() {
   errorMsg.value = ''
   successMsg.value = ''
 
-  if (!exercise.value) {
-    errorMsg.value = 'Please select an exercise.'
-    return
-  }
-
-  const parsedSets = buildSetsFromInputs()
-  setsInput.value = parsedSets
+  const { valid, data } = await r$.$validate()
+  if (!valid) return
 
   loading.value = true
   try {
-    const exerciseKey = exercise.value as StrengthExercise
+    const exerciseKey = data.exercise as StrengthExercise
     const muscles = EXERCISE_TO_MUSCLES[exerciseKey] ?? []
+
+    // Drop any incomplete trailing row before saving (shouldn't exist if valid, but be safe)
+    const parsedSets: number[][] = data.sets
+      .filter((s) => s.reps != null && s.kg != null)
+      .map((s) => [s.reps as number, s.kg as number])
 
     const { error } = await supabase
       .from<Database['public']['Tables']['strength']['Insert']>('strength')

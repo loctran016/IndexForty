@@ -1,5 +1,5 @@
 {
-  "name": "hobby",
+  "name": "IndexForty",
   "type": "module",
   "private": true,
   "scripts": {
@@ -15,6 +15,7 @@
     "@internationalized/date": "^3.12.2",
     "@nuxt/image": "2.0.0",
     "@nuxtjs/supabase": "2.0.9",
+    "@regle/nuxt": "1.28.3",
     "@vee-validate/nuxt": "4.15.1",
     "@vite-pwa/nuxt": "1.1.1",
     "@vueuse/nuxt": "14.3.0",
