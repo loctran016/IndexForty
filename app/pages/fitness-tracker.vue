@@ -98,7 +98,7 @@ const todayStrengthExercises = computed(() => {
         <div class="i-tabler:layout-grid" />
         Strength Workouts
       </h2>
-      <ul class="grid grid-cols-3 lg:grid-cols-4 items-stretch w-full gap-2 mt-4">
+      <ul class="grid grid-cols-3 xl:grid-cols-4 items-stretch w-full gap-2 mt-4">
         <ExerciseCard
           v-for="items in strengthExercises"
           :key="items.id"
