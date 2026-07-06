@@ -2,5 +2,5 @@ import { defineConfig, minimal2023Preset } from '@vite-pwa/assets-generator/conf
 
 export default defineConfig({
   preset: 'minimal-2023',
-  images: ['/public/logo.svg'], // single source image
+  images: ['public/logo.svg'], // single source image
 })

@@ -46,9 +46,9 @@ const cardClass =
   <div class="grid lg:grid-cols-6 gap-4 px-4 py-4 mx-auto font-sans dark:text-gray-100">
     <div class="lg:col-span-4 card">
       <h2
-        class="border-rounded-full w-max font-head px-3 py-2 hover:bg-gray-400/30 transition-all duration-300 flex items-center gap-2 font-bold cursor-pointer text-base"
+        class="border-rounded-full w-max font-head px-3 py-2 transition-all duration-300 flex items-center gap-2 font-bold cursor-pointer text-base"
       >
-        <div class="i-tabler:layout-grid" />
+        <div class="i-healthicons:exercise-weights text-lg" />
         Today workouts
       </h2>
       <ul class="grid grid-cols-2 lg:grid-cols-3 items-stretch w-full gap-2 mt-4">
@@ -61,7 +61,7 @@ const cardClass =
         <StrengthForm>
           <li
             v-if="todayStrengthExercises.length < 3"
-            class="border-stone-100/30 hover:border-stone-100/50 dark:border-stone-100/20 dark:hover:border-white/40 border-1 border-dashed flex items-center justify-center duration-200 w-full border-rounded-md cursor-pointer p-4 min-h-24 hover:text-black dark:hover:text-white"
+            class="border-stone-900/30 hover:border-stone-900/50 dark:border-stone-100/20 dark:hover:border-white/40 border-1 border-dashed flex items-center justify-center duration-200 w-full border-rounded-md cursor-pointer p-4 min-h-24 hover:text-black dark:hover:text-white"
           >
             <div class="i-mdi:plus" /></li
         ></StrengthForm>
@@ -94,7 +94,7 @@ const cardClass =
 
     <div class="lg:col-span-6 card">
       <h2
-        class="border-rounded-full w-max px-3 py-2 hover:bg-gray-400/30 transition-all duration-300 flex items-center gap-2 font-bold cursor-pointer font-head text-base"
+        class="border-rounded-full w-max px-3 py-2 transition-all duration-300 flex items-center gap-2 font-bold cursor-pointer font-head text-base"
       >
         <div class="i-tabler:layout-grid" />
         Strength Workouts

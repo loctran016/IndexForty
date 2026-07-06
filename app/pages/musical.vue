@@ -40,7 +40,7 @@
       </ComboboxContent>
     </ComboboxRoot>
 
-    <div class="w-3/4 mx-auto mt-8">
+    <div class="w-3/4 mx-auto mt-8 card">
       <ClientOnly>
         <ABCRenderer v-if="tuneAbc" :abcNotation="tuneAbc" />
         <template #fallback>

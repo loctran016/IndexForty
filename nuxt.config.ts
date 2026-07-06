@@ -7,7 +7,6 @@ export default defineNuxtConfig({
     '@formkit/auto-animate',
     '@vueuse/nuxt',
     'motion-v/nuxt',
-    '@nuxt/image',
     '@nuxtjs/supabase',
     'nuxt-echarts',
     '@nuxt/eslint',
@@ -28,11 +27,6 @@ export default defineNuxtConfig({
   supabase: {
     useSsrCookies: true, // This should be true for SSR support
     redirect: false,
-  },
-  image: {
-    cloudinary: {
-      baseURL: 'https://res.cloudinary.com/loctran016/image/upload',
-    },
   },
   pwa: {
     manifest: {

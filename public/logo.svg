@@ -1,37 +1,44 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<svg id="Layer_1" data-name="Layer 1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 512 512">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
   <defs>
-    <style>
-      .cls-1 {
-        fill: url(#linear-gradient);
-      }
-
-      .cls-1, .cls-2, .cls-3 {
-        stroke-width: 0px;
-      }
-
-      .cls-2 {
-        fill: url(#linear-gradient-2);
-      }
-
-      .cls-3 {
-        fill: url(#linear-gradient-3);
-      }
-    </style>
-    <linearGradient id="linear-gradient" x1="41.12" y1="279.56" x2="107.76" y2="212.92" gradientUnits="userSpaceOnUse">
-      <stop offset="0" stop-color="#1a003f" stop-opacity=".8"/>
-      <stop offset="1" stop-color="#9c15ff"/>
+    <linearGradient id="back-grad" x1="90" y1="110" x2="430" y2="450" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#7e22ce"/>
+      <stop offset="1" stop-color="#be185d"/>
     </linearGradient>
-    <linearGradient id="linear-gradient-2" x1="208.15" y1="303.85" x2="320.39" y2="191.61" gradientUnits="userSpaceOnUse">
-      <stop offset="0" stop-color="#1a003f" stop-opacity=".8"/>
-      <stop offset="1" stop-color="#9c15ff"/>
+    <linearGradient id="front-grad" x1="70" y1="70" x2="442" y2="442" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#a855f7"/>
+      <stop offset="1" stop-color="#ec4899"/>
     </linearGradient>
-    <linearGradient id="linear-gradient-3" x1="423.76" y1="279.56" x2="490.4" y2="212.92" gradientUnits="userSpaceOnUse">
-      <stop offset="0" stop-color="#1a003f" stop-opacity=".8"/>
-      <stop offset="1" stop-color="#9c15ff"/>
-    </linearGradient>
+    <radialGradient id="highlight-grad" cx="0.5" cy="0.15" r="0.55" gradientUnits="objectBoundingBox">
+      <stop offset="0" stop-color="#ffffff" stop-opacity="0.55"/>
+      <stop offset="1" stop-color="#ffffff" stop-opacity="0"/>
+    </radialGradient>
+    <clipPath id="front-clip">
+      <rect x="70" y="70" width="372" height="372" rx="86"/>
+    </clipPath>
+    <filter id="drop-shadow" x="-50%" y="-50%" width="200%" height="200%">
+      <feDropShadow dx="0" dy="20" stdDeviation="16" flood-color="#4a044e" flood-opacity="0.35"/>
+    </filter>
+    <filter id="glyph-shadow" x="-50%" y="-50%" width="200%" height="200%">
+      <feDropShadow dx="0" dy="4" stdDeviation="4" flood-color="#4a044e" flood-opacity="0.35"/>
+    </filter>
   </defs>
-  <path class="cls-1" d="M17.56,97.73h94.24v34.17H41.66l15.11-14.39v276.98l-15.11-14.75h70.14v34.53H17.56V97.73Z"/>
-  <path class="cls-2" d="M176.64,136.79h158.72v33.72h-158.72v-33.72ZM176.64,341.15h158.72v34.06h-158.72v-34.06ZM236.93,151.43h38.15v207.77h-38.15v-207.77Z"/>
-  <path class="cls-3" d="M400.2,414.27v-34.53h70.14l-15.11,14.75V117.51l15.11,14.39h-70.14v-34.17h94.24v316.55h-94.24Z"/>
+
+  <!-- back layer, peeking out lower-right, echoing the stacked-card look -->
+  <rect x="90" y="110" width="340" height="340" rx="80" fill="url(#back-grad)" opacity="0.8"/>
+
+  <!-- front layer with shadow lifting it off the page -->
+  <g filter="url(#drop-shadow)">
+    <rect x="70" y="70" width="372" height="372" rx="86" fill="url(#front-grad)"/>
+  </g>
+
+  <!-- glossy highlight, clipped to the front squircle -->
+  <rect x="70" y="70" width="372" height="372" rx="86" fill="url(#highlight-grad)" clip-path="url(#front-clip)"/>
+
+  <!-- the I glyph, embossed with a soft shadow -->
+  <path
+    filter="url(#glyph-shadow)"
+    fill="#ffffff"
+    d="M176.64,136.79h158.72v33.72h-158.72v-33.72ZM176.64,341.15h158.72v34.06h-158.72v-34.06ZM236.93,151.43h38.15v207.77h-38.15v-207.77Z"
+  />
 </svg>

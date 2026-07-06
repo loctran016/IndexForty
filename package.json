@@ -13,7 +13,6 @@
   "dependencies": {
     "@formkit/auto-animate": "0.9.0",
     "@internationalized/date": "^3.12.2",
-    "@nuxt/image": "2.0.0",
     "@nuxtjs/cloudinary": "^4.0.0",
     "@nuxtjs/supabase": "2.0.9",
     "@regle/nuxt": "1.28.3",
@@ -33,6 +32,7 @@
     "vue-router": "^5.1.0"
   },
   "devDependencies": {
+    "@iconify-json/healthicons": "^1.2.12",
     "@iconify-json/mdi": "^1.2.3",
     "@iconify-json/solar": "^1.2.5",
     "@iconify-json/tabler": "^1.2.35",
