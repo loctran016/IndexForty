@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import type { CalendarRootProps } from 'reka-ui'
-// import { Icon } from '@iconify/vue'
 import { fromDate, toCalendarDate, today } from '@internationalized/date'
 import {
   CalendarCell,
@@ -47,18 +46,15 @@ useHead({
   ],
 })
 
-// app/pages/index.vue
 definePageMeta({ title: 'Home Islet' })
 
 const selectedDate = ref()
-
-// --- Events from Supabase, matched to calendar cells ---
 
 interface CalendarEvent {
   id: number
   event: string
   location: string
-  date: string // timestamptz
+  date: string
   created_at: string
   type: string
 }
@@ -66,9 +62,7 @@ interface CalendarEvent {
 const supabase = useSupabaseClient()
 
 const { data: events } = await useAsyncData('exams', async () => {
-  const { data, error } = await supabase
-    .from('exams') // <-- swap for your real table name if different
-    .select('id, event, location, date, type')
+  const { data, error } = await supabase.from('exams').select('id, event, location, date, type')
 
   if (error) throw error
   return data as CalendarEvent[]
@@ -81,9 +75,6 @@ function dateKey(d: { year: number; month: number; day: number }) {
 const eventsByDate = computed(() => {
   const map = new Map<string, CalendarEvent[]>()
   for (const ev of events.value ?? []) {
-    // Convert the timestamptz into a plain calendar date in the same
-    // timezone the calendar itself uses, so "23:00 UTC" doesn't land
-    // on the wrong day.
     const zoned = fromDate(new Date(ev.date), TIME_ZONE)
     const key = dateKey(toCalendarDate(zoned))
     if (!map.has(key)) map.set(key, [])
@@ -95,8 +86,6 @@ const eventsByDate = computed(() => {
 function eventsForDate(d: { year: number; month: number; day: number }) {
   return eventsByDate.value.get(dateKey(d)) ?? []
 }
-
-// --- Todo list from Supabase ---
 
 interface TodoItem {
   id: number
@@ -115,7 +104,6 @@ const { data: todosData } = await useAsyncData('todo', async () => {
   return data as TodoItem[]
 })
 
-// Local reactive copy so we can edit in place without refetching on every keystroke
 const todos = ref<TodoItem[]>(todosData.value ? [...todosData.value] : [])
 
 const newTaskText = ref('')
@@ -145,10 +133,10 @@ async function addTodo() {
 
 async function toggleDone(todo: TodoItem, value: boolean) {
   const previous = todo.done
-  todo.done = value // optimistic update
+  todo.done = value
   const { error } = await supabase.from('todo').update({ done: value }).eq('id', todo.id)
   if (error) {
-    todo.done = previous // revert on failure
+    todo.done = previous
     console.error('Failed to update todo', error)
   }
 }
@@ -158,7 +146,7 @@ async function saveTaskText(todo: TodoItem, value: string) {
   if (!trimmed || trimmed === todo.task) return
 
   const previous = todo.task
-  todo.task = trimmed // optimistic update
+  todo.task = trimmed
   const { error } = await supabase.from('todo').update({ task: trimmed }).eq('id', todo.id)
   if (error) {
     todo.task = previous
@@ -170,10 +158,10 @@ async function removeTodo(todo: TodoItem) {
   const index = todos.value.findIndex((t) => t.id === todo.id)
   if (index === -1) return
 
-  const [removed] = todos.value.splice(index, 1) // optimistic
+  const [removed] = todos.value.splice(index, 1)
   const { error } = await supabase.from('todo').delete().eq('id', todo.id)
   if (error) {
-    todos.value.splice(index, 0, removed) // revert on failure
+    todos.value.splice(index, 0, removed)
     console.error('Failed to delete todo', error)
   }
 }
@@ -181,15 +169,16 @@ async function removeTodo(todo: TodoItem) {
 
 <template>
   <div
-    class="grid lg:grid-cols-6 gap-8 items-center px-4 py-4 mx-auto font-sans dark:text-gray-100"
+    class="grid grid-cols-1 lg:grid-cols-4 lg:grid-rows-4 gap-x-4 gap-y-4 px-4 py-4 mx-auto font-sans dark:text-gray-100"
   >
     <ClientOnly>
       <TooltipProvider :delay-duration="150">
+        <!-- Calendar: 3 rows x 2 cols, top-left -->
         <CalendarRoot
           v-slot="{ weekDays, grid }"
           :is-date-unavailable="isDateUnavailable"
           :default-value="date"
-          class="lg:order-first text-lg lg:col-span-3 card"
+          class="text-lg card lg:col-start-1 lg:col-span-2 lg:row-start-1 lg:row-span-3"
           fixed-weeks
           weekdayFormat="short"
           :week-starts-on="1"
@@ -202,7 +191,6 @@ async function removeTodo(todo: TodoItem) {
               <div class="i-mdi:arrow-left" />
             </CalendarPrev>
             <CalendarHeading class="font-medium text-xl font-head" />
-
             <CalendarNext
               class="inline-flex items-center cursor-pointer justify-center rounded-md bg-transparent p-2 text-2xl hover:translate-x-1 transition-all duration-200 hover:text-purple-600 active:scale-98 active:transition-all focus-visible:ring-2 focus-visible:ring-purple-400 focus-visible:ring-offset-2 focus:outline-none"
             >
@@ -272,10 +260,17 @@ async function removeTodo(todo: TodoItem) {
           </div>
         </CalendarRoot>
 
-        <!-- Todo list -->
-        <div class="card text-lg lg:col-span-3 p-8 shadow-sm border flex flex-col gap-4">
-          <h2 class="font-medium text-xl font-head">To-do</h2>
+        <!-- Holy days: 1 row x 2 cols, below calendar -->
+        <TibetanHolyDays class="lg:col-start-1 lg:col-span-2 lg:row-start-4 lg:row-span-1" />
 
+        <!-- Todo: 2 rows x 2 cols, top-right -->
+        <div
+          class="card text-lg p-8 shadow-sm border flex flex-col gap-4 lg:col-start-3 lg:col-span-2 lg:row-start-1 lg:row-span-2"
+        >
+          <h2 class="font-medium text-xl font-head flex items-center gap-2">
+            <div class="i-mdi:text-box-edit" />
+            To-do
+          </h2>
           <ul class="flex flex-col gap-2 overflow-y-auto">
             <li v-for="todo in todos" :key="todo.id" class="flex items-center gap-3 group">
               <CheckboxRoot
@@ -287,7 +282,6 @@ async function removeTodo(todo: TodoItem) {
                   <div class="i-mdi:check text-white text-sm" />
                 </CheckboxIndicator>
               </CheckboxRoot>
-
               <EditableRoot
                 :model-value="todo.task"
                 class="flex-1"
@@ -305,7 +299,6 @@ async function removeTodo(todo: TodoItem) {
                   />
                 </EditableArea>
               </EditableRoot>
-
               <button
                 type="button"
                 class="opacity-0 group-hover:opacity-100 transition-opacity text-stone-500 hover:text-red-500 shrink-0"
@@ -315,12 +308,10 @@ async function removeTodo(todo: TodoItem) {
                 <div class="i-mdi:close text-lg" />
               </button>
             </li>
-
             <li v-if="!todos.length" class="text-sm text-stone-500 dark:text-stone-400">
               Nothing to do yet — add your first task below.
             </li>
           </ul>
-
           <form
             class="flex gap-2 pt-2 border-t border-stone-800/10 dark:border-stone-100/10"
             @submit.prevent="addTodo"
@@ -340,6 +331,12 @@ async function removeTodo(todo: TodoItem) {
             </button>
           </form>
         </div>
+
+        <!-- Pomodoro: 2 rows x 1 col, bottom-right area -->
+        <PomodoroTimer class="lg:col-start-3 lg:col-span-1 lg:row-start-3 lg:row-span-2" />
+
+        <!-- Music: 2 rows x 1 col, bottom-right area -->
+        <MusicPlayer class="lg:col-start-4 lg:col-span-1 lg:row-start-3 lg:row-span-2" />
       </TooltipProvider>
     </ClientOnly>
   </div>
