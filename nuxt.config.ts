@@ -16,12 +16,6 @@ export default defineNuxtConfig({
     '@nuxtjs/cloudinary',
     'nuxt-easy-lightbox',
   ],
-  //   runtimeConfig: {
-  //     public: {
-  //       supabaseUrl: process.env.SUPABASE_URL,
-  //       supabaseKey: process.env.SUPABASE_KEY,
-  //     },
-  //   },
   runtimeConfig: {
     // server-only, never sent to the client
     cloudinaryCloudName: process.env.CLOUDINARY_CLOUD_NAME,

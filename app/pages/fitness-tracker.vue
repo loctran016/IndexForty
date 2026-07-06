@@ -37,13 +37,14 @@ const todayStrengthExercises = computed(() => {
     return itemDate.compare(currentDate) === 0
   })
 })
+
+const cardClass =
+  'rounded-2xl bg-white/45 dark:bg-stone-800/50 backdrop-blur-xl backdrop-saturate-150 border border-white/40 dark:border-white/10 p-6'
 </script>
 
 <template>
   <div class="grid lg:grid-cols-6 gap-4 px-4 py-4 mx-auto font-sans dark:text-gray-100">
-    <div
-      class="lg:col-span-4 w-full h-max border-gray-900/15 dark:border-gray-100/10 border-1 py-5 px-6 border-rounded-lg"
-    >
+    <div class="lg:col-span-4 card">
       <h2
         class="border-rounded-full w-max font-head px-3 py-2 hover:bg-gray-400/30 transition-all duration-300 flex items-center gap-2 font-bold cursor-pointer text-base"
       >
@@ -60,13 +61,13 @@ const todayStrengthExercises = computed(() => {
         <StrengthForm>
           <li
             v-if="todayStrengthExercises.length < 3"
-            class="border-stone-600/30 hover:border-stone-700/50 dark:border-stone-700/30 dark:hover:border-gray-400/30 border-1 border-dashed flex items-center justify-center duration-200 w-full border-rounded-md cursor-pointer p-4 min-h-24 hover:text-black dark:hover:text-white"
+            class="border-stone-100/30 hover:border-stone-100/50 dark:border-stone-100/20 dark:hover:border-white/40 border-1 border-dashed flex items-center justify-center duration-200 w-full border-rounded-md cursor-pointer p-4 min-h-24 hover:text-black dark:hover:text-white"
           >
             <div class="i-mdi:plus" /></li
         ></StrengthForm>
       </ul>
     </div>
-    <div class="lg:col-span-2 lg:order-first w-full h-max p-4">
+    <div class="lg:col-span-2 lg:order-first card">
       <h2
         class="border-rounded-full px-3 py-2 w-max flex items-center gap-2 font-semibold font-head text-lg"
       >
@@ -78,20 +79,20 @@ const todayStrengthExercises = computed(() => {
           aria-haspopup="dialog"
           aria-expanded="false"
           data-state="closed"
-          class="inline-flex items-center justify-center focus:shadow-black focus:outline-none cursor-pointer ml-6 border border-transparent border-1 hover:pb-1 focus:pb-1 hover:border-b-purple-600 focus:border-b-purple-600 group transition-all duration-200"
+          class="inline-flex items-center justify-center focus:shadow-black focus:outline-none cursor-pointer ml-6 border border-transparent border-1 hover:pb-1 focus:pb-1 dark:hover:border-b-white dark:focus:border-b-white group transition-all duration-200"
         >
-          <div class="i-mdi:plus text-purple-600 text-xl mr-2" />
+          <div
+            class="i-mdi:plus dark:text-white/90 group-hover:text-white transition-colors duration-200 mr-2 group-hover:font-semibold"
+          />
           <span
-            class="group-hover:text-purple-500 group-focus:text-purple-500 group-hover:font-semibold group-focus:font-semibold"
+            class="dark:group-hover:text-white dark:group-focus:text-white group-hover:font-semibold group-focus:font-semibold"
             >Add Strength</span
           >
         </button></StrengthForm
       >
     </div>
 
-    <div
-      class="lg:col-span-6 w-full h-max border-gray-900/15 dark:border-gray-100/10 border-1 py-5 px-6 border-rounded-lg"
-    >
+    <div class="lg:col-span-6 card">
       <h2
         class="border-rounded-full w-max px-3 py-2 hover:bg-gray-400/30 transition-all duration-300 flex items-center gap-2 font-bold cursor-pointer font-head text-base"
       >
@@ -108,7 +109,7 @@ const todayStrengthExercises = computed(() => {
         <StrengthForm>
           <li
             v-if="strengthExercises.length < 4"
-            class="border-stone-700/30 border-1 hover:border-gray-400/30 border-dashed flex items-center justify-center duration-200 w-full border-rounded-md cursor-pointer p-4 min-h-24"
+            class="border-stone-100/30 hover:border-stone-100/50 dark:border-stone-100/20 dark:hover:border-white/40 border-1 border-dashed flex items-center justify-center duration-200 w-full border-rounded-md cursor-pointer p-4 min-h-24"
           >
             <div class="i-mdi:plus" /></li
         ></StrengthForm>

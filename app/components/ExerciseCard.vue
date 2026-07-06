@@ -1,6 +1,6 @@
 <template>
   <li
-    class="duration-200 w-full border-rounded-md cursor-pointer p-4 group bg-stone-300/30 hover:bg-stone-400/35 dark:bg-stone-700/30 dark:hover:bg-stone-500/30"
+    class="duration-200 w-full border-rounded-md cursor-pointer p-4 group bg-purple-950/25 hover:bg-purple-950/35 border border-white/10 dark:bg-purple-950/25 dark:hover:bg-purple-950/35 dark:border-white/5"
   >
     <h3 class="font-bold flex items-center gap-2 font-sans text-base">
       <div class="i-mdi:dumbbell" />
@@ -15,7 +15,7 @@
       {{ df.format(parseDateTime(exercise.date).toDate('Asia/Ho_Chi_Minh')) }}
     </div>
     <div
-      class="flex justify-between items-start mt-2 pt-2 border-t-1 border-gray-800/40 border-dashed dark:border-gray-600/40"
+      class="flex justify-between items-start mt-2 pt-2 border-t-1 border-white/20 dark:border-white/15 border-dashed"
     >
       <div
         class="text-sm font-bold"
@@ -44,7 +44,7 @@
         <li
           v-for="muscle in exercise.muscles"
           :key="`${exercise.id}-${muscle}`"
-          class="w-max rounded-lg px-2 py-1 transition-all duration-200 bg-purple-600/20 hover:bg-purple-600/30 dark:bg-purple-400/10 dark:hover:bg-purple-400/50"
+          class="w-max rounded-lg px-2 py-1 transition-all duration-200 bg-purple-600/25 hover:bg-purple-600/35 text-purple-900 dark:bg-purple-400/25 dark:hover:bg-purple-400/35 dark:text-purple-100"
         >
           {{ muscle }}
         </li>

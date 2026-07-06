@@ -8,6 +8,13 @@ const pageTitle = computed(() => (route.meta.title as string) ?? '')
   <div
     class="w-full bg-stone-50 text-stone-900 dark:bg-stone-900 dark:text-gray-100 scrollbar scrollbar-track-op-0 scrollbar-thin font-sans min-h-screen grid items-start"
   >
+    <img
+      src="/blob-bg.svg"
+      alt=""
+      aria-hidden="true"
+      class="fixed inset-0 w-full h-full object-cover object-top-left z-0 opacity-60 dark:opacity-60 pointer-events-none"
+    />
+
     <header
       class="sticky top-0 z-20 border-b border-white/40 dark:border-white/10 bg-white/30 dark:bg-stone-700/30 backdrop-blur-xl backdrop-saturate-150"
     >

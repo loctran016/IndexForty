@@ -37,12 +37,12 @@ const isDateUnavailable: CalendarRootProps['isDateUnavailable'] = (date) => {
 }
 
 useHead({
-  title: 'Islet',
+  title: 'Isolde',
   meta: [
     {
       name: 'description',
       content:
-        'Your personal islands — tasks, sound, movement, and memory, each in its own calm, focused space.',
+        'Your personal isolate islands — tasks, sound, movement, and memory, each in its own calm, focused space.',
     },
   ],
 })
@@ -189,7 +189,7 @@ async function removeTodo(todo: TodoItem) {
           v-slot="{ weekDays, grid }"
           :is-date-unavailable="isDateUnavailable"
           :default-value="date"
-          class="rounded-xl lg:order-first text-lg lg:col-span-3 bg-white/50 dark:bg-stone-500/50 border-stone-800/30 p-8 shadow-sm border dark:border-stone-300/30"
+          class="lg:order-first text-lg lg:col-span-3 card"
           fixed-weeks
           weekdayFormat="short"
           :week-starts-on="1"
@@ -273,9 +273,7 @@ async function removeTodo(todo: TodoItem) {
         </CalendarRoot>
 
         <!-- Todo list -->
-        <div
-          class="rounded-xl text-lg lg:col-span-3 bg-white/30 dark:bg-stone-500/30 border-stone-800/30 p-8 shadow-sm border dark:border-stone-300/30 flex flex-col gap-4 max-h-[calc(100vh-4rem)]"
-        >
+        <div class="card text-lg lg:col-span-3 p-8 shadow-sm border flex flex-col gap-4">
           <h2 class="font-medium text-xl font-head">To-do</h2>
 
           <ul class="flex flex-col gap-2 overflow-y-auto">
