@@ -11,7 +11,7 @@ const pageTitle = computed(() => (route.meta.title as string) ?? '')
     <header
       class="sticky top-0 z-20 border-b border-white/40 dark:border-white/10 bg-white/30 dark:bg-stone-700/30 backdrop-blur-xl backdrop-saturate-150"
     >
-      <div class="max-w-6xl mx-auto flex items-center justify-between gap-4 px-4 py-3">
+      <div class="max-w-6xl mx-auto flex items-center justify-between gap-4 px-4 py-2">
         <span class="text-xl font-medium font-head truncate">{{ pageTitle }}</span>
         <NavBar />
       </div>
