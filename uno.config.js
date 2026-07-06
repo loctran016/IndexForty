@@ -1,6 +1,6 @@
 import { defineConfig, presetWind4, presetIcons, presetWebFonts } from 'unocss'
 import { presetScrollbar } from 'unocss-preset-scrollbar'
-
+import { presetScrollbarHide } from 'unocss-preset-scrollbar-hide'
 export default defineConfig({
   presets: [
     presetWind4({
@@ -20,6 +20,7 @@ export default defineConfig({
       },
     }),
     presetScrollbar(),
+    presetScrollbarHide(),
   ],
   shortcuts: {
     card: 'rounded-2xl bg-white/45 dark:bg-stone-800/50 backdrop-blur-xl backdrop-saturate-150 border border-white/40 dark:border-white/10 p-6',

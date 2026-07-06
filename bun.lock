@@ -21,6 +21,7 @@
         "nuxt-echarts": "1.0.1",
         "reka-ui": "^2.10.1",
         "tibetan-date-calculator": "^1.2.3",
+        "unocss-preset-scrollbar-hide": "^1.0.1",
         "vue": "^3.5.39",
         "vue-echarts": "^8.0.0",
         "vue-router": "^5.1.0",
@@ -2262,6 +2263,8 @@
     "unocss": ["unocss@66.7.2", "", { "dependencies": { "@unocss/cli": "66.7.2", "@unocss/core": "66.7.2", "@unocss/preset-attributify": "66.7.2", "@unocss/preset-icons": "66.7.2", "@unocss/preset-mini": "66.7.2", "@unocss/preset-tagify": "66.7.2", "@unocss/preset-typography": "66.7.2", "@unocss/preset-uno": "66.7.2", "@unocss/preset-web-fonts": "66.7.2", "@unocss/preset-wind": "66.7.2", "@unocss/preset-wind3": "66.7.2", "@unocss/preset-wind4": "66.7.2", "@unocss/transformer-attributify-jsx": "66.7.2", "@unocss/transformer-compile-class": "66.7.2", "@unocss/transformer-directives": "66.7.2", "@unocss/transformer-variant-group": "66.7.2", "@unocss/vite": "66.7.2" }, "peerDependencies": { "@unocss/astro": "66.7.2", "@unocss/postcss": "66.7.2", "@unocss/webpack": "66.7.2" }, "optionalPeers": ["@unocss/astro", "@unocss/postcss", "@unocss/webpack"] }, "sha512-yB0yOpJTtlyGH/HAe4QdnjgjSP6z9ItTdrObvagc8ZEwRY1D2GbfUABwDKyZzXs19gXebqThMG9f+W0hPhDIPA=="],
 
     "unocss-preset-scrollbar": ["unocss-preset-scrollbar@4.0.0", "", { "dependencies": { "@unocss/preset-mini": "^66.6.2" }, "peerDependencies": { "unocss": ">=66.0.0" } }, "sha512-wPePkUCOvWsA1kOeImQtBzUnBuWhFvo2gOdWsPpmBke+z2zWbW4p9KfOPtGch+WrgnwnpmM4d4BxoVulC+1xhA=="],
+
+    "unocss-preset-scrollbar-hide": ["unocss-preset-scrollbar-hide@1.0.1", "", { "peerDependencies": { "@unocss/nuxt": "^0.40.0", "unocss": "^0.40.0" }, "optionalPeers": ["@unocss/nuxt", "unocss"] }, "sha512-U+JcxAMhgvI14ZtveQBRSbyYGkgYRDlOJzAW2pUbrTvsGZwTyb3dWLvNiMdtN4s1dFEGMCBRAgnoBPLh21APPQ=="],
 
     "unpic": ["unpic@3.22.0", "", {}, "sha512-NFhB8HgHHWkNzTxwWg6KHx8+3RZnhWFm4Axdqp9iI176iY3wskzfP16NRSJ2SSTfXzyK4W6GsBqs8iOOdvOB3g=="],
 

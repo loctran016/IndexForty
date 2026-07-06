@@ -16,14 +16,14 @@
 
           <DialogContent
             as-child
-            class="fixed top-[50%] left-[50%] max-h-[85vh] w-[90vw] max-w-[450px] translate-x-[-50%] translate-y-[-50%] rounded-[6px] bg-stone-50 dark:bg-stone-700 dark:text-gray-100 p-[25px] shadow-[hsl(206_22%_7%_/_35%)_0px_10px_38px_-10px,hsl(206_22%_7%_/_20%)_0px_10px_20px_-15px] focus:outline-none z-10"
+            class="fixed top-1/2 left-1/2 max-h-[85vh] w-[90vw] max-w-[450px] -translate-x-1/2 -translate-y-1/2 card shadow-[hsl(206_22%_7%_/_35%)_0px_10px_38px_-10px,hsl(206_22%_7%_/_20%)_0px_10px_20px_-15px] focus:outline-none z-10"
           >
             <Motion
               :initial="false"
               :animate="{ opacity: 1, top: '50%' }"
               :exit="{ opacity: 0, top: '30%' }"
             >
-              <DialogTitle class="font-semibold mb-5 leading-normal dark:text-gray-100">
+              <DialogTitle class="font-semibold font-head text-lg mb-5 leading-normal dark:text-gray-100">
                 Strength Exercise
               </DialogTitle>
 
