@@ -19,8 +19,7 @@ export default defineConfig({
         // custom ones
       },
     }),
-    presetScrollbar(),
-    presetScrollbarHide(),
+    presetScrollbar()
   ],
   shortcuts: {
     card: 'rounded-2xl bg-white/45 dark:bg-stone-800/50 backdrop-blur-xl backdrop-saturate-150 border border-white/40 dark:border-white/10 p-6',

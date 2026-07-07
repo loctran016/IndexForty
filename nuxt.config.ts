@@ -21,6 +21,17 @@ export default defineNuxtConfig({
     cloudinaryApiKey: process.env.CLOUDINARY_API_KEY,
     cloudinaryApiSecret: process.env.CLOUDINARY_API_SECRET,
   },
+  echarts: {
+    renderer: 'svg',
+    charts: ['BarChart', 'LineChart', 'PieChart', 'HeatmapChart'],
+    components: [
+      'GridComponent',
+      'TooltipComponent',
+      'LegendComponent',
+      'CalendarComponent',
+      'VisualMapComponent',
+    ],
+  },
   app: {
     pageTransition: { name: 'page', mode: 'out-in' },
   },

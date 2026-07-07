@@ -1,13 +1,17 @@
 <script setup>
 import { parseDateTime, today } from '@internationalized/date'
+import { useDark } from '@vueuse/core'
+import { EXERCISE_TO_SPLIT } from '~/types/database.types'
 
 useHead({
   title: 'Body Island',
   meta: [{ name: 'description', content: 'Activity and metric logs.' }],
 })
 
-// app/pages/musical.vue
 definePageMeta({ title: 'Body Island' })
+
+const TIME_ZONE = 'Asia/Ho_Chi_Minh'
+const isDark = useDark()
 
 const client = useSupabaseClient()
 const {
@@ -22,15 +26,11 @@ const {
     .order('created_at', { ascending: false })
 
   if (error) throw error
-
-  // Map through the rows and format the date string for @internationalized/date
   return data ?? []
 })
 
-// Filter today's entries reactively
 const todayStrengthExercises = computed(() => {
-  const currentDate = today('Asia/Ho_Chi_Minh')
-
+  const currentDate = today(TIME_ZONE)
   return (strengthExercises.value ?? []).filter((item) => {
     if (!item?.date) return false
     const itemDate = parseDateTime(item.date)
@@ -38,8 +38,157 @@ const todayStrengthExercises = computed(() => {
   })
 })
 
-const cardClass =
-  'rounded-2xl bg-white/45 dark:bg-stone-800/50 backdrop-blur-xl backdrop-saturate-150 border border-white/40 dark:border-white/10 p-6'
+// --- Overview stats: yearly heatmap, streak, push/pull split ---
+
+// Precompute sets-per-day once, rather than re-filtering the whole
+// dataset for every day of the year (365 x N vs a single N-pass).
+const setsPerDayMap = computed(() => {
+  const map = new Map()
+  for (const item of strengthExercises.value ?? []) {
+    if (!item?.date) continue
+    const d = parseDateTime(item.date)
+    const iso = `${d.year}-${String(d.month).padStart(2, '0')}-${String(d.day).padStart(2, '0')}`
+    map.set(iso, (map.get(iso) ?? 0) + (item.sets?.length ?? 0))
+  }
+  return map
+})
+
+function setsLoggedOnIso(iso) {
+  return setsPerDayMap.value.get(iso) ?? 0
+}
+
+function setsLoggedOn(calDate) {
+  const iso = `${calDate.year}-${String(calDate.month).padStart(2, '0')}-${String(calDate.day).padStart(2, '0')}`
+  return setsLoggedOnIso(iso)
+}
+
+const DAILY_GOAL = 15
+
+// --- Year selector for the heatmap ---
+
+const availableYears = computed(() => {
+  const years = new Set([today(TIME_ZONE).year])
+  for (const item of strengthExercises.value ?? []) {
+    if (item?.date) years.add(parseDateTime(item.date).year)
+  }
+  return [...years].sort((a, b) => b - a)
+})
+
+const selectedYear = ref(today(TIME_ZONE).year)
+
+const yearHeatmapData = computed(() => {
+  const data = []
+  const year = selectedYear.value
+  const start = new Date(Date.UTC(year, 0, 1))
+  const end = new Date(Date.UTC(year, 11, 31))
+  for (let d = start; d <= end; d.setUTCDate(d.getUTCDate() + 1)) {
+    const iso = d.toISOString().slice(0, 10)
+    data.push([iso, setsLoggedOnIso(iso)])
+  }
+  return data
+})
+
+const maxDailySets = computed(() =>
+  Math.max(DAILY_GOAL, ...yearHeatmapData.value.map(([, v]) => v)),
+)
+
+const heatmapOption = computed(() => {
+  const textColor = isDark.value ? '#e7e5e4' : '#44403c'
+  return {
+    tooltip: {
+      formatter: (params) => `${params.value[0]}: ${params.value[1]} sets`,
+    },
+    visualMap: {
+      min: 0,
+      max: maxDailySets.value,
+      calculable: true,
+      orient: 'horizontal',
+      left: 'center',
+      bottom: 0,
+      textStyle: { color: textColor },
+      inRange: { color: ['#f3e8ff', '#a855f7', '#6b21a8'] },
+    },
+    calendar: {
+      top: 40,
+      left: 40,
+      right: 20,
+      bottom: 40,
+      cellSize: ['auto', 16],
+      range: String(selectedYear.value),
+      firstDay: 1, // weeks start Monday, matching the rest of the app
+      itemStyle: { borderWidth: 3, borderColor: 'transparent' },
+      splitLine: { show: false },
+      yearLabel: { show: false },
+      monthLabel: { color: textColor },
+      dayLabel: {
+        color: textColor,
+        // Sparse labels (Mon/Wed/Fri only) like a GitHub-style contribution graph;
+        // order matches firstDay: 1, i.e. Mon, Tue, Wed, Thu, Fri, Sat, Sun
+        nameMap: ['Mon', '', 'Wed', '', 'Fri', '', ''],
+      },
+    },
+    series: [
+      {
+        type: 'heatmap',
+        coordinateSystem: 'calendar',
+        data: yearHeatmapData.value,
+      },
+    ],
+  }
+})
+
+const currentStreak = computed(() => {
+  let streak = 0
+  let cursor = today(TIME_ZONE)
+  if (setsLoggedOn(cursor) === 0) cursor = cursor.subtract({ days: 1 })
+  while (setsLoggedOn(cursor) > 0) {
+    streak++
+    cursor = cursor.subtract({ days: 1 })
+  }
+  return streak
+})
+
+const RECENT_WINDOW_DAYS = 30
+
+const splitTotals = computed(() => {
+  const cutoff = today(TIME_ZONE).subtract({ days: RECENT_WINDOW_DAYS })
+  let push = 0
+  let pull = 0
+  for (const item of strengthExercises.value ?? []) {
+    if (!item?.date) continue
+    const d = parseDateTime(item.date)
+    if (d.compare(cutoff) < 0) continue
+    const split = EXERCISE_TO_SPLIT[item.exercise]
+    const setCount = item.sets?.length ?? 0
+    if (split === 'Push') push += setCount
+    else if (split === 'Pull') pull += setCount
+  }
+  return { push, pull }
+})
+
+const hasSplitData = computed(() => splitTotals.value.push + splitTotals.value.pull > 0)
+
+const splitOption = computed(() => ({
+  tooltip: { trigger: 'item', formatter: '{b}: {c} sets ({d}%)' },
+  legend: {
+    bottom: 0,
+    itemWidth: 10,
+    itemHeight: 10,
+    textStyle: { fontSize: 11, color: isDark.value ? '#e7e5e4' : '#44403c' },
+  },
+  series: [
+    {
+      type: 'pie',
+      radius: ['55%', '75%'],
+      center: ['50%', '42%'],
+      label: { show: false },
+      data: [
+        { value: splitTotals.value.push, name: 'Push', itemStyle: { color: '#ec4899' } },
+        { value: splitTotals.value.pull, name: 'Pull', itemStyle: { color: '#a855f7' } },
+      ],
+    },
+  ],
+}))
 </script>
 
 <template>
@@ -90,6 +239,52 @@ const cardClass =
           >
         </button></StrengthForm
       >
+    </div>
+
+    <!-- Full-width yearly heatmap -->
+    <div class="lg:col-span-6 card">
+      <div class="flex items-center justify-between mb-2">
+        <h3 class="text-sm font-semibold font-head">Workout calendar</h3>
+        <select
+          v-model.number="selectedYear"
+          class="text-sm bg-white/40 dark:bg-stone-700/40 border border-stone-800/20 dark:border-stone-100/20 rounded-md px-2 py-1 outline-none focus-visible:ring-2 focus-visible:ring-purple-400"
+        >
+          <option v-for="y in availableYears" :key="y" :value="y">{{ y }}</option>
+        </select>
+      </div>
+      <ClientOnly>
+        <VChart :option="heatmapOption" autoresize class="h-64 w-full" />
+        <template #fallback>
+          <div class="h-64 flex items-center justify-center text-sm text-stone-500">Loading…</div>
+        </template>
+      </ClientOnly>
+      <p class="text-xs text-stone-500 mt-1">
+        Streak: {{ currentStreak }} days · sets logged per day
+      </p>
+    </div>
+
+    <!-- Streak + split, side by side below -->
+    <div class="lg:col-span-3 card flex flex-col items-center justify-center gap-1">
+      <h3 class="text-sm font-semibold font-head self-start mb-2">Streak</h3>
+      <p class="text-4xl font-semibold">🔥 {{ currentStreak }}</p>
+      <p class="text-xs text-stone-500">{{ currentStreak === 1 ? 'day' : 'days' }} active</p>
+    </div>
+
+    <div class="lg:col-span-3 card">
+      <h3 class="text-sm font-semibold font-head mb-2">Push / Pull split</h3>
+      <ClientOnly>
+        <VChart v-if="hasSplitData" :option="splitOption" autoresize class="h-40 w-full" />
+        <p
+          v-else
+          class="h-40 flex items-center justify-center text-sm text-stone-500 text-center px-4"
+        >
+          Log a few workouts to see your split.
+        </p>
+        <template #fallback>
+          <div class="h-40 flex items-center justify-center text-sm text-stone-500">Loading…</div>
+        </template>
+      </ClientOnly>
+      <p class="text-xs text-stone-500 mt-1">Last {{ RECENT_WINDOW_DAYS }} days, by sets logged</p>
     </div>
 
     <div class="lg:col-span-6 card">
