@@ -11,7 +11,11 @@
             as-child
             class="bg-transparent backdrop-blur-md backdrop-brightness-80 w-screen h-screen fixed inset-0 z-5"
           >
-            <Motion :initial="false" :animate="{ opacity: 1 }" :exit="{ opacity: 0, scale: 0.6 }" />
+            <Motion
+              :initial="{ opacity: 0.8 }"
+              :animate="{ opacity: 1 }"
+              :exit="{ opacity: 0, scale: 1.6 }"
+            />
           </DialogOverlay>
 
           <DialogContent
@@ -19,7 +23,7 @@
             class="fixed top-1/2 left-1/2 max-h-[85vh] w-[90vw] max-w-[450px] -translate-x-1/2 -translate-y-1/2 card dark:text-gray-100 shadow-[hsl(206_22%_7%_/_35%)_0px_10px_38px_-10px,hsl(206_22%_7%_/_20%)_0px_10px_20px_-15px] focus:outline-none z-10"
           >
             <Motion
-              :initial="false"
+              :initial="{ opacity: 0, top: '30%' }"
               :animate="{ opacity: 1, top: '50%' }"
               :exit="{ opacity: 0, top: '30%' }"
             >
