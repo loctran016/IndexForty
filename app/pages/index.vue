@@ -267,7 +267,7 @@ async function removeTodo(todo: TodoItem) {
         <div
           class="card text-lg p-8 shadow-sm border flex flex-col gap-4 lg:col-start-3 lg:col-span-2 lg:row-start-1 lg:row-span-2"
         >
-          <h2 class="font-medium text-xl font-head flex items-center gap-2">
+          <h2 class="card-title">
             <div class="i-mdi:text-box-edit" />
             To-do
           </h2>

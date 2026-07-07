@@ -19,10 +19,11 @@ export default defineConfig({
         // custom ones
       },
     }),
-    presetScrollbar()
+    presetScrollbar(),
   ],
   shortcuts: {
     card: 'rounded-2xl bg-white/45 dark:bg-stone-800/50 backdrop-blur-xl backdrop-saturate-150 border border-white/40 dark:border-white/10 p-6',
     'scrollbar-thin-all': `scrollbar:w-2 scrollbar:h-2 scrollbar-thin`,
+    'card-title': 'font-semibold font-head flex items-center gap-1 ml-2 text-lg',
   },
 })

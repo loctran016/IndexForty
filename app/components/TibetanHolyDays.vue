@@ -16,7 +16,7 @@ function formatDate(iso: string) {
 
 <template>
   <div class="card">
-    <h2 class="font-semibold font-head text-lg flex gap-1 items-center">
+    <h2 class="card-title">
       <div class="i-mdi:calendar-star" />
       This week's holy days
     </h2>
