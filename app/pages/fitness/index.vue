@@ -236,7 +236,7 @@ const splitOption = computed(() => ({
         </h2>
         <select
           v-model.number="selectedYear"
-          class="text-sm bg-white/40 dark:bg-stone-700/40 border border-stone-800/20 dark:border-stone-100/20 rounded-md px-2 py-1 outline-none focus-visible:ring-2 focus-visible:ring-purple-400"
+          class="text-sm bg-white/40 dark:bg-stone-700/40 border border-stone-800/20 dark:border-stone-100/20 rounded-md px-3 py-1 outline-none focus-visible:ring-2 focus-visible:ring-purple-400"
         >
           <option v-for="y in availableYears" :key="y" :value="y">{{ y }}</option>
         </select>
@@ -253,17 +253,7 @@ const splitOption = computed(() => ({
     <!-- Streak + split, side by side below -->
 
     <div class="lg:col-span-2 h-74 card">
-      <h2 class="card-title !text-base mb-2">Push / Pull split</h2>
-      <ClientOnly>
-        <VChart v-if="hasSplitData" :option="splitOption" autoresize class="h-50 w-full" />
-        <p v-else class="h-50 flex items-center justify-center text-sm text-center px-4">
-          Log a few workouts to see your split.
-        </p>
-        <template #fallback>
-          <div class="h-40 flex items-center justify-center text-sm opacity-50">Loading…</div>
-        </template>
-      </ClientOnly>
-      <p class="text-xs mt-1 opacity-90">Last {{ RECENT_WINDOW_DAYS }} days, by sets logged</p>
+      <h2 class="card-title !text-base mb-2">Weight & BF</h2>
     </div>
 
     <div class="lg:col-span-1 flex flex-col gap-2">
@@ -273,12 +263,10 @@ const splitOption = computed(() => ({
           aria-haspopup="dialog"
           aria-expanded="false"
           data-state="closed"
-          class="card h-36 flex items-center justify-center w-full cursor-pointer"
+          class="card h-36 flex items-center gap-2 justify-center w-full cursor-pointer group"
         >
-          <!-- <div class="i-healthicons:exercise-weights h-full"></div> -->
-          <p class="text-6xl font-semibold">🏋️</p>
-          <span class="text-4xl opacity-85">+</span>
-          <!-- <p class="text-xs opacity-85">Add Strength Exercise</p> -->
+          <div class="i-solar:dumbbell-large-minimalistic-bold-duotone text-6xl" />
+          <p class="text-4xl opacity-15 transition-all duration-200 group-hover:opacity-100">+</p>
         </button>
       </StrengthForm>
       <StrengthForm>
@@ -287,12 +275,10 @@ const splitOption = computed(() => ({
           aria-haspopup="dialog"
           aria-expanded="false"
           data-state="closed"
-          class="card h-36 flex items-center justify-center w-full cursor-pointer"
+          class="card h-36 flex items-center gap-2 justify-center w-full cursor-pointer group"
         >
-          <!-- <div class="i-healthicons:exercise-weights h-full"></div> -->
-          <p class="text-6xl font-semibold">🏃‍♂️</p>
-          <span class="text-4xl opacity-85">+</span>
-          <!-- <p class="text-xs opacity-85">Add Strength Exercise</p> -->
+           <div class="i-solar:treadmill-round-bold-duotone text-7xl" />
+          <p class="text-4xl opacity-15 transition-all duration-200 group-hover:opacity-100">+</p>
         </button>
       </StrengthForm>
     </div>
@@ -303,17 +289,15 @@ const splitOption = computed(() => ({
           aria-haspopup="dialog"
           aria-expanded="false"
           data-state="closed"
-          class="card h-36 flex items-center justify-center w-full cursor-pointer"
+          class="card h-36 flex items-center gap-2 justify-center w-full cursor-pointer group"
         >
-          <!-- <div class="i-healthicons:exercise-weights h-full"></div> -->
-          <p class="text-6xl font-semibold">⚖️</p>
-          <span class="text-4xl opacity-85">+</span>
-          <!-- <p class="text-xs opacity-85">Add Strength Exercise</p> -->
+          <div class="i-solar:weigher-bold-duotone text-6xl" />
+          <p class="text-4xl opacity-15 transition-all duration-200 group-hover:opacity-100">+</p>
         </button>
       </StrengthForm>
       <div class="card h-36 flex flex-col gap-1 items-center justify-center">
-        <p class="text-4xl font-semibold">🔥 {{ currentStreak }}</p>
-        <p class="text-sm opacity-85">{{ currentStreak === 1 ? 'day' : 'days' }} active</p>
+        <p class="text-5xl font-semibold flex items-center gap-1"><div class="i-solar:fire-bold-duotone text-6xl" /> {{ currentStreak }}</p>
+        <p class="text-base opacity-85">{{ currentStreak === 1 ? 'day' : 'days' }} active</p>
       </div>
     </div>
 
