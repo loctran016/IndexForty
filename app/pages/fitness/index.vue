@@ -218,7 +218,7 @@ const splitOption = computed(() => ({
     bottom: 0,
     itemWidth: 10,
     itemHeight: 10,
-    textStyle: { fontSize: 11, color: colorMode.value === 'dark' ? '#e7e5e4' : '#44403c' },
+    textStyle: { fontSize: 11, color: colorMode.value === 'dark' || window.matchMedia('(prefers-color-scheme: dark)') ? '#e7e5e4' : '#44403c' },
   },
   series: [
     {
