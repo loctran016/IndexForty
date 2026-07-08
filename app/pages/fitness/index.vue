@@ -32,6 +32,7 @@ function syncEchartsTextColor() {
 
 const { themePref } = useTheme()
 watch(themePref)
+// TODO: Should I use watchEffect
 const colorMode = computed(() => themePref.value)
 
 onMounted(syncEchartsTextColor)

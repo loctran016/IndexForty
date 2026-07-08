@@ -323,7 +323,7 @@ onBeforeUnmount(() => {
   <ContextMenuRoot>
     <ContextMenuTrigger as-child>
       <button
-        class="inline-flex items-center gap-2 rounded-xl px-4 py-2 text-sm font-medium card text-white active:scale-[0.98] transition select-none"
+        class="inline-flex items-center gap-2 rounded-xl px-4 py-2 text-sm font-medium card text-color active:scale-[0.98] transition select-none"
         @click="toggle"
       >
         <span class="inline-flex gap-1">
@@ -336,7 +336,7 @@ onBeforeUnmount(() => {
         </span>
 
         <span>{{ isPlaying ? 'Metronome On' : 'Metronome Off' }}</span>
-        <span class="text-xs text-neutral-300">{{ bpm }} BPM</span>
+        <span class="text-xs text-color-300">{{ bpm }} BPM</span>
       </button>
     </ContextMenuTrigger>
 
@@ -344,7 +344,7 @@ onBeforeUnmount(() => {
       <ContextMenuContent
         class="min-w-68 max-h-[70vh] overflow-y-auto rounded-xl border border-neutral-200 bg-white p-1 pt-2 shadow-xl outline-none dark:border-neutral-700 select-none dark:bg-neutral-900"
       >
-        <ContextMenuLabel class="px-2 py-1 text-xs text-neutral-500">
+        <ContextMenuLabel class="px-2 py-1 text-xs text-color-500">
           Metronome (Space to toggle)
         </ContextMenuLabel>
 
@@ -353,7 +353,7 @@ onBeforeUnmount(() => {
           @select.prevent="toggle"
         >
           <span>{{ isPlaying ? 'Stop' : 'Start' }}</span>
-          <span class="text-xs text-neutral-500">Left click / Space</span>
+          <span class="text-xs text-color-500">Left click / Space</span>
         </ContextMenuItem>
 
         <ContextMenuSeparator class="my-1 h-px bg-neutral-200 dark:bg-neutral-700" />
@@ -362,26 +362,26 @@ onBeforeUnmount(() => {
           class="flex cursor-pointer items-center justify-between rounded-md px-2 py-1.5 text-sm hover:bg-neutral-100 dark:hover:bg-neutral-800"
           @select.prevent="decreaseBpm(1)"
         >
-          <span>BPM -1</span><span class="text-neutral-500 select-none">{{ bpm }}</span>
+          <span>BPM -1</span><span class="text-color-500 select-none">{{ bpm }}</span>
         </ContextMenuItem>
 
         <ContextMenuItem
           class="flex cursor-pointer items-center justify-between rounded-md px-2 py-1.5 text-sm hover:bg-neutral-100 dark:hover:bg-neutral-800"
           @select.prevent="increaseBpm(1)"
         >
-          <span>BPM +1</span><span class="text-neutral-500 select-none">{{ bpm }}</span>
+          <span>BPM +1</span><span class="text-color-500 select-none">{{ bpm }}</span>
         </ContextMenuItem>
 
         <ContextMenuItem
           class="flex cursor-pointer items-center justify-between rounded-md px-2 py-1.5 text-sm hover:bg-neutral-100 dark:hover:bg-neutral-800"
           @select.prevent="tapTempo"
         >
-          <span>Tap Tempo</span><span class="text-xs text-neutral-500">Click repeatedly</span>
+          <span>Tap Tempo</span><span class="text-xs text-color-500">Click repeatedly</span>
         </ContextMenuItem>
 
         <ContextMenuSeparator class="my-1 h-px bg-neutral-200 dark:bg-neutral-700" />
 
-        <ContextMenuLabel class="px-2 py-1 text-xs text-neutral-500">
+        <ContextMenuLabel class="px-2 py-1 text-xs text-color-500">
           Beats per bar
         </ContextMenuLabel>
 
@@ -412,7 +412,7 @@ onBeforeUnmount(() => {
 
         <ContextMenuSeparator class="my-1 h-px bg-neutral-200 dark:bg-neutral-700" />
 
-        <ContextMenuLabel class="px-2 py-1 text-xs text-neutral-500"> Sound </ContextMenuLabel>
+        <ContextMenuLabel class="px-2 py-1 text-xs text-color-500"> Sound </ContextMenuLabel>
         <ContextMenuRadioGroup v-model="soundMode">
           <ContextMenuRadioItem
             value="beep"

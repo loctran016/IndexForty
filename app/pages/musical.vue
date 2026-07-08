@@ -20,7 +20,7 @@
         class="absolute z-10 w-full max-w-62 mt-1 min-w-24 bg-white overflow-hidden rounded-lg shadow-sm border border-stone-800/40 will-change-[opacity,transform]"
       >
         <ComboboxViewport class="p-[5px]">
-          <ComboboxEmpty class="text-xs font-medium text-center py-2 text-stone-400" />
+          <ComboboxEmpty class="text-xs font-medium text-center py-2" />
 
           <ComboboxItem
             v-for="tune in tuneList"
@@ -34,7 +34,8 @@
             >
               <div class="i-tabler:check" />
             </ComboboxItemIndicator>
-            <span>{{ tune.title }}</span>
+            <span class="dark:text-stone-900">{{ tune.title }}</span>
+            <!-- TODO:fix color -->
           </ComboboxItem>
         </ComboboxViewport>
       </ComboboxContent>
