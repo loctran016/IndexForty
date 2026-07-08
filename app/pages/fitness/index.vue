@@ -1,6 +1,5 @@
 <script setup>
 import { parseDateTime, today, parseDate } from '@internationalized/date'
-import { useDark } from '@vueuse/core'
 import { EXERCISE_TO_SPLIT } from '~/types/database.types'
 
 useHead({
@@ -20,10 +19,10 @@ function syncEchartsTextColor() {
   echartsTextColor.value = getComputedStyle(heatmapCardRef.value).color
 }
 
-const isDark = useDark() // still needed as the trigger that tells us *when* to re-read
+const colorMode = useColorMode()
 
 onMounted(syncEchartsTextColor)
-watch(isDark, () => nextTick(syncEchartsTextColor))
+watch(() => colorMode.value, () => nextTick(syncEchartsTextColor))
 
 const client = useSupabaseClient()
 const {
@@ -202,7 +201,7 @@ const splitOption = computed(() => ({
     bottom: 0,
     itemWidth: 10,
     itemHeight: 10,
-    textStyle: { fontSize: 11, color: isDark.value ? '#e7e5e4' : '#44403c' },
+    textStyle: { fontSize: 11, color: colorMode.value === 'dark' ? '#e7e5e4' : '#44403c' },
   },
   series: [
     {
