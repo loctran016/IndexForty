@@ -387,7 +387,7 @@ const splitOption = computed(() => {
         </ul>
       </template>
     </div>
-    <div class="lg:col-span-2 card">
+    <div class="lg:col-span-3 xl:col-span-2 card">
       <h2 class="card-title">
         <div class="i-mdi:human" />
         Muscle focus

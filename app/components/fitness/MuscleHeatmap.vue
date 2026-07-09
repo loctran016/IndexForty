@@ -118,8 +118,16 @@ watch(volumeByPathId, () => nextTick(repaint))
 
 <template>
   <div v-if="isMounted" class="grid grid-cols-2 gap-4 place-items-center">
-    <div ref="frontRef" class="body-map w-full max-w-40" v-html="bodyFrontRaw" />
-    <div ref="backRef" class="body-map w-full max-w-40" v-html="bodyBackRaw" />
+    <div
+      ref="frontRef"
+      class="body-map w-48 flex items-center justify-center"
+      v-html="bodyFrontRaw"
+    />
+    <div
+      ref="backRef"
+      class="body-map w-48 flex items-center justify-center"
+      v-html="bodyBackRaw"
+    />
   </div>
   <div v-else class="h-64 flex items-center justify-center text-sm text-stone-500">Loading…</div>
 </template>
