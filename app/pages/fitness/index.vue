@@ -70,6 +70,85 @@ const todayStrengthExercises = computed(() => {
     return itemDate.compare(todayCalendarDate.value) === 0
   })
 })
+
+const WEEK_SCHEDULE = [
+  {
+    day: 'Monday',
+    label: 'Push A (Power/Size)',
+    target: 'Upper Chest, Front Delts, Triceps Heavy',
+    exercises: [
+      { display: 'Incline Dumbbell Press', canonical: 'Incline DB Bench Press', detail: '4×6–8' },
+      { display: 'Overhead Barbell Press', canonical: 'Barbell Overhead Press', detail: '3×8–10' },
+      { display: 'Flat Bench Press', canonical: 'Flat Barbell Bench Press', detail: '3×8–10' },
+      { display: 'Dumbbell Lateral Raises', canonical: 'DB Lateral Raise', detail: '4×12–15' },
+      { display: 'Heavy Weighted Dips', canonical: 'Chest Dip', detail: '3×8–10' },
+    ],
+  },
+  {
+    day: 'Tuesday',
+    label: 'Pull A (Width/Thickness)',
+    target: 'Upper Lats, Mid-Back, Biceps Heavy',
+    exercises: [
+      { display: 'Lat Pulldowns (Wide Grip)', canonical: 'Lat Pulldown', detail: '4×8–10' },
+      { display: 'Chest-Supported T-Bar Row', canonical: 'Chest-supported Row', detail: '3×8–10' },
+      { display: 'Seated Cable Row', canonical: 'DB Row', detail: '3×10–12', isApproximate: true },
+      { display: 'Standing Barbell Curls', canonical: 'Barbell Curl', detail: '3×8–10' },
+      { display: 'Hammer Curls', canonical: 'Hammer Curl', detail: '3×10–12' },
+    ],
+  },
+  {
+    day: 'Wednesday',
+    label: 'Mid-Week Mobility & Core',
+    note: 'Planks, hanging knee raises, bird-dogs, Pigeon Pose, Butterfly Stretch — not logged here, this app only tracks weighted strength sets.',
+  },
+  {
+    day: 'Thursday',
+    label: 'Push B (Sculpt/Pump)',
+    target: 'Mid/Lower Chest, Side Delts, Tricep Isolation',
+    exercises: [
+      {
+        display: 'Decline Bench Press',
+        canonical: 'Decline Barbell Bench Press',
+        detail: '3×12–15',
+      },
+      {
+        display: 'Incline Machine Press',
+        canonical: 'Machine Chest Press',
+        detail: '3×10–12',
+        isApproximate: true,
+      },
+      { display: 'Cable Lateral Raises', canonical: 'Cable Lateral Raise', detail: '4×15' },
+      { display: 'Incline Front Raises', canonical: 'Front Raise', detail: '3×12' },
+      { display: 'Tricep Rope Pushdowns', canonical: 'Triceps Pushdown', detail: '4×12–15' },
+    ],
+  },
+  {
+    day: 'Friday',
+    label: 'Pull B (Detail/Arms)',
+    target: 'Lower Lats, Rear Delts, Arm Volume',
+    exercises: [
+      { display: 'Pull-Ups', canonical: 'Pull-Up', detail: '4×max' },
+      { display: 'Single-Arm DB Row', canonical: 'DB Row', detail: '3×10–12/side' },
+      { display: 'Dumbbell Rear Delt Flyes', canonical: 'Rear Delt Fly', detail: '4×15' },
+      { display: 'Incline Dumbbell Curls', canonical: 'Incline DB Curl', detail: '3×12' },
+      { display: 'Preacher Curls', canonical: 'Preacher Curl', detail: '3×12' },
+    ],
+  },
+  {
+    day: 'Saturday',
+    label: 'Flex Cardio & Lotus (Optional)',
+    note: 'Incline treadmill 20 min + Frog Pose stretch — skip if needed, not logged here.',
+  },
+  { day: 'Sunday', label: 'Rest', note: 'Complete recovery.' },
+]
+
+const todaySchedule = computed(() => {
+  const dayName = new Intl.DateTimeFormat('en-US', { weekday: 'long' }).format(
+    todayCalendarDate.value.toDate(TIME_ZONE),
+  )
+  return WEEK_SCHEDULE.find((d) => d.day === dayName) ?? null
+})
+
 // --- Overview stats: yearly heatmap, streak, push/pull split ---
 
 // Precompute sets-per-day once, rather than re-filtering the whole
@@ -269,7 +348,71 @@ const splitOption = computed(() => {
         ></StrengthForm>
       </ul>
     </div>
-    <div class="lg:col-span-2 card"></div>
+    <div class="lg:col-span-2 card">
+      <h2 class="card-title flex flex-col items-start gap-1">
+        <template v-if="todaySchedule">
+          {{ todaySchedule.day }}
+          <span class="font-medium text-base opacity-80">{{ todaySchedule.label }}</span>
+        </template>
+        <template v-else>Today</template>
+      </h2>
+
+      <template v-if="todaySchedule">
+        <!-- Rest / mobility day — show the note instead -->
+        <p v-if="todaySchedule.note" class="text-sm opacity-70 mt-4 leading-relaxed">
+          {{ todaySchedule.note }}
+        </p>
+
+        <!-- Workout day — list exercises, each opening StrengthForm preset to it -->
+        <ul v-else-if="todaySchedule.exercises" class="mt-4 flex flex-col gap-1.5">
+          <li v-for="ex in todaySchedule.exercises" :key="ex.canonical">
+            <StrengthForm :preset-exercise="ex.canonical">
+              <button
+                type="button"
+                class="w-full flex items-center justify-between gap-4 text-sm rounded-lg px-3 py-2.5 -mx-1 hover:bg-purple-400/15 dark:hover:bg-purple-500/15 transition-colors cursor-pointer text-left focus:outline-none focus-visible:ring-2 focus-visible:ring-purple-400"
+              >
+                <span class="truncate">
+                  {{ ex.display }}
+                  <span
+                    v-if="ex.isApproximate"
+                    class="text-stone-400"
+                    title="Closest matching exercise in your library"
+                    >*</span
+                  >
+                </span>
+                <span class="opacity-50 tabular-nums shrink-0 text-xs">{{ ex.detail }}</span>
+              </button>
+            </StrengthForm>
+          </li>
+        </ul>
+      </template>
+    </div>
+    <div class="lg:col-span-2 card">
+      <h2 class="card-title">
+        <div class="i-mdi:human" />
+        Muscle focus
+      </h2>
+      <p class="text-xs opacity-60 mt-1">Last {{ RECENT_WINDOW_DAYS }} days, by sets logged</p>
+      <MuscleHeatmap
+        :days="RECENT_WINDOW_DAYS"
+        :strength-exercises="strengthExercises ?? []"
+        class="mt-4"
+      />
+    </div>
+    <div class="lg:col-span-4 card">
+      <!-- <h2 class="card-title">
+        <div class="i-mdi:human" />
+        Muscle focus
+      </h2>
+      <p class="text-xs opacity-60 mt-1">Last {{ RECENT_WINDOW_DAYS }} days, by sets logged</p>
+      <MuscleHeatmap
+        :days="RECENT_WINDOW_DAYS"
+        :strength-exercises="strengthExercises ?? []"
+        class="mt-4"
+      /> -->
+    </div>
+    <!-- <div class="lg:col-span-6 card">
+    </div> -->
 
     <!-- Full-width yearly heatmap -->
     <div class="lg:col-span-6 card" ref="heatmapCardRef">
