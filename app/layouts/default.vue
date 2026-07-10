@@ -33,7 +33,7 @@ useHead({
 
     <ScrollAreaRoot style="--scrollbar-size: 18px" class="flex-1 min-h-0">
       <ScrollAreaViewport class="w-full h-full">
-        <main class="mx-auto px-4 max-w-9/10 lg:max-w-5/6 w-full self-stretch">
+        <main class="mx-auto px-4 max-w-9/10 lg:max-w-5/6 w-full min-h-screen self-stretch">
           <slot />
         </main>
       </ScrollAreaViewport>
