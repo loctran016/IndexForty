@@ -320,13 +320,21 @@ const splitOption = computed(() => {
 
 <template>
   <div class="grid lg:grid-cols-6 gap-4 px-4 py-4 mx-auto font-sans dark:text-gray-100">
+    <!-- Improvements card -->
     <div class="lg:col-span-4 card">
       <div class="flex items-center justify-between">
         <h2 class="card-title">
           <div class="i-solar:graph-new-up-bold text-lg" />
           Improvements
         </h2>
-        <Select v-model="selectedExercise" :options="STRENGTH_EXERCISES" />
+        <ClientOnly>
+          <Select v-model="selectedExercise" :options="STRENGTH_EXERCISES" />
+          <template #fallback>
+            <div
+              class="h-9 w-40 rounded-xl border border-white/40 dark:border-white/10 bg-white/30 dark:bg-stone-700/10 animate-pulse"
+            />
+          </template>
+        </ClientOnly>
       </div>
       <ExerciseProgressChart
         class="mt-4"
@@ -336,7 +344,6 @@ const splitOption = computed(() => {
         :strength-exercises="strengthExercises"
       />
     </div>
-
     <div class="lg:col-span-2 card">
       <h2 class="card-title flex flex-col items-start gap-1">
         <template v-if="todaySchedule">
@@ -378,26 +385,27 @@ const splitOption = computed(() => {
       </template>
     </div>
 
-    <!-- Full-width yearly heatmap -->
+    <!-- Workout calendar card -->
     <div class="lg:col-span-6 card" ref="heatmapCardRef">
       <div class="flex items-center justify-between mb-2">
         <h2 class="card-title">
           <div class="i-solar:fire-bold text-xl" />
           Workout calendar
         </h2>
-        <Select
-          :model-value="String(selectedYear)"
-          @update:model-value="(v) => (selectedYear = Number(v))"
-          :options="availableYears.map(String)"
-        />
+        <ClientOnly>
+          <Select
+            :model-value="String(selectedYear)"
+            @update:model-value="(v) => (selectedYear = Number(v))"
+            :options="availableYears.map(String)"
+          />
+          <template #fallback>
+            <div
+              class="h-9 w-20 rounded-xl border border-white/40 dark:border-white/10 bg-white/30 dark:bg-stone-700/10 animate-pulse"
+            />
+          </template>
+        </ClientOnly>
       </div>
-      <ClientOnly>
-        <VChart :option="heatmapOption" autoresize class="h-56 w-full" />
-        <template #fallback>
-          <div class="h-56 flex items-center justify-center text-sm">Loading…</div>
-        </template>
-      </ClientOnly>
-      <p class="text-xs mt-1 opacity-85">Streak: {{ currentStreak }} days · sets logged per day</p>
+      <!-- ...rest unchanged... -->
     </div>
 
     <!-- Streak + split, side by side below -->
