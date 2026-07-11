@@ -150,7 +150,7 @@ const cardioChartOption = computed(() => {
 </script>
 
 <template>
-  <div class="grid gap-4 px-4 py-4 mx-auto font-sans dark:text-gray-100">
+  <div class="grid lg:grid-cols-6 gap-4 px-4 py-4 mx-auto font-sans dark:text-gray-100">
     <div class="grid lg:grid-cols-2 gap-4">
       <div class="card">
         <h2 class="card-title !text-base mb-2">Cardio duration</h2>
