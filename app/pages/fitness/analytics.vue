@@ -151,45 +151,48 @@ const cardioChartOption = computed(() => {
 
 <template>
   <div class="grid lg:grid-cols-2 gap-4 px-4 py-4 mx-auto font-sans dark:text-gray-100">
-      <!-- <div class="card"> -->
-        <h2 class="card-title !text-base mb-2">Cardio duration</h2>
-        <ClientOnly>
-          <VChart :option="cardioChartOption" autoresize class="h-56 w-full" />
-          <template #fallback>
-            <div class="h-56 flex items-center justify-center text-sm opacity-50">Loading…</div>
-          </template>
-        </ClientOnly>
-      </div>
+    <div class="card">
+      <h2 class="card-title !text-base mb-2">Cardio duration</h2>
+      <ClientOnly>
+        <VChart :option="cardioChartOption" autoresize class="h-56 w-full" />
+        <template #fallback>
+          <div class="h-56 flex items-center justify-center text-sm opacity-50">Loading…</div>
+        </template>
+      </ClientOnly>
+    </div>
 
-      <div class="card h-76 flex flex-col">
-        <h2 class="card-title !text-base mb-2">Weight & BF</h2>
-        <BodyMetricsChart :is-dark="isDark" class="flex-1 min-h-0" />
-      </div>
+    <div class="card flex flex-col">
+      <h2 class="card-title !text-base mb-2">Weight & BF</h2>
+      <BodyMetricsChart :is-dark="isDark" class="flex-1 min-h-0" />
+    </div>
 
-    <div class="card lg:col-span-2">
+    <div class="card col-span-2">
       <h2 class="card-title mb-3">Strength log</h2>
       <DataTable
         :data="strengthRows ?? []"
         :columns="strengthColumns"
         search-placeholder="Filter exercise, muscle…"
+        hydrate-on-visible
       />
     </div>
 
-    <div class="card lg:col-span-2">
+    <div class="card col-span-2">
       <h2 class="card-title mb-3">Cardio log</h2>
       <DataTable
         :data="cardioRows ?? []"
         :columns="cardioColumns"
         search-placeholder="Filter activity…"
+        hydrate-on-visible
       />
     </div>
 
-    <div class="card lg:col-span-2">
+    <div class="card col-span-2">
       <h2 class="card-title mb-3">Body metrics log</h2>
-      <DataTable
+      <LazyDataTable
         :data="bodyMetricRows ?? []"
         :columns="bodyMetricColumns"
         search-placeholder="Filter…"
+        hydrate-on-visible
       />
     </div>
   </div>
