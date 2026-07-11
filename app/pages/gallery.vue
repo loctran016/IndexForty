@@ -1,8 +1,6 @@
 <script setup lang="ts">
 import type { CloudinaryPhoto } from '~~/server/api/gallery.get'
 
-import { MasonryWall } from '@yeger/vue-masonry-wall'
-
 definePageMeta({ title: 'Light Island' })
 
 const { data: photos, status } = await useFetch<CloudinaryPhoto[]>('/api/gallery')
@@ -90,13 +88,14 @@ function openLightbox(publicId: string) {
 
     <p v-if="status === 'pending'" class="text-stone-500 dark:text-stone-400">Loading photos…</p>
 
-    <MasonryWall
+    <LazyMasonryWall
       v-else-if="filteredPhotos.length"
       :items="filteredPhotos"
       :column-width="220"
       :gap="12"
       :ssr-columns="2"
       :min-columns="1"
+      hydrate-on-visible
     >
       <template #default="slotProps">
         <button
