@@ -33,7 +33,7 @@ useHead({
           </div>
         </header>
 
-        <main class="mx-auto px-4 max-w-9/10 lg:max-w-5/6 w-full min-h-screen self-stretch">
+        <main class="mx-auto px-4 max-w-9/10 lg:max-w-5/6 h-full w-full self-stretch">
           <slot />
         </main>
       </ScrollAreaViewport>
