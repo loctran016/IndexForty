@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { today, parseDate } from '@internationalized/date'
+import { today } from '@internationalized/date'
 import { usePreferredDark } from '@vueuse/core'
 
 definePageMeta({ title: 'Habit Island' })
@@ -12,19 +12,6 @@ const colorMode = computed(() => themePref.value)
 const prefersDark = usePreferredDark()
 const isDark = computed(
   () => colorMode.value === 'dark' || (colorMode.value === 'system' && prefersDark.value),
-)
-
-const heatmapCardRef = ref(null)
-
-function syncEchartsTextColor() {
-  if (!heatmapCardRef.value) return
-  echartsTextColor.value = getComputedStyle(heatmapCardRef.value).color
-}
-
-onMounted(syncEchartsTextColor)
-watch(
-  () => colorMode.value,
-  () => nextTick(syncEchartsTextColor),
 )
 
 interface HabitLog {
@@ -41,7 +28,6 @@ const { data: logs, refresh: refreshLogs } = await useAsyncData('habit-logs', as
 
 const todayIso = useState('habit-today', () => today(TIME_ZONE).toString())
 
-// habit_key -> { iso date -> log id }, for fast "am I logged today" + toggle-off lookups
 const logIndex = computed(() => {
   const map: Record<string, Record<string, number>> = {}
   for (const log of logs.value ?? []) {
@@ -51,7 +37,6 @@ const logIndex = computed(() => {
   return map
 })
 
-// habit_key -> { iso date -> count }, for the heatmap
 function countsFor(keys: string[]) {
   const counts: Record<string, number> = {}
   for (const key of keys) {
@@ -92,7 +77,6 @@ async function toggleHabit(key: string) {
   }
 }
 </script>
-
 <template>
   <div class="grid grid-cols-2 gap-4 px-4 py-4 mx-auto font-sans dark:text-gray-100">
     <!-- Skincare: AM + PM, full width -->
@@ -138,7 +122,6 @@ async function toggleHabit(key: string) {
         :max-value="2"
         color="#a855f7"
         :is-dark="isDark"
-        ref="heatmapCardRef"
       />
     </div>
 
