@@ -1,6 +1,0 @@
-<script setup>
-import { MasonryWall } from '@yeger/vue-masonry-wall'
-</script>
-<template>
-  <MasonryWall v-bind="$attrs" />
-</template>
