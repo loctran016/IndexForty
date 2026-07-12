@@ -263,7 +263,13 @@ async function removeTodo(todo: TodoItem) {
         </CalendarRoot>
 
         <!-- Holy days: 1 row x 2 cols, below calendar -->
-        <TibetanHolyDays class="lg:col-start-1 lg:col-span-2 lg:row-start-4 lg:row-span-1" />
+        <div class="card lg:col-start-1 lg:col-span-2 lg:row-start-4 lg:row-span-1">
+          <h2 class="card-title">
+            <div class="i-mdi:calendar-star" />
+            This week's holy days
+          </h2>
+          <TibetanHolyDays class="" />
+        </div>
 
         <!-- Todo: 2 rows x 2 cols, top-right -->
         <div

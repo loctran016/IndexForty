@@ -28,7 +28,7 @@ const navItems = [
   { to: '/fitness', icon: 'i-mdi:weight-lifter', label: 'Fitness' },
   { to: '/musical', icon: 'i-mdi:music-clef-treble', label: 'Musical' },
   { to: '/gallery', icon: 'i-solar:gallery-round-bold', label: 'Gallery' },
-  { to: '/habit', icon: 'i-solar:star-rainbow-bold', label: 'Motivation' },
+  //   { to: '/habit', icon: 'i-solar:star-rainbow-bold', label: 'Motivation' },
 ]
 </script>
 

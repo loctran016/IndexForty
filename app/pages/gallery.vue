@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import type { CloudinaryPhoto } from '~~/server/api/gallery.get'
 
+import { MasonryWall } from '@yeger/vue-masonry-wall'
+
 definePageMeta({ title: 'Light Island' })
 
 const { data: photos, status } = await useFetch<CloudinaryPhoto[]>('/api/gallery')
