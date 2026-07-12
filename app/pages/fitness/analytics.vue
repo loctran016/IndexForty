@@ -46,10 +46,10 @@ const strengthColumns = [
   strengthHelper.accessor('muscles', { header: 'Muscles', cell: (i) => i.getValue().join(', ') }),
   strengthHelper.accessor('one_rep_max', { header: 'Est. 1RM' }),
   strengthHelper.accessor('total_volume', { header: 'Volume' }),
-  strengthHelper.accessor('created_at', {
-    header: 'Logged At',
-    cell: (i) => fmtDate(i.getValue()),
-  }),
+  //   strengthHelper.accessor('created_at', {
+  //     header: 'Logged At',
+  //     cell: (i) => fmtDate(i.getValue()),
+  //   }),
 ]
 
 // --- Cardio ---
