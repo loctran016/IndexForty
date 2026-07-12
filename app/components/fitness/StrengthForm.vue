@@ -1,18 +1,20 @@
 <script setup lang="ts">
-import { ref, watch } from 'vue'
+import { ref, watch, computed } from 'vue'
 import { useRegle } from '@regle/core'
 import { required, requiredIf, numeric, minValue, minLength, withMessage } from '@regle/rules'
-// import line: add STRENGTH_EXERCISES alongside your existing imports
 import {
   EXERCISE_TO_MUSCLES,
   STRENGTH_EXERCISES,
   type StrengthExercise,
+  type StrengthRecord,
   type Database,
 } from '~/types/database.types'
 
-// add near your other refs/consts
 const optionLists = STRENGTH_EXERCISES
-const props = defineProps<{ presetExercise?: StrengthExercise }>()
+const props = defineProps<{
+  presetExercise?: StrengthExercise
+  editRecord?: StrengthRecord | null
+}>()
 const supabase = useSupabaseClient()
 
 const open = ref(false)
@@ -22,13 +24,21 @@ interface SetInput {
   kg: number | null
 }
 
+function emptySets(): SetInput[] {
+  // 3 starting rows for convenience; validation still only requires 2 complete
+  return [
+    { reps: null, kg: null },
+    { reps: null, kg: null },
+    { reps: null, kg: null },
+  ]
+}
+
 const form = ref<{ exercise: StrengthExercise | null; sets: SetInput[] }>({
   exercise: null,
-  sets: [
-    { reps: null, kg: null },
-    { reps: null, kg: null },
-  ],
+  sets: emptySets(),
 })
+
+const isEditMode = computed(() => !!props.editRecord)
 
 const { r$ } = useRegle(form, {
   exercise: { required: withMessage(required, 'Please select an exercise.') },
@@ -77,18 +87,23 @@ function estimateOneRepMax(reps: number, kg: number) {
 
 function resetForm() {
   form.value.exercise = null
-  form.value.sets = [
-    { reps: null, kg: null },
-    { reps: null, kg: null },
-  ]
+  form.value.sets = emptySets()
   r$.$reset({ toInitialState: true })
 }
 
 watch(open, (v) => {
-  if (v) {
-    errorMsg.value = ''
-    successMsg.value = ''
-    if (props.presetExercise) form.value.exercise = props.presetExercise
+  if (!v) return
+  errorMsg.value = ''
+  successMsg.value = ''
+
+  if (props.editRecord) {
+    // Editing an existing entry — lock exercise, prefill its logged sets
+    form.value.exercise = props.editRecord.exercise
+    form.value.sets = props.editRecord.sets.length
+      ? props.editRecord.sets.map(([reps, kg]) => ({ reps, kg }))
+      : emptySets()
+  } else if (props.presetExercise) {
+    form.value.exercise = props.presetExercise
   }
 })
 
@@ -114,19 +129,34 @@ async function onSubmit() {
         10
       : 0
 
-    const { error } = await supabase
-      .from<Database['public']['Tables']['strength']['Insert']>('strength')
-      .insert({
-        exercise: exerciseKey,
-        sets: parsedSets,
-        muscles: [...muscles],
-        one_rep_max: oneRepMax,
-        total_volume: totalVolume,
-      })
+    if (isEditMode.value && props.editRecord) {
+      const { error } = await supabase
+        .from<Database['public']['Tables']['strength']['Update']>('strength')
+        .update({
+          sets: parsedSets,
+          muscles: [...muscles],
+          one_rep_max: oneRepMax,
+          total_volume: totalVolume,
+        })
+        .eq('id', props.editRecord.id)
 
-    if (error) throw error
+      if (error) throw error
+      successMsg.value = 'Workout updated.'
+    } else {
+      const { error } = await supabase
+        .from<Database['public']['Tables']['strength']['Insert']>('strength')
+        .insert({
+          exercise: exerciseKey,
+          sets: parsedSets,
+          muscles: [...muscles],
+          one_rep_max: oneRepMax,
+          total_volume: totalVolume,
+        })
 
-    successMsg.value = 'Workout saved.'
+      if (error) throw error
+      successMsg.value = 'Workout saved.'
+    }
+
     resetForm()
     open.value = false
   } catch (e: any) {
@@ -138,7 +168,7 @@ async function onSubmit() {
 </script>
 
 <template>
-  <FormWrapper v-model:open="open" title="Strength Exercise">
+  <FormWrapper v-model:open="open" :title="isEditMode ? 'Edit Exercise' : 'Strength Exercise'">
     <template #trigger>
       <slot />
     </template>
@@ -146,13 +176,22 @@ async function onSubmit() {
     <form class="space-y-4" @submit.prevent="onSubmit">
       <div>
         <label class="mb-1 block text-sm font-medium">Exercise</label>
+
         <ComboBox
+          v-if="!isEditMode"
           v-model="form.exercise"
           :options="optionLists"
           label="Exercises"
           placeholder="Select exercise..."
           empty-message="No exercises found."
         />
+        <div
+          v-else
+          class="w-full rounded-xl border border-white/40 dark:border-white/10 bg-white/20 dark:bg-stone-700/20 px-3 py-2.5 text-sm opacity-80 cursor-not-allowed"
+        >
+          {{ form.exercise }}
+        </div>
+
         <p v-if="r$.exercise.$error" class="text-sm text-red-600 dark:text-red-400 mt-1">
           {{ r$.exercise.$errors[0] }}
         </p>
@@ -232,7 +271,7 @@ async function onSubmit() {
         :disabled="loading"
         class="flex ml-auto px-3 py-3 mt-6 hover:scale-101 hover:-translate-y-0.5 hover:shadow-lg items-center justify-center border-1 border-stone-700/90 dark:border-stone-100/50 hover:dark:border-stone-100/80 transition-all duration-200 rounded-md px-[15px] leading-none focus:shadow-[0_0_0_2px] focus:outline-none cursor-pointer disabled:opacity-60"
       >
-        {{ loading ? 'Saving...' : 'Save workout' }}
+        {{ loading ? 'Saving...' : isEditMode ? 'Save changes' : 'Save workout' }}
       </button>
     </form>
   </FormWrapper>

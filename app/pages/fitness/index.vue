@@ -556,19 +556,22 @@ const splitOption = computed(() => {
         </NuxtLink>
       </h2>
       <ul class="grid grid-cols-3 xl:grid-cols-4 items-stretch w-full gap-2 mt-4">
-        <ExerciseCard
-          v-for="items in strengthExercises"
-          :key="items.id"
-          :exercise="items"
-          variant="all"
-        />
+        <StrengthForm v-for="items in strengthExercises" :key="items.id" :edit-record="items">
+          <ExerciseCard
+            :exercise="items"
+            variant="all"
+            class="cursor-pointer hover:opacity-90 transition-opacity"
+          />
+        </StrengthForm>
+
         <StrengthForm>
           <li
             v-if="strengthExercises.length < 4"
             class="border-stone-100/30 hover:border-stone-100/50 dark:border-stone-100/20 dark:hover:border-white/40 border-1 border-dashed flex items-center justify-center duration-200 w-full border-rounded-md cursor-pointer p-4 min-h-36"
           >
-            <div class="i-mdi:plus" /></li
-        ></StrengthForm>
+            <div class="i-mdi:plus" />
+          </li>
+        </StrengthForm>
       </ul>
     </div>
   </div>
