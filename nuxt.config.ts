@@ -58,15 +58,34 @@ export default defineNuxtConfig({
     useSsrCookies: true, // This should be true for SSR support
     redirect: false,
   },
+export default defineNuxtConfig({
+  modules: [
+    // ...existing modules
+    '@vite-pwa/nuxt',
+  ],
   pwa: {
+    registerType: 'prompt', // don't auto-reload silently — we want the toast to ask first
     manifest: {
       name: 'Isolde',
-      theme_color: '#4F46E5',
-      // icons are auto-injected — no need to list them manually
+      short_name: 'Isolde',
+      theme_color: '#a855f7',
+      background_color: '#1c1917',
     },
     pwaAssets: {
-      config: true, // reads pwa-assets.config.ts automatically
-      // overrideManifestIcons: true  ← set if you already have icons defined
+      image: 'public/logo.svg',
+    },
+    workbox: {
+      globPatterns: ['**/*.{js,css,html,png,svg,ico,woff2}'],
+      navigateFallback: '/',
+    },
+    client: {
+      installPrompt: true,
+      periodicSyncForUpdates: 3600, // re-check for new content every hour while the app stays open
+    },
+    devOptions: {
+      enabled: true,
+      type: 'module',
     },
   },
 })
+
