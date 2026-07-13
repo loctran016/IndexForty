@@ -24,10 +24,12 @@ useHead({
     <ScrollAreaRoot style="--scrollbar-size: 18px" class="relative flex-1 min-h-0">
       <ScrollAreaViewport class="w-full h-full">
         <header
-          class="sticky top-0 z-20 h-3rem lg:h-4.1875rem flex items-center border-b border-white/40 dark:border-white/10 bg-white/30 dark:bg-stone-700/30 backdrop-blur-xl backdrop-saturate-150"
+          class="sticky top-0 z-20 h-3.5rem lg:h-4.1875rem flex items-center border-b border-white/40 dark:border-white/10 bg-white/30 dark:bg-stone-700/30 backdrop-blur-xl backdrop-saturate-150"
         >
-          <div class="max-w-6xl mx-auto flex items-center justify-between gap-4 px-4 w-full">
-            <span class="text-xl font-medium font-head truncate">{{ pageTitle }}</span>
+          <div
+            class="w-full md:max-w-95% lg:max-w-6xl mx-auto flex items-center justify-between gap-4 px-4"
+          >
+            <span class="text-lg lg:text-xl font-medium font-head truncate">{{ pageTitle }}</span>
             <NavBar />
           </div>
         </header>
@@ -39,6 +41,7 @@ useHead({
         </main>
       </ScrollAreaViewport>
       <ScrollAreaScrollbar
+        style="top: 3.5rem"
         class="top-3rem lg:top-4.1875rem absolute right-0 bottom-0 flex select-none touch-none p-0.5 z-20 transition-colors duration-[160ms] ease-out data-[orientation=vertical]:w-2 data-[orientation=horizontal]:flex-col data-[orientation=horizontal]:h-2"
         orientation="vertical"
       >
@@ -70,19 +73,5 @@ body,
 .page-leave-to {
   opacity: 0;
   filter: blur(1rem);
-}
-
-.img-bg::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  opacity: 0.015; /* Controls the intensity (1.5% opacity) */
-  pointer-events: none; /* Allows clicks to pass through to widgets */
-
-  /* High-quality SVG noise texture */
-  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
 }
 </style>

@@ -319,13 +319,15 @@ const splitOption = computed(() => {
 </script>
 
 <template>
-  <div class="grid lg:grid-cols-6 gap-4 px-4 py-4 mx-auto font-sans dark:text-gray-100">
+  <div
+    class="my-2 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-6 gap-4 px-4 py-4 mx-auto font-sans dark:text-gray-100"
+  >
     <!-- Improvements card -->
-    <div class="lg:col-span-4 card">
+    <div class="lt-lg:order-0 col-span-2 lg:col-span-4 card">
       <div class="flex items-center justify-between">
         <h2 class="card-title">
           <div class="i-solar:graph-new-up-bold text-lg" />
-          Improvements
+          Progress
         </h2>
         <ClientOnly>
           <Select v-model="selectedExercise" :options="STRENGTH_EXERCISES" />
@@ -344,7 +346,7 @@ const splitOption = computed(() => {
         :strength-exercises="strengthExercises"
       />
     </div>
-    <div class="lg:col-span-2 card">
+    <div class="lt-lg:order-0 lt-lg:row-span-2 lg:col-span-2 card">
       <h2 class="card-title flex flex-col items-start gap-1">
         <template v-if="todaySchedule">
           {{ todaySchedule.day }}
@@ -386,7 +388,7 @@ const splitOption = computed(() => {
     </div>
 
     <!-- Workout calendar card -->
-    <div class="lg:col-span-6 card" ref="heatmapCardRef">
+    <div class="lt-lg:order-1 col-span-2 lg:col-span-6 card" ref="heatmapCardRef">
       <div class="flex items-center justify-between mb-2">
         <h2 class="card-title">
           <div class="i-solar:fire-bold text-xl" />
@@ -416,7 +418,7 @@ const splitOption = computed(() => {
 
     <!-- Streak + split, side by side below -->
 
-    <div class="lg:col-span-2 h-76 card flex flex-col">
+    <div class="lt-lg:order-1 lg:col-span-2 lg:h-76 card flex flex-col">
       <h2 class="card-title !text-base mb-2">Weight & BF</h2>
       <LazyBodyMetricsChart
         :hydrate-on-visible="{ rootMargin: '300px' }"
@@ -425,14 +427,16 @@ const splitOption = computed(() => {
       />
     </div>
 
-    <div class="lg:col-span-1 flex flex-col gap-4 text-gray-800 dark:text-gray-100">
+    <div
+      class="lt-lg:order-0 lg:col-span-1 flex lg:flex-col gap-4 text-gray-800 dark:text-gray-100"
+    >
       <StrengthForm>
         <button
           type="button"
           aria-haspopup="dialog"
           aria-expanded="false"
           data-state="closed"
-          class="card h-36 flex items-center gap-2 justify-center w-full cursor-pointer group"
+          class="card lt-lg:max-w-[calc(50%_-_0.5rem)] lg:h-36 flex items-center gap-2 justify-center w-full cursor-pointer group"
         >
           <div
             class="i-solar:dumbbell-large-minimalistic-line-duotone dark:i-solar:dumbbell-large-minimalistic-bold-duotone text-6xl"
@@ -450,7 +454,7 @@ const splitOption = computed(() => {
           aria-haspopup="dialog"
           aria-expanded="false"
           data-state="closed"
-          class="card h-36 flex items-center gap-2 justify-center w-full cursor-pointer group"
+          class="card lg:h-36 lt-lg:max-w-[calc(50%_-_0.5rem)] flex items-center gap-2 justify-center w-full cursor-pointer group"
         >
           <div
             class="i-solar:treadmill-round-line-duotone dark:i-solar:treadmill-round-bold-duotone text-7xl"
@@ -463,14 +467,16 @@ const splitOption = computed(() => {
         </button>
       </CardioForm>
     </div>
-    <div class="lg:col-span-1 flex flex-col gap-4 text-gray-800 dark:text-gray-100">
+    <div
+      class="lt-lg:order-0 lg:col-span-1 flex lg:flex-col gap-4 text-gray-800 dark:text-gray-100"
+    >
       <BodyMetricForm>
         <button
           type="button"
           aria-haspopup="dialog"
           aria-expanded="false"
           data-state="closed"
-          class="card h-36 flex items-center gap-2 justify-center w-full cursor-pointer group"
+          class="card lg:h-36 lt-lg:max-w-[calc(50%_-_0.5rem)] flex items-center gap-2 justify-center w-full cursor-pointer group"
         >
           <div class="i-solar:weigher-line-duotone dark:i-solar:weigher-bold-duotone text-6xl" />
           <p
@@ -480,7 +486,9 @@ const splitOption = computed(() => {
           </p>
         </button>
       </BodyMetricForm>
-      <div class="card h-36 flex flex-col gap-1 items-center justify-center">
+      <div
+        class="card lt-lg:max-w-[calc(50%_-_0.5rem)] w-full lg:h-36 flex flex-col gap-1 items-center justify-center"
+      >
         <div class="text-5xl font-semibold flex items-center gap-1">
           <div class="i-solar:fire-line-duotone dark:i-solar:fire-bold-duotone text-6xl" />
           <span class="opacity-90 dark:opacity-100">{{ currentStreak }}</span>
@@ -489,7 +497,7 @@ const splitOption = computed(() => {
       </div>
     </div>
 
-    <div class="lg:col-span-2 h-76 card">
+    <div class="lt-lg:order-1 lg:col-span-2 lg:h-76 card">
       <h2 class="card-title !text-base mb-2">Push / Pull split</h2>
       <ClientOnly>
         <VChart v-if="hasSplitData" :option="splitOption" autoresize class="h-50 w-full" />
@@ -505,7 +513,7 @@ const splitOption = computed(() => {
 
     <!-- Muscle diagram + table -->
 
-    <div class="lg:col-span-3 xl:col-span-2 card">
+    <div class="col-span-2 lt-lg:order-2 lg:col-span-3 xl:col-span-2 card">
       <h2 class="card-title">
         <div class="i-mdi:human" />
         Muscle Diagram
@@ -520,7 +528,7 @@ const splitOption = computed(() => {
       />
     </div>
 
-    <div class="lg:col-span-3 xl:col-span-4 card">
+    <div class="col-span-2 lt-lg:order-2 lg:col-span-3 xl:col-span-4 card">
       <h2 class="card-title">
         <div class="i-solar:database-linear" />
         Muscle Table
@@ -539,7 +547,7 @@ const splitOption = computed(() => {
 
     <!-- All Workouts -->
 
-    <div class="lg:col-span-6 card">
+    <div class="order-last col-span-2 lg:col-span-6 card">
       <h2 class="card-title">
         <div class="i-tabler:layout-grid" />
         Strength Workouts
@@ -555,7 +563,7 @@ const splitOption = computed(() => {
           />
         </NuxtLink>
       </h2>
-      <ul class="grid grid-cols-3 xl:grid-cols-4 items-stretch w-full gap-2 mt-4">
+      <ul class="grid md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 items-stretch w-full gap-2 mt-4">
         <StrengthForm v-for="items in strengthExercises" :key="items.id" :edit-record="items">
           <ExerciseCard
             :exercise="items"

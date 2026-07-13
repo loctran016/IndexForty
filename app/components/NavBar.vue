@@ -34,7 +34,7 @@ const navItems = [
 
 <template>
   <ul
-    class="flex gap-2 items-center justify-center rounded-full border border-white/40 dark:border-white/10 bg-white/20 dark:bg-stone-500/20 backdrop-blur-md p-1 text-lg lg:text-xl"
+    class="flex gap-2 items-center justify-center rounded-full border border-white/40 dark:border-white/10 bg-white/20 dark:bg-stone-500/20 backdrop-blur-md p-1 text-base lg:text-xl"
   >
     <li v-for="item in navItems" :key="item.to">
       <NuxtLink
@@ -51,7 +51,7 @@ const navItems = [
     <ClientOnly>
       <li>
         <button
-          class="cursor-pointer duration-200 rounded-full p-2.5 flex items-center justify-center transition-all"
+          class="cursor-pointer duration-200 rounded-full p-2 lg:p-2.5 flex items-center justify-center transition-all"
           :class="buttonClass"
           :aria-label="themeLabel"
           :title="themeLabel"
