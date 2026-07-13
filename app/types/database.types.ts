@@ -26,6 +26,7 @@ export type StrengthExercise =
   | 'Push-Up'
   | 'Weighted Push-Up'
   | 'Chest Dip'
+  | 'Incline Machine Chest Press'
   | 'Machine Chest Press'
   | 'Cable Fly'
   | 'Incline Cable Fly'
@@ -113,6 +114,7 @@ export const EXERCISE_TO_SPLIT: Record<StrengthExercise, Split> = {
   'Weighted Push-Up': 'Push',
   'Chest Dip': 'Push',
   'Machine Chest Press': 'Push',
+  'Incline Machine Chest Press': 'Push',
   'Cable Fly': 'Push',
   'Incline Cable Fly': 'Push',
   'Pec Deck Fly': 'Push',
@@ -197,6 +199,7 @@ export const SPLIT_TO_EXERCISE: Record<Split, StrengthExercise[]> = {
     'Push-Up',
     'Weighted Push-Up',
     'Chest Dip',
+    'Incline Machine Chest Press',
     'Machine Chest Press',
     'Cable Fly',
     'Incline Cable Fly',
@@ -266,6 +269,7 @@ export const STRENGTH_EXERCISES = [
   'Weighted Push-Up',
   'Chest Dip',
   'Machine Chest Press',
+  'Incline Machine Chest Press',
   'Cable Fly',
   'Incline Cable Fly',
   'Pec Deck Fly',
@@ -333,6 +337,7 @@ export const EXERCISE_TO_MUSCLES = {
   'Weighted Push-Up': ['Middle chest', 'Front delts', 'Triceps', 'Upper Abs'],
   'Chest Dip': ['Lower chest', 'Triceps', 'Front delts'],
   'Machine Chest Press': ['Middle chest', 'Front delts', 'Triceps'],
+  'Incline Machine Chest Press': ['Upper chest', 'Front delts', 'Triceps'],
   'Cable Fly': ['Middle chest'],
   'Incline Cable Fly': ['Upper chest'],
   'Pec Deck Fly': ['Middle chest'],
@@ -408,7 +413,12 @@ export const EXERCISE_TO_MUSCLES = {
 
 // Optional helper map: muscle -> exercises
 export const MUSCLE_TO_EXERCISES: Record<MuscleGroup, StrengthExercise[]> = {
-  'Upper chest': ['Incline DB Bench Press', 'Incline Barbell Bench Press', 'Incline Cable Fly'],
+  'Upper chest': [
+    'Incline DB Bench Press',
+    'Incline Barbell Bench Press',
+    'Incline Cable Fly',
+    'Incline Machine Chest Press',
+  ],
   'Middle chest': [
     'DB Bench Press',
     'Flat Barbell Bench Press',
