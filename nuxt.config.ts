@@ -58,11 +58,6 @@ export default defineNuxtConfig({
     useSsrCookies: true, // This should be true for SSR support
     redirect: false,
   },
-export default defineNuxtConfig({
-  modules: [
-    // ...existing modules
-    '@vite-pwa/nuxt',
-  ],
   pwa: {
     registerType: 'prompt', // don't auto-reload silently — we want the toast to ask first
     manifest: {
@@ -88,4 +83,3 @@ export default defineNuxtConfig({
     },
   },
 })
-
