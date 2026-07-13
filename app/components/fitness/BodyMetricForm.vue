@@ -155,6 +155,8 @@ async function onSubmit() {
       bf,
       created_at: new Date().toISOString(),
     }
+
+    await refreshNuxtData('body-metrics-history')
     successMsg.value = 'Body metrics saved.'
     setTimeout(() => (open.value = false), 900)
   } catch (e: any) {

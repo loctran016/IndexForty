@@ -157,6 +157,7 @@ async function onSubmit() {
       successMsg.value = 'Workout saved.'
     }
 
+    await refreshNuxtData('strength-entries')
     resetForm()
     open.value = false
   } catch (e: any) {

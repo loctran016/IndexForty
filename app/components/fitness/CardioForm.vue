@@ -95,6 +95,7 @@ async function onSubmit() {
 
     if (error) throw error
 
+    await refreshNuxtData('cardio-entries')
     successMsg.value = 'Cardio session saved.'
     resetForm()
     open.value = false

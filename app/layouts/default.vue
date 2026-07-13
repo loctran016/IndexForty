@@ -1,5 +1,4 @@
 <script setup lang="ts">
-const { $pwa } = useNuxtApp()
 const route = useRoute()
 const pageTitle = computed(() => (route.meta.title as string) ?? '')
 import { ScrollAreaRoot, ScrollAreaScrollbar, ScrollAreaThumb, ScrollAreaViewport } from 'reka-ui'
@@ -25,7 +24,7 @@ useHead({
     <ScrollAreaRoot style="--scrollbar-size: 18px" class="relative flex-1 min-h-0">
       <ScrollAreaViewport class="w-full h-full">
         <header
-          class="sticky top-0 z-20 h-4.1875rem flex items-center border-b border-white/40 dark:border-white/10 bg-white/30 dark:bg-stone-700/30 backdrop-blur-xl backdrop-saturate-150"
+          class="sticky top-0 z-20 h-3rem lg:h-4.1875rem flex items-center border-b border-white/40 dark:border-white/10 bg-white/30 dark:bg-stone-700/30 backdrop-blur-xl backdrop-saturate-150"
         >
           <div class="max-w-6xl mx-auto flex items-center justify-between gap-4 px-4 w-full">
             <span class="text-xl font-medium font-head truncate">{{ pageTitle }}</span>
@@ -40,8 +39,7 @@ useHead({
         </main>
       </ScrollAreaViewport>
       <ScrollAreaScrollbar
-        style="top: 4.1875rem"
-        class="absolute right-0 bottom-0 flex select-none touch-none p-0.5 z-20 transition-colors duration-[160ms] ease-out data-[orientation=vertical]:w-2 data-[orientation=horizontal]:flex-col data-[orientation=horizontal]:h-2"
+        class="top-3rem lg:top-4.1875rem absolute right-0 bottom-0 flex select-none touch-none p-0.5 z-20 transition-colors duration-[160ms] ease-out data-[orientation=vertical]:w-2 data-[orientation=horizontal]:flex-col data-[orientation=horizontal]:h-2"
         orientation="vertical"
       >
         <ScrollAreaThumb
@@ -50,6 +48,7 @@ useHead({
       </ScrollAreaScrollbar>
     </ScrollAreaRoot>
 
+    <PwaToast />
     <NuxtPwaAssets />
   </div>
 </template>
