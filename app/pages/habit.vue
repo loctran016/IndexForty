@@ -338,7 +338,7 @@ function getDayAbbr(dateStr: string) {
 
 <template>
   <div
-    class="grid grid-cols-1 md:grid-cols-4 gap-4 px-4 my-2 py-4 mx-auto font-sans dark:text-gray-100"
+    class="grid grid-cols-1 md:grid-cols-4 gap-3 p-3 sm:gap-4 sm:px-4 sm:py-4 my-1.5 sm:my-2 mx-auto font-sans dark:text-gray-100"
   >
     <!-- Skincare: AM + PM, full width -->
     <div class="col-span-full card">
@@ -379,14 +379,16 @@ function getDayAbbr(dateStr: string) {
         </button>
       </div>
 
-      <CalendarHeatmap
-        class="mt-6"
-        :logs-by-date="skincareCounts"
-        :max-value="2"
-        color="#a855f7"
-        :is-dark="isDark"
-        height="h-50"
-      />
+      <div class="overflow-x-auto scrollbar-none">
+        <CalendarHeatmap
+          class="mt-6 min-w-144 w-full"
+          :logs-by-date="skincareCounts"
+          :max-value="2"
+          color="#a855f7"
+          :is-dark="isDark"
+          height="h-50"
+        />
+      </div>
     </div>
     <!-- Sugar Detox Challenge -->
     <div class="col-span-full card">
@@ -500,7 +502,7 @@ function getDayAbbr(dateStr: string) {
       </div>
     </div>
     <!-- Piano -->
-    <div class="card col-span-3">
+    <div class="card sm:col-span-3">
       <div class="flex items-center justify-between">
         <h2 class="card-title">
           <div class="i-solar:music-notes-bold" />
@@ -523,25 +525,27 @@ function getDayAbbr(dateStr: string) {
         {{ isLoggedToday('piano') ? 'Practiced today ✓' : 'Log practice' }}
       </button>
 
-      <CalendarHeatmap
-        class="mt-6"
-        :logs-by-date="pianoCounts"
-        :max-value="1"
-        color="#3b82f6"
-        :is-dark="isDark"
-        height="h-36"
-      />
+      <div class="overflow-x-auto scrollbar-none">
+        <CalendarHeatmap
+          class="mt-6 min-w-144 w-full"
+          :logs-by-date="pianoCounts"
+          :max-value="1"
+          color="#3b82f6"
+          :is-dark="isDark"
+          height="h-36"
+        />
+      </div>
     </div>
 
     <!-- Piano stats card -->
-    <div class="card col-span-1 !p-6 flex flex-col items-center justify-center gap-3">
+    <div class="card sm:col-span-1 !p-6 flex flex-col items-center justify-center gap-3">
       <div class="i-solar:piano-bold-duotone text-6xl opacity-80" />
       <span class="text-5xl font-bold">{{ pianoTotalHours }}</span>
       <div class="text-sm opacity-60">total practice</div>
     </div>
 
     <!-- Pennywort -->
-    <div class="card col-span-3">
+    <div class="card sm:col-span-3">
       <div class="flex items-center justify-between">
         <h2 class="card-title">
           <div class="i-solar:leaf-bold" />
@@ -564,17 +568,19 @@ function getDayAbbr(dateStr: string) {
         {{ isLoggedToday('pennywort') ? 'Had it today ✓' : 'Log drink' }}
       </button>
 
-      <CalendarHeatmap
-        class="mt-6"
-        :logs-by-date="pennywortCounts"
-        :max-value="1"
-        color="#10b981"
-        :is-dark="isDark"
-        height="h-36"
-      />
+      <div class="overflow-x-auto scrollbar-none">
+        <CalendarHeatmap
+          class="mt-6 min-w-144 w-full"
+          :logs-by-date="pennywortCounts"
+          :max-value="1"
+          color="#10b981"
+          :is-dark="isDark"
+          height="h-36"
+        />
+      </div>
     </div>
     <!-- Pennywort stats card -->
-    <div class="card col-span-1 !p-6 flex flex-col items-center justify-center gap-3">
+    <div class="card sm:col-span-1 !p-6 flex flex-col items-center justify-center gap-3">
       <div class="i-solar:cup-bold-duotone text-6xl opacity-80" />
       <span class="text-5xl font-bold">{{ pennywortThisWeek }}/3</span>
       <div class="text-sm opacity-60">this week</div>
