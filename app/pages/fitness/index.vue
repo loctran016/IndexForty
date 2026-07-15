@@ -147,14 +147,14 @@ const heatmapOption = computed(() => {
     tooltip: {
       //   formatter: (params) => `${params.value[0]}: ${params.value[1]} sets`,
       formatter: (params) => `${formatIsoDateHeatmap(params.value[0])}: ${params.value[1]} sets`,
-      backgroundColor: props.isDark
+      backgroundColor: isDark.value
         ? 'rgba(88, 28, 135, 0.75)' // Slightly more opaque for readability
         : 'rgba(168, 85, 247, 0.85)',
-      borderColor: props.isDark ? 'rgba(168, 85, 247, 0.4)' : 'rgba(168, 85, 247, 0.3)',
+      borderColor: isDark.value ? 'rgba(168, 85, 247, 0.4)' : 'rgba(168, 85, 247, 0.3)',
       borderWidth: 1,
       textStyle: {
         color: '#fff',
-        // color: props.isDark ? '#fff' : 'oklab(0.216 0.00335142 0.00497674)',
+        // color:isDark.value ? '#fff' : 'oklab(0.216 0.00335142 0.00497674)',
         fontSize: 12,
         fontWeight: 500,
       },
