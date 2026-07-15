@@ -406,10 +406,10 @@ function getDayAbbr(dateStr: string) {
         </div>
       </div>
 
-      <!-- Internal 12-column grid -->
+      <!-- 2-column layout: Weekly Breakdown | Control Panel -->
       <div class="grid grid-cols-12 gap-6 items-center">
-        <!-- LEFT: Weekly Breakdown (7/12 columns) -->
-        <div class="col-span-7 flex flex-col justify-center gap-5 pr-4">
+        <!-- LEFT: Weekly Breakdown (6/12 columns) -->
+        <div class="col-span-6 flex flex-col gap-5 pr-4">
           <div class="flex items-center gap-2 text-sm opacity-60 mb-1">
             <div class="i-solar:chart-2-bold-duotone text-pink-400 text-lg" />
             Weekly Breakdown
@@ -417,21 +417,18 @@ function getDayAbbr(dateStr: string) {
 
           <!-- Week rows -->
           <div v-for="week in sugarDetoxWeeks" :key="week.label" class="flex items-center gap-4">
-            <span class="text-xs opacity-90 w-12 shrink-0">{{ week.label }}</span>
+            <span class="text-xs opacity-40 w-12 shrink-0">{{ week.label }}</span>
             <div class="flex gap-2 flex-1">
               <div
                 v-for="day in week.days"
                 :key="day.date"
                 class="flex-1 aspect-square rounded-md transition-all"
                 :class="{
-                  // Filled states - solid colors with glow
                   'bg-pink-500 shadow-lg shadow-pink-500/20': day.status === 'clean',
                   'bg-purple-500 shadow-lg shadow-purple-500/20': day.status === 'slip',
                   'bg-stone-400/80 dark:bg-stone-600/80': day.status === 'cheat',
-                  // Empty states - transparent with subtle border
                   'bg-transparent border border-stone-200/30 dark:border-white/5':
                     day.status === 'future',
-                  // Today highlight
                   'bg-pink-400/80 ring-2 ring-pink-400/60 ring-offset-1 ring-offset-white dark:ring-offset-stone-900 shadow-lg shadow-pink-500/30':
                     day.status === 'today',
                 }"
@@ -441,87 +438,64 @@ function getDayAbbr(dateStr: string) {
           </div>
         </div>
 
-        <!-- MIDDLE: Control Panel (3/12 columns) -->
-        <div class="col-span-3 flex flex-col items-stretch justify-center gap-3 py-2">
+        <!-- RIGHT: Control Panel (6/12 columns) -->
+        <div
+          class="col-span-6 flex flex-col items-stretch justify-center gap-4 pl-4 border-l border-stone-200/20 dark:border-white/5 h-full"
+        >
           <p class="text-xs opacity-50 tracking-wider uppercase">Log today</p>
 
-          <!-- Clean button -->
+          <!-- Clean button - wide and chunky -->
           <button
             type="button"
-            class="flex items-center gap-3 px-4 py-3 rounded-xl border transition-all disabled:opacity-30 disabled:cursor-not-allowed"
+            class="flex items-center justify-center gap-3 w-full py-4 rounded-xl border transition-all disabled:opacity-30 disabled:cursor-not-allowed text-lg font-medium"
             :class="
               sugarDetoxTodayStatus === 'clean'
-                ? 'bg-pink-500/10 border-pink-400/40 ring-1 ring-pink-400/20'
-                : 'bg-white/5 border-white/10 hover:bg-pink-500/10 hover:border-pink-500/30'
+                ? 'bg-pink-500/20 border-pink-400/40 ring-1 ring-pink-400/20 text-pink-400'
+                : 'bg-pink-500/10 border-pink-500/20 hover:bg-pink-500/20 hover:border-pink-500/30 text-white/90'
             "
             :disabled="!!sugarDetoxTodayStatus"
             @click="logSugarDetox('clean')"
           >
-            <div class="i-solar:star-bold-duotone text-pink-400 text-lg w-5 h-5 shrink-0" />
-            <span
-              class="text-sm font-medium"
-              :class="sugarDetoxTodayStatus === 'clean' ? 'text-pink-400' : 'opacity-90'"
-              >Clean</span
-            >
+            <div class="i-solar:star-bold-duotone text-pink-400 text-xl w-6 h-6 shrink-0" />
+            Clean
           </button>
 
           <!-- Slip button -->
           <button
             type="button"
-            class="flex items-center gap-3 px-4 py-3 rounded-xl border transition-all disabled:opacity-30 disabled:cursor-not-allowed"
+            class="flex items-center justify-center gap-3 w-full py-4 rounded-xl border transition-all disabled:opacity-30 disabled:cursor-not-allowed text-lg font-medium"
             :class="
               sugarDetoxTodayStatus === 'slip'
-                ? 'bg-purple-500/10 border-purple-400/40 ring-1 ring-purple-400/20'
-                : 'bg-white/5 border-white/10 hover:bg-purple-500/10 hover:border-purple-500/30'
+                ? 'bg-purple-500/20 border-purple-400/40 ring-1 ring-purple-400/20 text-purple-400'
+                : 'bg-purple-500/10 border-purple-500/20 hover:bg-purple-500/20 hover:border-purple-500/30 text-white/90'
             "
             :disabled="!!sugarDetoxTodayStatus"
             @click="logSugarDetox('slip')"
           >
-            <div class="i-solar:flame-bold-duotone text-purple-400 text-lg w-5 h-5 shrink-0" />
-            <span
-              class="text-sm font-medium"
-              :class="sugarDetoxTodayStatus === 'slip' ? 'text-purple-400' : 'opacity-90'"
-              >Slip</span
-            >
+            <div class="i-solar:flame-bold-duotone text-purple-400 text-xl w-6 h-6 shrink-0" />
+            Slip
           </button>
 
           <!-- Cheat button -->
           <button
             type="button"
-            class="flex items-center gap-3 px-4 py-3 rounded-xl border transition-all disabled:opacity-30 disabled:cursor-not-allowed"
+            class="flex items-center justify-center gap-3 w-full py-4 rounded-xl border transition-all disabled:opacity-30 disabled:cursor-not-allowed text-lg font-medium"
             :class="
               sugarDetoxTodayStatus === 'cheat'
-                ? 'bg-red-500/10 border-red-400/40 ring-1 ring-red-400/20'
-                : 'bg-white/5 border-white/10 hover:bg-red-500/10 hover:border-red-500/30'
+                ? 'bg-red-500/20 border-red-400/40 ring-1 ring-red-400/20 text-red-400'
+                : 'bg-red-500/10 border-red-500/20 hover:bg-red-500/20 hover:border-red-500/30 text-white/70'
             "
             :disabled="!!sugarDetoxTodayStatus"
             @click="logSugarDetox('cheat')"
           >
-            <div class="i-solar:close-circle-bold-duotone text-red-400 text-lg w-5 h-5 shrink-0" />
-            <span
-              class="text-sm font-medium"
-              :class="sugarDetoxTodayStatus === 'cheat' ? 'text-red-400' : 'opacity-90'"
-              >Cheat</span
-            >
+            <div class="i-solar:close-circle-bold-duotone text-red-400 text-xl w-6 h-6 shrink-0" />
+            Cheat
           </button>
-        </div>
 
-        <!-- RIGHT: Stats Card (2/12 columns) - Darker, more subtle -->
-        <div
-          class="col-span-2 flex flex-col items-center justify-center bg-black/20 dark:bg-black/40 border border-white/5 rounded-xl py-6 px-2 h-[85%]"
-        >
-          <div class="text-4xl font-bold text-pink-400 tracking-tight">
-            {{ sugarDetoxCleanDays }}
-          </div>
-          <div class="text-[10px] opacity-50 uppercase tracking-widest mt-1">Clean Days</div>
-
-          <div class="w-8 h-px bg-white/10 my-3" />
-
-          <div class="flex items-center gap-1.5 opacity-60 text-sm">
-            <span class="text-amber-400">💰</span>
-            <span>${{ sugarDetoxMoneySaved }}.00</span>
-          </div>
-          <div class="text-[10px] opacity-30 mt-0.5">${{ SAVINGS_PER_CLEAN_DAY }}/day saved</div>
+          <!-- Subtle stats line at the bottom -->
+          <p class="text-xs opacity-30 text-center mt-2">
+            {{ sugarDetoxCleanDays }} clean · {{ sugarDetoxStreak }} day streak
+          </p>
         </div>
       </div>
     </div>
