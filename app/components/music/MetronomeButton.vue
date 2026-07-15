@@ -46,36 +46,38 @@ function secondsPerBeat() {
 
 function ensureAudioContext() {
   if (!audioCtx) {
+    // Create AudioContext on user gesture - iOS requires this synchronously
     audioCtx = new (window.AudioContext || (window as any).webkitAudioContext)()
   }
   if (audioCtx && !masterGain) {
     masterGain = audioCtx.createGain()
-    masterGain.gain.value = 1
+    masterGain.gain.value = 0.8 // slightly reduced to prevent clipping on mobile
     masterGain.connect(audioCtx.destination)
   }
 }
 
-async function unlockAudio() {
+// 🔥 Must be called synchronously within the user gesture for iOS
+function unlockAudioSync(): boolean {
   ensureAudioContext()
   if (!audioCtx) return false
 
-  try {
-    if (audioCtx.state !== 'running') {
-      await audioCtx.resume()
-    }
+  // Resume must happen synchronously in the gesture handler
+  if (audioCtx.state === 'suspended') {
+    audioCtx.resume()
+  }
 
+  // Play a tiny silent buffer to fully unlock iOS audio
+  try {
     const buffer = audioCtx.createBuffer(1, 1, 22050)
     const src = audioCtx.createBufferSource()
     src.buffer = buffer
-    src.connect(masterGain ?? audioCtx.destination)
+    src.connect(audioCtx.destination)
     src.start(0)
+    src.stop(audioCtx.currentTime + 0.001)
+  } catch {}
 
-    isAudioUnlocked.value = audioCtx.state === 'running'
-    return isAudioUnlocked.value
-  } catch {
-    isAudioUnlocked.value = false
-    return false
-  }
+  isAudioUnlocked.value = audioCtx.state === 'running'
+  return isAudioUnlocked.value
 }
 
 // -------- Click synthesis --------
@@ -93,7 +95,6 @@ function playClick(time: number, accent = false) {
     filter.type = 'highpass'
     filter.frequency.setValueAtTime(500, time)
 
-    // keep beep about same loudness as before
     const peak = accent ? 0.42 : 0.28
     const decay = 0.06
     const attack = 0.001
@@ -118,7 +119,6 @@ function playClick(time: number, accent = false) {
   filter.frequency.setValueAtTime(accent ? 1500 : 1200, time)
   filter.Q.setValueAtTime(3.5, time)
 
-  // boosted peak and slightly longer decay
   const peak = accent ? 0.75 : 0.55
   const decay = 0.055
   const attack = 0.001
@@ -162,8 +162,18 @@ function scheduler() {
 
 // -------- Controls --------
 async function start() {
-  const ok = await unlockAudio()
-  if (!ok || !audioCtx) return
+  // Ensure context exists
+  ensureAudioContext()
+  if (!audioCtx) return
+
+  // If still suspended, try resuming (iOS might block if not in gesture)
+  if (audioCtx.state === 'suspended') {
+    try {
+      await audioCtx.resume()
+    } catch {
+      return // Can't start - user needs to interact first
+    }
+  }
 
   stopSchedulerOnly()
 
@@ -190,6 +200,20 @@ function stopSchedulerOnly() {
 }
 
 async function toggle() {
+  // 🔥 Ensure audio context is created/resumed within this gesture for iOS
+  if (!audioCtx || audioCtx.state === 'suspended') {
+    const unlocked = unlockAudioSync()
+    if (!unlocked && !isPlaying.value) {
+      // Try one more time with await (some iOS versions need both)
+      try {
+        ensureAudioContext()
+        if (audioCtx) await audioCtx.resume()
+      } catch {
+        // Will fail silently - user will need to tap again
+      }
+    }
+  }
+
   if (isPlaying.value) stop()
   else await start()
 }
@@ -286,19 +310,6 @@ watch([bpm, beatsPerBar, accentFirstBeat, soundMode], () => {
   } catch {}
 })
 
-function unlockOnFirstInteraction() {
-  ensureAudioContext()
-  audioCtx?.resume().catch(() => {})
-}
-
-onMounted(() => {
-  buttonRef.value?.addEventListener('pointerdown', unlockOnFirstInteraction, { once: true })
-})
-
-onBeforeUnmount(() => {
-  buttonRef.value?.removeEventListener('pointerdown', unlockOnFirstInteraction)
-})
-
 // BPM / meter changes should be reflected immediately while playing
 watch(bpm, restartIfPlaying)
 watch(beatsPerBar, () => {
@@ -314,7 +325,7 @@ onBeforeUnmount(() => {
     const ctx = audioCtx
     audioCtx = null
     masterGain = null
-    ctx.close().catch(() => {}) // fire-and-forget, don't await
+    ctx.close().catch(() => {})
   }
 })
 </script>
