@@ -263,10 +263,10 @@ const splitOption = computed(() => {
 
 <template>
   <div
-    class="my-2 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-6 gap-4 px-4 py-4 mx-auto font-sans dark:text-gray-100"
+    class="my-1.5 sm:my-2 grid grid-cols-2 lg:grid-cols-6 gap-3 p-3 sm:gap-4 sm:px-4 sm:py-4 mx-auto font-sans dark:text-gray-100"
   >
-    <!-- Improvements card -->
-    <div class="lt-lg:order-0 col-span-2 lg:col-span-4 card">
+    <!-- Progress card -->
+    <div class="sm:lt-lg:order-0 col-span-2 lg:col-span-4 card">
       <div class="flex items-center justify-between">
         <h2 class="card-title">
           <div class="i-solar:graph-new-up-bold text-lg" />
@@ -281,15 +281,21 @@ const splitOption = computed(() => {
           </template>
         </ClientOnly>
       </div>
-      <ExerciseProgressChart
-        class="mt-4"
-        :exercise="selectedExercise"
-        :today-date="todayDate"
-        :is-dark="isDark"
-        :strength-exercises="strengthExercises"
-      />
+      <div class="scrollbar-none overflow-x-auto">
+        <ExerciseProgressChart
+          class="mt-4 min-w-100"
+          :exercise="selectedExercise"
+          :today-date="todayDate"
+          :is-dark="isDark"
+          :strength-exercises="strengthExercises"
+        />
+      </div>
     </div>
-    <div class="lt-lg:order-0 lt-lg:row-span-2 lg:col-span-2 card">
+
+    <!-- Today Schedule -->
+    <div
+      class="lt-sm:col-span-2 lt-sm:order-first sm:lt-lg:order-0 sm:lt-lg:row-span-2 lg:col-span-2 card"
+    >
       <h2 class="card-title flex flex-col items-start gap-1">
         <template v-if="todaySchedule">
           {{ todaySchedule.day }}
@@ -330,8 +336,8 @@ const splitOption = computed(() => {
       </template>
     </div>
 
-    <!-- Workout calendar card -->
-    <div class="lt-lg:order-1 col-span-2 lg:col-span-6 card" ref="heatmapCardRef">
+    <!-- Workout calendar Heatmap card -->
+    <div class="sm:lt-lg:order-1 col-span-2 lg:col-span-6 card" ref="heatmapCardRef">
       <div class="flex items-center justify-between mb-2">
         <h2 class="card-title">
           <div class="i-solar:fire-bold text-xl" />
@@ -350,18 +356,22 @@ const splitOption = computed(() => {
           </template>
         </ClientOnly>
       </div>
-      <ClientOnly>
-        <VChart :option="heatmapOption" autoresize class="h-50 w-full" />
-        <template #fallback>
-          <div class="h-50 flex items-center justify-center text-sm">Loading…</div>
-        </template>
-      </ClientOnly>
+      <div class="overflow-x-auto scrollbar-none">
+        <ClientOnly>
+          <VChart :option="heatmapOption" autoresize class="h-40 sm:h-50 min-w-144 w-full" />
+          <template #fallback>
+            <div class="h-50 flex items-center justify-center text-sm">Loading…</div>
+          </template>
+        </ClientOnly>
+      </div>
       <p class="text-xs mt-1 opacity-85">Streak: {{ currentStreak }} days · sets logged per day</p>
     </div>
 
     <!-- Streak + split, side by side below -->
 
-    <div class="lt-lg:order-1 lg:col-span-2 lg:h-76 card flex flex-col">
+    <div
+      class="lt-sm:col-span-2 lt-sm:min-h-24 sm:lt-lg:order-1 lg:col-span-2 lg:h-76 card flex flex-col"
+    >
       <h2 class="card-title !text-base mb-2">Weight & BF</h2>
       <LazyBodyMetricsChart
         :hydrate-on-visible="{ rootMargin: '300px' }"
@@ -370,8 +380,9 @@ const splitOption = computed(() => {
       />
     </div>
 
+    <!-- Four action btns -->
     <div
-      class="lt-lg:order-0 lg:col-span-1 flex lg:flex-col gap-4 text-gray-800 dark:text-gray-100"
+      class="lt-sm:col-span-2 sm:lt-lg:order-0 lg:col-span-1 flex lg:flex-col gap-3 sm:gap-4 lt-md:h-25 text-gray-800 dark:text-gray-100"
     >
       <StrengthForm>
         <button
@@ -411,7 +422,7 @@ const splitOption = computed(() => {
       </CardioForm>
     </div>
     <div
-      class="lt-lg:order-0 lg:col-span-1 flex lg:flex-col gap-4 text-gray-800 dark:text-gray-100"
+      class="lt-sm:col-span-2 sm:lt-lg:order-0 lg:col-span-1 flex lg:flex-col gap-3 sm:gap-4 lt-md:h-25 text-gray-800 dark:text-gray-100"
     >
       <BodyMetricForm>
         <button
@@ -434,9 +445,9 @@ const splitOption = computed(() => {
       <div
         class="card lt-lg:max-w-[calc(50%_-_0.5rem)] w-full lg:h-36 flex flex-col gap-1 items-center justify-center"
       >
-        <div class="text-4xl lg:text-5xl font-semibold flex items-center gap-1">
+        <div class="text-3xl sm:text-4xl lg:text-5xl font-semibold flex items-center gap-1">
           <div
-            class="i-solar:fire-line-duotone dark:i-solar:fire-bold-duotone text-4xl lg:text-6xl"
+            class="i-solar:fire-line-duotone dark:i-solar:fire-bold-duotone text-3xl sm:text-4xl lg:text-6xl"
           />
           <span class="opacity-90 dark:opacity-100">{{ currentStreak }}</span>
         </div>
@@ -444,7 +455,7 @@ const splitOption = computed(() => {
       </div>
     </div>
 
-    <div class="lt-lg:order-1 lg:col-span-2 lg:h-76 card">
+    <div class="lt-sm:col-span-2 sm:lt-lg:order-1 lg:col-span-2 lg:h-76 card">
       <h2 class="card-title !text-base mb-2">Push / Pull split</h2>
       <ClientOnly>
         <VChart v-if="hasSplitData" :option="splitOption" autoresize class="h-50 w-full" />
@@ -460,7 +471,7 @@ const splitOption = computed(() => {
 
     <!-- Muscle diagram + table -->
 
-    <div class="col-span-2 lt-lg:order-2 lg:col-span-3 xl:col-span-2 card">
+    <div class="col-span-2 sm:lt-lg:order-2 lg:col-span-3 xl:col-span-2 card">
       <h2 class="card-title">
         <div class="i-mdi:human" />
         Muscle Diagram
@@ -475,7 +486,7 @@ const splitOption = computed(() => {
       />
     </div>
 
-    <div class="col-span-2 lt-lg:order-2 lg:col-span-3 xl:col-span-4 card">
+    <div class="col-span-2 sm:lt-lg:order-2 lg:col-span-3 xl:col-span-4 card">
       <h2 class="card-title">
         <div class="i-solar:database-linear" />
         Muscle Table

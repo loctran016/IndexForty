@@ -30,6 +30,7 @@ useHead({
         <header
           class="sticky top-0 z-20 h-[var(--header-height)] flex items-center border-b border-white/40 dark:border-white/10 bg-white/30 dark:bg-stone-700/30 backdrop-blur-xl backdrop-saturate-150"
         >
+          <!-- TODO: pt-safe as iPhone has small pt-safe -->
           <div
             class="w-full md:max-w-95% lg:max-w-6xl mx-auto flex items-center justify-between gap-4 px-4"
           >
@@ -44,7 +45,7 @@ useHead({
         </header>
 
         <main
-          class="mx-auto px-4 max-w-9/10 lg:max-w-5/6 h-full w-full min-h-[calc(100vh-var(--header-height))]"
+          class="mx-auto px-4 sm:max-w-9/10 lg:max-w-5/6 h-full w-full min-h-[calc(100vh-var(--header-height))]"
         >
           <slot />
         </main>
