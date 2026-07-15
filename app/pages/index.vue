@@ -171,7 +171,7 @@ async function removeTodo(todo: TodoItem) {
 
 <template>
   <div
-    class="grid grid-cols-1 lg:grid-cols-4 lg:grid-rows-4 gap-x-4 gap-y-4 px-4 py-4 mx-auto font-sans dark:text-gray-100"
+    class="grid grid-cols-1 lt-sm:my-2 lg:grid-cols-4 lg:grid-rows-4 gap-3 p-3 sm:gap-4 sm:p-4 mx-auto font-sans dark:text-gray-100"
   >
     <ClientOnly>
       <TooltipProvider :delay-duration="150">
@@ -180,21 +180,21 @@ async function removeTodo(todo: TodoItem) {
           v-slot="{ weekDays, grid }"
           :is-date-unavailable="isDateUnavailable"
           :default-value="date"
-          class="text-lg card lg:col-start-1 lg:col-span-2 lg:row-start-1 lg:row-span-3"
+          class="sm:text-lg card lg:col-start-1 lg:col-span-2 lg:row-start-1 lg:row-span-3"
           fixed-weeks
           weekdayFormat="short"
           :week-starts-on="1"
           :model-value="selectedDate"
         >
-          <CalendarHeader class="flex items-center justify-between">
+          <CalendarHeader class="flex items-center justify-between text-sm">
             <CalendarPrev
-              class="inline-flex items-center cursor-pointer justify-center rounded-md bg-transparent p-2 text-2xl hover:-translate-x-1 transition-all duration-200 hover:text-purple-600 active:scale-98 active:transition-all focus-visible:ring-2 focus-visible:ring-purple-400 focus-visible:ring-offset-2 focus:outline-none"
+              class="inline-flex items-center cursor-pointer justify-center rounded-md bg-transparent p-2 text-xl sm:text-2xl hover:-translate-x-1 transition-all duration-200 hover:text-purple-600 active:scale-98 active:transition-all focus-visible:ring-2 focus-visible:ring-purple-400 focus-visible:ring-offset-2 focus:outline-none"
             >
               <div class="i-mdi:arrow-left" />
             </CalendarPrev>
-            <CalendarHeading class="font-medium text-xl font-head" />
+            <CalendarHeading class="font-medium text-lg sm:text-xl font-head" />
             <CalendarNext
-              class="inline-flex items-center cursor-pointer justify-center rounded-md bg-transparent p-2 text-2xl hover:translate-x-1 transition-all duration-200 hover:text-purple-600 active:scale-98 active:transition-all focus-visible:ring-2 focus-visible:ring-purple-400 focus-visible:ring-offset-2 focus:outline-none"
+              class="inline-flex items-center cursor-pointer justify-center rounded-md bg-transparent p-2 text-xl sm:text-2xl hover:translate-x-1 transition-all duration-200 hover:text-purple-600 active:scale-98 active:transition-all focus-visible:ring-2 focus-visible:ring-purple-400 focus-visible:ring-offset-2 focus:outline-none"
             >
               <div class="i-mdi:arrow-right" />
             </CalendarNext>
