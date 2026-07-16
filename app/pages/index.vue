@@ -114,9 +114,9 @@ const { data: todosData } = await useAsyncData('todo', async () => {
 const todos = ref<TodoItem[]>(todosData.value ? [...todosData.value] : [])
 
 // Filter by type
-const taskTodos = computed(() => todos.value.filter(t => t.type === 'task' || !t.type))
-const studyTodos = computed(() => todos.value.filter(t => t.type === 'study'))
-const eventTodos = computed(() => todos.value.filter(t => t.type === 'event'))
+const taskTodos = computed(() => todos.value.filter((t) => t.type === 'task' || !t.type))
+const studyTodos = computed(() => todos.value.filter((t) => t.type === 'study'))
+const eventTodos = computed(() => todos.value.filter((t) => t.type === 'event'))
 
 // Sort study and events by due date (null/overdue first, then upcoming)
 function sortByDueDate(items: TodoItem[]) {
@@ -283,7 +283,7 @@ function isOverdue(dateStr: string | null): boolean {
 
 <template>
   <div
-    class="grid grid-cols-1 lt-sm:my-2 lg:grid-cols-4 lg:grid-rows-4 gap-3 p-3 sm:gap-4 sm:p-4 mx-auto font-sans dark:text-gray-100"
+    class="grid grid-cols-1 lt-sm:my-2 lg:grid-cols-4 lg:grid-rows-4 gap-3 p-3 sm:gap-4 sm:p-4 mx-auto font-sans dark:text-gray-100 h-[calc(100vh-var(--header-height))]"
   >
     <ClientOnly>
       <TooltipProvider :delay-duration="150">
@@ -393,15 +393,18 @@ function isOverdue(dateStr: string | null): boolean {
               <div class="i-mdi:text-box-edit" />
               To-do
             </h2>
-            <span class="text-xs opacity-50">{{ taskTodos.length + studyTodos.length + eventTodos.length }} items</span>
+            <span class="text-xs opacity-50"
+              >{{ taskTodos.length + studyTodos.length + eventTodos.length }} items</span
+            >
           </div>
 
           <!-- Sections with proportional heights -->
           <div class="flex flex-col gap-5 flex-1 min-h-0">
-            
             <!-- TASKS (no due date) -->
             <section class="flex flex-col min-h-0" :style="{ flex: sectionFlex.task }">
-              <h3 class="text-xs font-medium opacity-50 uppercase tracking-wider mb-2 flex items-center gap-2 shrink-0">
+              <h3
+                class="text-xs font-medium opacity-50 uppercase tracking-wider mb-2 flex items-center gap-2 shrink-0"
+              >
                 <div class="i-mdi:checkbox-outline text-sm" />
                 Tasks
               </h3>
@@ -464,12 +467,18 @@ function isOverdue(dateStr: string | null): boolean {
 
             <!-- STUDY (purple, with due dates) -->
             <section class="flex flex-col min-h-0" :style="{ flex: sectionFlex.study }">
-              <h3 class="text-xs font-medium text-purple-600 dark:text-purple-400 uppercase tracking-wider mb-2 flex items-center gap-2 shrink-0">
+              <h3
+                class="text-xs font-medium text-purple-600 dark:text-purple-400 uppercase tracking-wider mb-2 flex items-center gap-2 shrink-0"
+              >
                 <div class="i-mdi:book-open-outline text-sm" />
                 Study
               </h3>
               <ul class="flex-1 min-h-0 overflow-y-auto scrollbar-none flex flex-col gap-1.5">
-                <li v-for="todo in sortedStudyTodos" :key="todo.id" class="flex items-center gap-3 group">
+                <li
+                  v-for="todo in sortedStudyTodos"
+                  :key="todo.id"
+                  class="flex items-center gap-3 group"
+                >
                   <CheckboxRoot
                     :model-value="todo.done"
                     class="shrink-0 w-5 h-5 rounded-md border border-purple-400/50 flex items-center justify-center data-[state=checked]:bg-purple-500 data-[state=checked]:border-purple-500 focus-visible:ring-2 focus-visible:ring-purple-400 focus-visible:ring-offset-2 outline-none cursor-pointer transition-colors"
@@ -499,15 +508,22 @@ function isOverdue(dateStr: string | null): boolean {
                   </div>
                   <span
                     class="text-[11px] shrink-0"
-                    :class="isOverdue(todo.due_date) ? 'text-red-500 font-medium' : 'text-purple-500/70'"
+                    :class="
+                      isOverdue(todo.due_date) ? 'text-red-500 font-medium' : 'text-purple-500/70'
+                    "
                   >
                     {{ formatDueDate(todo.due_date) }}
                   </span>
                 </li>
-                <li v-if="!studyTodos.length" class="text-xs opacity-40 py-1">No study items yet</li>
+                <li v-if="!studyTodos.length" class="text-xs opacity-40 py-1">
+                  No study items yet
+                </li>
               </ul>
               <!-- Add study form -->
-              <div v-if="showStudyForm" class="mt-2 space-y-2 p-3 rounded-lg bg-purple-500/5 border border-purple-500/20 shrink-0">
+              <div
+                v-if="showStudyForm"
+                class="mt-2 space-y-2 p-3 rounded-lg bg-purple-500/5 border border-purple-500/20 shrink-0"
+              >
                 <input
                   v-model="newStudyTask"
                   type="text"
@@ -549,12 +565,18 @@ function isOverdue(dateStr: string | null): boolean {
 
             <!-- EVENTS (pink, with due dates) -->
             <section class="flex flex-col min-h-0" :style="{ flex: sectionFlex.event }">
-              <h3 class="text-xs font-medium text-pink-600 dark:text-pink-400 uppercase tracking-wider mb-2 flex items-center gap-2 shrink-0">
+              <h3
+                class="text-xs font-medium text-pink-600 dark:text-pink-400 uppercase tracking-wider mb-2 flex items-center gap-2 shrink-0"
+              >
                 <div class="i-mdi:calendar-star text-sm" />
                 Important Events
               </h3>
               <ul class="flex-1 min-h-0 overflow-y-auto scrollbar-none flex flex-col gap-1.5">
-                <li v-for="todo in sortedEventTodos" :key="todo.id" class="flex items-center gap-3 group">
+                <li
+                  v-for="todo in sortedEventTodos"
+                  :key="todo.id"
+                  class="flex items-center gap-3 group"
+                >
                   <CheckboxRoot
                     :model-value="todo.done"
                     class="shrink-0 w-5 h-5 rounded-md border border-pink-400/50 flex items-center justify-center data-[state=checked]:bg-pink-500 data-[state=checked]:border-pink-500 focus-visible:ring-2 focus-visible:ring-pink-400 focus-visible:ring-offset-2 outline-none cursor-pointer transition-colors"
@@ -584,7 +606,9 @@ function isOverdue(dateStr: string | null): boolean {
                   </div>
                   <span
                     class="text-[11px] shrink-0"
-                    :class="isOverdue(todo.due_date) ? 'text-red-500 font-medium' : 'text-pink-500/70'"
+                    :class="
+                      isOverdue(todo.due_date) ? 'text-red-500 font-medium' : 'text-pink-500/70'
+                    "
                   >
                     {{ formatDueDate(todo.due_date) }}
                   </span>
@@ -592,7 +616,10 @@ function isOverdue(dateStr: string | null): boolean {
                 <li v-if="!eventTodos.length" class="text-xs opacity-40 py-1">No events yet</li>
               </ul>
               <!-- Add event form -->
-              <div v-if="showEventForm" class="mt-2 space-y-2 p-3 rounded-lg bg-pink-500/5 border border-pink-500/20 shrink-0">
+              <div
+                v-if="showEventForm"
+                class="mt-2 space-y-2 p-3 rounded-lg bg-pink-500/5 border border-pink-500/20 shrink-0"
+              >
                 <input
                   v-model="newEventTask"
                   type="text"
