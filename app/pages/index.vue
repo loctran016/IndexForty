@@ -280,7 +280,7 @@ function isOverdue(dateStr: string | null): boolean {
 
 <template>
   <div
-    class="grid grid-cols-1 lt-sm:my-2 lg:grid-cols-4 lg:grid-rows-4 gap-3 p-3 sm:gap-4 sm:p-4 mx-auto font-sans dark:text-gray-100"
+    class="h-[calc(100vh-var(--header-height))] grid grid-cols-1 lt-sm:my-2 lg:grid-cols-4 lg:grid-rows-4 gap-3 p-3 sm:gap-4 sm:p-4 mx-auto font-sans dark:text-gray-100"
   >
     <ClientOnly>
       <TooltipProvider :delay-duration="150">
@@ -396,7 +396,7 @@ function isOverdue(dateStr: string | null): boolean {
           <div class="flex-1 overflow-y-auto space-y-5 pr-1">
             
             <!-- TASKS (no due date) -->
-            <section>
+            <section class="overflow-y-auto scrollbar-none">
               <h3 class="text-xs font-medium opacity-50 uppercase tracking-wider mb-2 flex items-center gap-2">
                 <div class="i-mdi:checkbox-outline text-sm" />
                 Tasks
@@ -460,7 +460,7 @@ function isOverdue(dateStr: string | null): boolean {
             </section>
 
             <!-- STUDY (purple, with due dates) -->
-            <section>
+            <section class="overflow-y-auto scrollbar-none">
               <h3 class="text-xs font-medium text-purple-600 dark:text-purple-400 uppercase tracking-wider mb-2 flex items-center gap-2">
                 <div class="i-mdi:book-open-outline text-sm" />
                 Study
@@ -554,7 +554,7 @@ function isOverdue(dateStr: string | null): boolean {
             </section>
 
             <!-- EVENTS (pink, with due dates) -->
-            <section>
+            <section class="overflow-y-auto scrollbar-none">
               <h3 class="text-xs font-medium text-pink-600 dark:text-pink-400 uppercase tracking-wider mb-2 flex items-center gap-2">
                 <div class="i-mdi:calendar-star text-sm" />
                 Important Events
