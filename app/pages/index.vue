@@ -280,7 +280,7 @@ function isOverdue(dateStr: string | null): boolean {
 
 <template>
   <div
-    class="h-[calc(100vh-var(--header-height))] grid grid-cols-1 lt-sm:my-2 lg:grid-cols-4 lg:grid-rows-4 gap-3 p-3 sm:gap-4 sm:p-4 mx-auto font-sans dark:text-gray-100"
+    class="grid grid-cols-1 lt-sm:my-2 lg:grid-cols-4 lg:grid-rows-4 gap-3 p-3 sm:gap-4 sm:p-4 mx-auto font-sans dark:text-gray-100"
   >
     <ClientOnly>
       <TooltipProvider :delay-duration="150">
@@ -382,7 +382,7 @@ function isOverdue(dateStr: string | null): boolean {
 
         <!-- Todo: Expanded to 2 cols x 4 rows, replacing Pomodoro & Music -->
         <div
-          class="card text-lg p-6 shadow-sm border flex flex-col gap-4 lg:col-start-3 lg:col-span-2 lg:row-start-1 lg:row-span-4 overflow-hidden"
+          class="card text-lg p-6 shadow-sm border flex flex-col gap-4 lg:col-start-3 lg:col-span-2 lg:row-start-1 lg:row-span-4 overflow-x-hidden"
         >
           <!-- Header -->
           <div class="flex items-center justify-between">
@@ -396,7 +396,7 @@ function isOverdue(dateStr: string | null): boolean {
           <div class="flex-1 overflow-y-auto space-y-5 pr-1">
             
             <!-- TASKS (no due date) -->
-            <section class="overflow-y-auto scrollbar-none">
+            <section>
               <h3 class="text-xs font-medium opacity-50 uppercase tracking-wider mb-2 flex items-center gap-2">
                 <div class="i-mdi:checkbox-outline text-sm" />
                 Tasks
@@ -414,13 +414,13 @@ function isOverdue(dateStr: string | null): boolean {
                   </CheckboxRoot>
                   <EditableRoot
                     :model-value="todo.task"
-                    class="flex-1"
+                    class="flex-1 min-w-0"
                     @update:model-value="(value) => saveTaskText(todo, String(value))"
                   >
                     <EditableArea>
                       <EditablePreview
                         :class="[
-                          'cursor-text text-sm',
+                          'cursor-text text-sm break-words',
                           todo.done ? 'line-through opacity-40' : '',
                         ]"
                       />
@@ -460,7 +460,7 @@ function isOverdue(dateStr: string | null): boolean {
             </section>
 
             <!-- STUDY (purple, with due dates) -->
-            <section class="overflow-y-auto scrollbar-none">
+            <section>
               <h3 class="text-xs font-medium text-purple-600 dark:text-purple-400 uppercase tracking-wider mb-2 flex items-center gap-2">
                 <div class="i-mdi:book-open-outline text-sm" />
                 Study
@@ -484,7 +484,7 @@ function isOverdue(dateStr: string | null): boolean {
                       <EditableArea>
                         <EditablePreview
                           :class="[
-                            'cursor-text text-sm truncate',
+                            'cursor-text text-sm break-words',
                             todo.done ? 'line-through opacity-40' : '',
                           ]"
                         />
@@ -500,14 +500,6 @@ function isOverdue(dateStr: string | null): boolean {
                   >
                     {{ formatDueDate(todo.due_date) }}
                   </span>
-                  <button
-                    type="button"
-                    class="opacity-0 group-hover:opacity-100 transition-opacity text-stone-500 hover:text-red-500 shrink-0"
-                    aria-label="Remove"
-                    @click="removeTodo(todo)"
-                  >
-                    <div class="i-mdi:close text-base" />
-                  </button>
                 </li>
                 <li v-if="!studyTodos.length" class="text-xs opacity-40 py-1">No study items yet</li>
               </ul>
@@ -554,7 +546,7 @@ function isOverdue(dateStr: string | null): boolean {
             </section>
 
             <!-- EVENTS (pink, with due dates) -->
-            <section class="overflow-y-auto scrollbar-none">
+            <section>
               <h3 class="text-xs font-medium text-pink-600 dark:text-pink-400 uppercase tracking-wider mb-2 flex items-center gap-2">
                 <div class="i-mdi:calendar-star text-sm" />
                 Important Events
@@ -578,7 +570,7 @@ function isOverdue(dateStr: string | null): boolean {
                       <EditableArea>
                         <EditablePreview
                           :class="[
-                            'cursor-text text-sm truncate',
+                            'cursor-text text-sm break-words',
                             todo.done ? 'line-through opacity-40' : '',
                           ]"
                         />
@@ -594,14 +586,6 @@ function isOverdue(dateStr: string | null): boolean {
                   >
                     {{ formatDueDate(todo.due_date) }}
                   </span>
-                  <button
-                    type="button"
-                    class="opacity-0 group-hover:opacity-100 transition-opacity text-stone-500 hover:text-red-500 shrink-0"
-                    aria-label="Remove"
-                    @click="removeTodo(todo)"
-                  >
-                    <div class="i-mdi:close text-base" />
-                  </button>
                 </li>
                 <li v-if="!eventTodos.length" class="text-xs opacity-40 py-1">No events yet</li>
               </ul>
