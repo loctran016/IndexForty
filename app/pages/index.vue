@@ -283,7 +283,7 @@ function isOverdue(dateStr: string | null): boolean {
 
 <template>
   <div
-    class="grid grid-cols-1 lt-sm:my-2 lg:grid-cols-4 lg:grid-rows-4 gap-3 p-3 sm:gap-4 sm:p-4 mx-auto font-sans dark:text-gray-100 h-[calc(100vh-var(--header-height))]"
+    class="grid grid-cols-1 lt-sm:my-2 lg:grid-cols-4 lg:grid-rows-4 gap-3 p-3 sm:gap-4 sm:p-4 mx-auto font-sans dark:text-gray-100 sm:h-[calc(100vh-var(--header-height))]"
   >
     <ClientOnly>
       <TooltipProvider :delay-duration="150">
