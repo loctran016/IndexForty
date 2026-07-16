@@ -398,7 +398,7 @@ function isOverdue(dateStr: string | null): boolean {
             >
           </div>
 
-          <!-- Sections with proportional heights -->
+          <!-- Sections with proportional heights, no outer scroll -->
           <div class="flex flex-col gap-5 flex-1 min-h-0">
             <!-- TASKS (no due date) -->
             <section class="flex flex-col min-h-0" :style="{ flex: sectionFlex.task }">
@@ -408,45 +408,51 @@ function isOverdue(dateStr: string | null): boolean {
                 <div class="i-mdi:checkbox-outline text-sm" />
                 Tasks
               </h3>
-              <ul class="flex-1 min-h-0 overflow-y-auto scrollbar-none flex flex-col gap-1.5">
-                <li v-for="todo in taskTodos" :key="todo.id" class="flex items-center gap-3 group">
-                  <CheckboxRoot
-                    :model-value="todo.done"
-                    class="shrink-0 w-5 h-5 rounded-md border border-stone-800/40 dark:border-stone-100/40 flex items-center justify-center data-[state=checked]:bg-purple-500 data-[state=checked]:border-purple-500 focus-visible:ring-2 focus-visible:ring-purple-400 focus-visible:ring-offset-2 outline-none cursor-pointer transition-colors"
-                    @update:model-value="(value) => toggleDone(todo, value === true)"
+              <PurpleScrollArea class="flex-1 min-h-0">
+                <ul class="flex flex-col gap-1.5">
+                  <li
+                    v-for="todo in taskTodos"
+                    :key="todo.id"
+                    class="flex items-center gap-3 group"
                   >
-                    <CheckboxIndicator>
-                      <div class="i-mdi:check text-white text-sm" />
-                    </CheckboxIndicator>
-                  </CheckboxRoot>
-                  <EditableRoot
-                    :model-value="todo.task"
-                    class="flex-1 min-w-0"
-                    @update:model-value="(value) => saveTaskText(todo, String(value))"
-                  >
-                    <EditableArea>
-                      <EditablePreview
-                        :class="[
-                          'cursor-text text-sm break-words',
-                          todo.done ? 'line-through opacity-40' : '',
-                        ]"
-                      />
-                      <EditableInput
-                        class="w-full bg-transparent outline-none border-b border-purple-400 text-sm"
-                      />
-                    </EditableArea>
-                  </EditableRoot>
-                  <button
-                    type="button"
-                    class="opacity-0 group-hover:opacity-100 transition-opacity text-stone-500 hover:text-red-500 shrink-0"
-                    aria-label="Remove task"
-                    @click="removeTodo(todo)"
-                  >
-                    <div class="i-mdi:close text-base" />
-                  </button>
-                </li>
-                <li v-if="!taskTodos.length" class="text-xs opacity-40 py-1">No tasks yet</li>
-              </ul>
+                    <CheckboxRoot
+                      :model-value="todo.done"
+                      class="shrink-0 w-5 h-5 rounded-md border border-stone-800/40 dark:border-stone-100/40 flex items-center justify-center data-[state=checked]:bg-purple-500 data-[state=checked]:border-purple-500 focus-visible:ring-2 focus-visible:ring-purple-400 focus-visible:ring-offset-2 outline-none cursor-pointer transition-colors"
+                      @update:model-value="(value) => toggleDone(todo, value === true)"
+                    >
+                      <CheckboxIndicator>
+                        <div class="i-mdi:check text-white text-sm" />
+                      </CheckboxIndicator>
+                    </CheckboxRoot>
+                    <EditableRoot
+                      :model-value="todo.task"
+                      class="flex-1 min-w-0"
+                      @update:model-value="(value) => saveTaskText(todo, String(value))"
+                    >
+                      <EditableArea>
+                        <EditablePreview
+                          :class="[
+                            'cursor-text text-sm break-words',
+                            todo.done ? 'line-through opacity-40' : '',
+                          ]"
+                        />
+                        <EditableInput
+                          class="w-full bg-transparent outline-none border-b border-purple-400 text-sm"
+                        />
+                      </EditableArea>
+                    </EditableRoot>
+                    <button
+                      type="button"
+                      class="opacity-0 group-hover:opacity-100 transition-opacity text-stone-500 hover:text-red-500 shrink-0"
+                      aria-label="Remove task"
+                      @click="removeTodo(todo)"
+                    >
+                      <div class="i-mdi:close text-base" />
+                    </button>
+                  </li>
+                  <li v-if="!taskTodos.length" class="text-xs opacity-40 py-1">No tasks yet</li>
+                </ul>
+              </PurpleScrollArea>
               <!-- Add task form – always visible -->
               <form class="flex gap-2 mt-2 shrink-0" @submit.prevent="addTodo">
                 <input
@@ -473,52 +479,54 @@ function isOverdue(dateStr: string | null): boolean {
                 <div class="i-mdi:book-open-outline text-sm" />
                 Study
               </h3>
-              <ul class="flex-1 min-h-0 overflow-y-auto scrollbar-none flex flex-col gap-1.5">
-                <li
-                  v-for="todo in sortedStudyTodos"
-                  :key="todo.id"
-                  class="flex items-center gap-3 group"
-                >
-                  <CheckboxRoot
-                    :model-value="todo.done"
-                    class="shrink-0 w-5 h-5 rounded-md border border-purple-400/50 flex items-center justify-center data-[state=checked]:bg-purple-500 data-[state=checked]:border-purple-500 focus-visible:ring-2 focus-visible:ring-purple-400 focus-visible:ring-offset-2 outline-none cursor-pointer transition-colors"
-                    @update:model-value="(value) => toggleDone(todo, value === true)"
+              <PurpleScrollArea class="flex-1 min-h-0">
+                <ul class="flex flex-col gap-1.5">
+                  <li
+                    v-for="todo in sortedStudyTodos"
+                    :key="todo.id"
+                    class="flex items-center gap-3 group"
                   >
-                    <CheckboxIndicator>
-                      <div class="i-mdi:check text-white text-sm" />
-                    </CheckboxIndicator>
-                  </CheckboxRoot>
-                  <div class="flex-1 min-w-0">
-                    <EditableRoot
-                      :model-value="todo.task"
-                      @update:model-value="(value) => saveTaskText(todo, String(value))"
+                    <CheckboxRoot
+                      :model-value="todo.done"
+                      class="shrink-0 w-5 h-5 rounded-md border border-purple-400/50 flex items-center justify-center data-[state=checked]:bg-purple-500 data-[state=checked]:border-purple-500 focus-visible:ring-2 focus-visible:ring-purple-400 focus-visible:ring-offset-2 outline-none cursor-pointer transition-colors"
+                      @update:model-value="(value) => toggleDone(todo, value === true)"
                     >
-                      <EditableArea>
-                        <EditablePreview
-                          :class="[
-                            'cursor-text text-sm break-words',
-                            todo.done ? 'line-through opacity-40' : '',
-                          ]"
-                        />
-                        <EditableInput
-                          class="w-full bg-transparent outline-none border-b border-purple-400 text-sm"
-                        />
-                      </EditableArea>
-                    </EditableRoot>
-                  </div>
-                  <span
-                    class="text-[11px] shrink-0"
-                    :class="
-                      isOverdue(todo.due_date) ? 'text-red-500 font-medium' : 'text-purple-500/70'
-                    "
-                  >
-                    {{ formatDueDate(todo.due_date) }}
-                  </span>
-                </li>
-                <li v-if="!studyTodos.length" class="text-xs opacity-40 py-1">
-                  No study items yet
-                </li>
-              </ul>
+                      <CheckboxIndicator>
+                        <div class="i-mdi:check text-white text-sm" />
+                      </CheckboxIndicator>
+                    </CheckboxRoot>
+                    <div class="flex-1 min-w-0">
+                      <EditableRoot
+                        :model-value="todo.task"
+                        @update:model-value="(value) => saveTaskText(todo, String(value))"
+                      >
+                        <EditableArea>
+                          <EditablePreview
+                            :class="[
+                              'cursor-text text-sm break-words',
+                              todo.done ? 'line-through opacity-40' : '',
+                            ]"
+                          />
+                          <EditableInput
+                            class="w-full bg-transparent outline-none border-b border-purple-400 text-sm"
+                          />
+                        </EditableArea>
+                      </EditableRoot>
+                    </div>
+                    <span
+                      class="text-[11px] shrink-0"
+                      :class="
+                        isOverdue(todo.due_date) ? 'text-red-500 font-medium' : 'text-purple-500/70'
+                      "
+                    >
+                      {{ formatDueDate(todo.due_date) }}
+                    </span>
+                  </li>
+                  <li v-if="!studyTodos.length" class="text-xs opacity-40 py-1">
+                    No study items yet
+                  </li>
+                </ul>
+              </PurpleScrollArea>
               <!-- Add study form -->
               <div
                 v-if="showStudyForm"
@@ -571,50 +579,52 @@ function isOverdue(dateStr: string | null): boolean {
                 <div class="i-mdi:calendar-star text-sm" />
                 Important Events
               </h3>
-              <ul class="flex-1 min-h-0 overflow-y-auto scrollbar-none flex flex-col gap-1.5">
-                <li
-                  v-for="todo in sortedEventTodos"
-                  :key="todo.id"
-                  class="flex items-center gap-3 group"
-                >
-                  <CheckboxRoot
-                    :model-value="todo.done"
-                    class="shrink-0 w-5 h-5 rounded-md border border-pink-400/50 flex items-center justify-center data-[state=checked]:bg-pink-500 data-[state=checked]:border-pink-500 focus-visible:ring-2 focus-visible:ring-pink-400 focus-visible:ring-offset-2 outline-none cursor-pointer transition-colors"
-                    @update:model-value="(value) => toggleDone(todo, value === true)"
+              <PurpleScrollArea class="flex-1 min-h-0">
+                <ul class="flex flex-col gap-1.5">
+                  <li
+                    v-for="todo in sortedEventTodos"
+                    :key="todo.id"
+                    class="flex items-center gap-3 group"
                   >
-                    <CheckboxIndicator>
-                      <div class="i-mdi:check text-white text-sm" />
-                    </CheckboxIndicator>
-                  </CheckboxRoot>
-                  <div class="flex-1 min-w-0">
-                    <EditableRoot
-                      :model-value="todo.task"
-                      @update:model-value="(value) => saveTaskText(todo, String(value))"
+                    <CheckboxRoot
+                      :model-value="todo.done"
+                      class="shrink-0 w-5 h-5 rounded-md border border-pink-400/50 flex items-center justify-center data-[state=checked]:bg-pink-500 data-[state=checked]:border-pink-500 focus-visible:ring-2 focus-visible:ring-pink-400 focus-visible:ring-offset-2 outline-none cursor-pointer transition-colors"
+                      @update:model-value="(value) => toggleDone(todo, value === true)"
                     >
-                      <EditableArea>
-                        <EditablePreview
-                          :class="[
-                            'cursor-text text-sm break-words',
-                            todo.done ? 'line-through opacity-40' : '',
-                          ]"
-                        />
-                        <EditableInput
-                          class="w-full bg-transparent outline-none border-b border-pink-400 text-sm"
-                        />
-                      </EditableArea>
-                    </EditableRoot>
-                  </div>
-                  <span
-                    class="text-[11px] shrink-0"
-                    :class="
-                      isOverdue(todo.due_date) ? 'text-red-500 font-medium' : 'text-pink-500/70'
-                    "
-                  >
-                    {{ formatDueDate(todo.due_date) }}
-                  </span>
-                </li>
-                <li v-if="!eventTodos.length" class="text-xs opacity-40 py-1">No events yet</li>
-              </ul>
+                      <CheckboxIndicator>
+                        <div class="i-mdi:check text-white text-sm" />
+                      </CheckboxIndicator>
+                    </CheckboxRoot>
+                    <div class="flex-1 min-w-0">
+                      <EditableRoot
+                        :model-value="todo.task"
+                        @update:model-value="(value) => saveTaskText(todo, String(value))"
+                      >
+                        <EditableArea>
+                          <EditablePreview
+                            :class="[
+                              'cursor-text text-sm break-words',
+                              todo.done ? 'line-through opacity-40' : '',
+                            ]"
+                          />
+                          <EditableInput
+                            class="w-full bg-transparent outline-none border-b border-pink-400 text-sm"
+                          />
+                        </EditableArea>
+                      </EditableRoot>
+                    </div>
+                    <span
+                      class="text-[11px] shrink-0"
+                      :class="
+                        isOverdue(todo.due_date) ? 'text-red-500 font-medium' : 'text-pink-500/70'
+                      "
+                    >
+                      {{ formatDueDate(todo.due_date) }}
+                    </span>
+                  </li>
+                  <li v-if="!eventTodos.length" class="text-xs opacity-40 py-1">No events yet</li>
+                </ul>
+              </PurpleScrollArea>
               <!-- Add event form -->
               <div
                 v-if="showEventForm"
