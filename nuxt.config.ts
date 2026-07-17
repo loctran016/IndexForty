@@ -69,29 +69,5 @@ export default defineNuxtConfig({
   supabase: {
     useSsrCookies: true, // This should be true for SSR support
     redirect: false,
-  },
-  pwa: {
-    registerType: 'prompt', // don't auto-reload silently — we want the toast to ask first
-    manifest: {
-      name: 'Isolde',
-      short_name: 'Isolde',
-      theme_color: '#a855f7',
-      background_color: '#1c1917',
-    },
-    pwaAssets: {
-      image: 'public/logo.svg',
-    },
-    workbox: {
-      globPatterns: ['**/*.{js,css,html,png,svg,ico,woff2}'],
-      navigateFallback: '/',
-    },
-    client: {
-      installPrompt: true,
-      periodicSyncForUpdates: 3600, // re-check for new content every hour while the app stays open
-    },
-    devOptions: {
-      enabled: false,
-      //   type: 'classic',
-    },
-  },
+  }
 })
