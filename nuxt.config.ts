@@ -15,7 +15,7 @@ export default defineNuxtConfig({
     '@regle/nuxt',
     '@nuxtjs/cloudinary',
     'nuxt-easy-lightbox',
-    '@vercel/speed-insights'
+    '@vercel/speed-insights',
   ],
   vite: {
     optimizeDeps: {
@@ -69,5 +69,30 @@ export default defineNuxtConfig({
   supabase: {
     useSsrCookies: true, // This should be true for SSR support
     redirect: false,
-  }
+  },
+  pwa: {
+    registerType: 'prompt',
+    injectRegister: null, // disable auto-registration — we'll register manually, deferred
+    manifest: {
+      name: 'Isolde',
+      short_name: 'Isolde',
+      theme_color: '#a855f7',
+      background_color: '#1c1917',
+    },
+    pwaAssets: {
+      image: 'public/logo.svg',
+    },
+    workbox: {
+      globPatterns: ['**/*.{js,css,html,png,svg,ico,woff2}'],
+      navigateFallback: '/',
+    },
+    client: {
+      installPrompt: true,
+      periodicSyncForUpdates: 3600,
+    },
+    devOptions: {
+      enabled: true,
+      type: 'module',
+    },
+  },
 })
