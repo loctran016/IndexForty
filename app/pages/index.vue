@@ -132,7 +132,7 @@ const sortedStudyTodos = computed(() => sortByDueDate(studyTodos.value))
 const sortedEventTodos = computed(() => sortByDueDate(eventTodos.value))
 
 // Section flex values: Tasks 1, Study 2, Events 1
-const sectionFlex = { task: 1, study: 2, event: 1 }
+const sectionFlex = { task: 1.25, study: 2, event: 1 }
 
 // --- Add new items ---
 
