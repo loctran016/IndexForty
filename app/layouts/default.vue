@@ -60,9 +60,9 @@ useHead({
         />
       </ScrollAreaScrollbar>
     </ScrollAreaRoot>
-
+<!--
     <PwaToast />
-    <NuxtPwaAssets />
+    <NuxtPwaAssets /> -->
   </div>
 </template>
 
