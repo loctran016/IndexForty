@@ -115,7 +115,7 @@ const heatmapOption = computed(() => {
       <ClientOnly>
         <VChart :option="heatmapOption" autoresize class="h-40 sm:h-50 min-w-144 w-full" />
         <template #fallback>
-          <div class="h-50 flex items-center justify-center text-sm">Loading…</div>
+          <div class="h-50 flex items-center justify-center text-sm opacity-80">Loading…</div>
         </template>
       </ClientOnly>
     </div>
