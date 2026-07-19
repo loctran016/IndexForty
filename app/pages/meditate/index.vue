@@ -136,7 +136,10 @@ const tableColumns = computed(() => [
   ...dayNumbers.value.map((day) =>
     columnHelper.accessor(`d${day}`, {
       header: String(day),
-      cell: (info) => info.getValue() ?? '—',
+      cell: (info) => {
+        const value = info.getValue()
+        return value == null ? h('span', { class: 'opacity-20' }, '—') : value
+      },
     }),
   ),
 ])
@@ -153,9 +156,11 @@ const table = useVueTable({
 </script>
 
 <template>
-  <div class="grid gap-4 px-4 py-4 mx-auto font-sans dark:text-gray-100">
+  <div
+    class="my-1.5 sm:my-2 grid grid-cols-2 lg:grid-cols-6 gap-3 sm:gap-4 sm:py-4 mx-auto font-sans dark:text-gray-100"
+  >
     <!-- Quick actions -->
-    <div class="card">
+    <div class="card col-span-full">
       <h2 class="card-title">
         <div class="i-solar:meditation-round-outline" />
         Today's practice
@@ -179,7 +184,7 @@ const table = useVueTable({
     </div>
 
     <!-- Month/year history -->
-    <div class="card">
+    <div class="card col-span-full">
       <div class="flex items-center justify-between flex-wrap gap-3">
         <h2 class="card-title">
           <div class="i-solar:calendar-linear" />

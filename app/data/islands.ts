@@ -53,7 +53,7 @@ export const ISLANDS: Island[] = [
     path: '/meditate',
     navLabel: 'Meditate',
     pageTitle: 'Meditate Island',
-    titleIcon: 'i-solar:stars-minimalistic-bold',
+    titleIcon: 'i-solar:hand-stars-bold',
     description: 'Daily practice counts, logged with a tap.',
   },
 ]
