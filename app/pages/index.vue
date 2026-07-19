@@ -46,8 +46,16 @@ useHead({
     },
   ],
 })
+import { getIsland } from '~/data/islands'
 
-definePageMeta({ title: 'Home Island', titleIcon: 'i-mdi:home' })
+const island = getIsland('/')!
+
+useHead({
+  title: island.pageTitle,
+  meta: [{ name: 'description', content: island.description }],
+})
+
+definePageMeta({ title: island.pageTitle, titleIcon: island.titleIcon })
 
 const selectedDate = ref()
 
@@ -183,6 +191,7 @@ async function addStudy() {
       .insert({ task, done: false, type: 'study', due_date: dueDate })
       .select('id, task, done, type, due_date, created_at')
       .single()
+      .limit(50)
 
     if (error) throw error
     todos.value.push(data as TodoItem)
@@ -283,7 +292,7 @@ function isOverdue(dateStr: string | null): boolean {
 
 <template>
   <div
-    class="grid grid-cols-1 lt-sm:my-2 lg:grid-cols-4 lg:grid-rows-4 gap-3 p-3 sm:gap-4 sm:p-4 mx-auto font-sans dark:text-gray-100 sm:h-[calc(100vh-var(--header-height))]"
+    class="grid grid-cols-1 lt-sm:my-2 lg:grid-cols-4 lg:grid-rows-4 gap-3 p-3 sm:gap-4 sm:p-4 mx-auto font-sans dark:text-gray-100 sm:h-[calc(100vh-var(--header-height))] max-h-200vh"
   >
     <ClientOnly>
       <TooltipProvider :delay-duration="150">
@@ -676,7 +685,7 @@ function isOverdue(dateStr: string | null): boolean {
 </template>
 
 <style>
-  /* Chrome, Safari, Edge, Opera */
+/* Chrome, Safari, Edge, Opera */
 input::-webkit-outer-spin-button,
 input::-webkit-inner-spin-button {
   -webkit-appearance: none;
@@ -684,7 +693,7 @@ input::-webkit-inner-spin-button {
 }
 
 /* Firefox */
-input[type=number] {
+input[type='number'] {
   -moz-appearance: textfield;
 }
 </style>

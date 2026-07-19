@@ -2,8 +2,16 @@
 import type { CloudinaryPhoto } from '~~/server/api/gallery.get'
 
 import { MasonryWall } from '@yeger/vue-masonry-wall'
+import { getIsland } from '~/data/islands'
 
-definePageMeta({ title: 'Light Island', titleIcon: 'i-solar:gallery-round-bold' })
+const island = getIsland('/gallery')!
+
+useHead({
+  title: island.pageTitle,
+  meta: [{ name: 'description', content: island.description }],
+})
+
+definePageMeta({ title: island.pageTitle, titleIcon: island.titleIcon })
 
 const { data: photos, status } = await useFetch<CloudinaryPhoto[]>('/api/gallery')
 

@@ -1,6 +1,10 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 import { Separator } from 'reka-ui'
+import { ISLANDS } from '~/data/islands'
+
+const navItems = ISLANDS.filter((i) => i.key !== 'home' || true) // adjust if Home shouldn't appear, or keep as-is
+  .map((i) => ({ to: i.path, icon: i.titleIcon, label: i.navLabel }))
 
 const { themePref, cycleTheme } = useTheme()
 
@@ -24,13 +28,13 @@ const buttonClass = computed(() => {
   return ''
 })
 
-const navItems = [
-  { to: '/', icon: 'i-mdi:home', label: 'Home' },
-  { to: '/fitness', icon: 'i-mdi:weight-lifter', label: 'Fitness' },
-  { to: '/musical', icon: 'i-mdi:music-clef-treble', label: 'Musical' },
-  { to: '/gallery', icon: 'i-solar:gallery-round-bold', label: 'Gallery' },
-  { to: '/habit', icon: 'i-solar:star-rainbow-bold', label: 'Motivation' },
-]
+// const navItems = [
+//   { to: '/', icon: 'i-mdi:home', label: 'Home' },
+//   { to: '/fitness', icon: 'i-mdi:weight-lifter', label: 'Fitness' },
+//   { to: '/musical', icon: 'i-mdi:music-clef-treble', label: 'Musical' },
+//   { to: '/gallery', icon: 'i-solar:gallery-round-bold', label: 'Gallery' },
+//   { to: '/habit', icon: 'i-solar:star-rainbow-bold', label: 'Motivation' },
+// ]
 </script>
 
 <template>

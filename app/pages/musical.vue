@@ -4,7 +4,16 @@ type Tune = {
   title: string
 }
 
-definePageMeta({ title: 'Sound Island', titleIcon: 'i-mdi:music-clef-treble' })
+import { getIsland } from '~/data/islands'
+
+const island = getIsland('/musical')!
+
+useHead({
+  title: island.pageTitle,
+  meta: [{ name: 'description', content: island.description }],
+})
+
+definePageMeta({ title: island.pageTitle, titleIcon: island.titleIcon })
 
 const tuneModules = import.meta.glob('~/assets/data/tunes/*.abc', { query: '?raw' })
 

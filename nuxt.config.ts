@@ -34,7 +34,7 @@ export default defineNuxtConfig({
   },
   echarts: {
     renderer: 'svg',
-    charts: ['BarChart', 'LineChart', 'PieChart', 'HeatmapChart'],
+    charts: ['LineChart', 'PieChart', 'HeatmapChart'],
     components: [
       'GridComponent',
       'TooltipComponent',

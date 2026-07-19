@@ -2,12 +2,16 @@
 import { today, parseDate } from '@internationalized/date'
 import { usePreferredDark } from '@vueuse/core'
 
-definePageMeta({ title: 'Habit Island', titleIcon: 'i-solar:star-rainbow-bold' })
+import { getIsland } from '~/data/islands'
+
+const island = getIsland('/habit')!
 
 useHead({
-  title: 'Habit Island',
-  //   meta: [{ name: 'description', content: 'Activity and metric logs.' }],
+  title: island.pageTitle,
+  meta: [{ name: 'description', content: island.description }],
 })
+
+definePageMeta({ title: island.pageTitle, titleIcon: island.titleIcon })
 
 const TIME_ZONE = 'Asia/Ho_Chi_Minh'
 const supabase = useSupabaseClient()
