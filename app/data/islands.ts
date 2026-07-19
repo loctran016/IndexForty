@@ -48,6 +48,14 @@ export const ISLANDS: Island[] = [
     titleIcon: 'i-solar:star-rainbow-bold',
     description: 'Skincare, walks, and weekly habits, tracked.',
   },
+  {
+    key: 'meditate',
+    path: '/meditate',
+    navLabel: 'Meditate',
+    pageTitle: 'Meditate Island',
+    titleIcon: 'i-solar:meditation-round-outline',
+    description: 'Daily practice counts, logged with a tap.',
+  },
 ]
 
 // Convenience lookup, so a page can grab its own entry by path
