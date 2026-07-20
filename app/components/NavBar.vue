@@ -48,7 +48,7 @@ const buttonClass = computed(() => {
         :title="item.label"
         active-class="bg-stone-800/10 dark:bg-stone-100/10"
         class="block rounded-full transition-colors"
-        :class="item.to === '/musical' ? 'hidden sm:flex' : ''"
+        :class="item.to === '/musical' || item.to === '/gallery' ? 'hidden sm:flex' : ''"
       >
         <IconNavBarWrapper><div :class="item.icon" /></IconNavBarWrapper>
       </NuxtLink>
