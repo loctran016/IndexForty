@@ -53,6 +53,7 @@ const buttonClass = computed(() => {
         <IconNavBarWrapper><div :class="item.icon" /></IconNavBarWrapper>
       </NuxtLink>
     </li>
+    <div class="i-solar:hand-stars-bold hidden" />
     <Separator
       class="bg-purple-300/40 self-stretch mx-.75 my-1.5 sm:mx-1 sm:my-2 data-[orientation=vertical]:w-px"
       decorative
