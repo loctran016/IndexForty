@@ -84,7 +84,17 @@ function removeSet(index: number) {
 }
 function duplicateSet(index: number) {
   const source = form.value.sets[index]
-  form.value.sets.splice(index + 1, 0, { ...source })
+  const next = form.value.sets[index + 1]
+  const nextIsBlank = next && next.reps == null && next.kg == null
+
+  if (nextIsBlank) {
+    // Fill the existing blank row in place, rather than adding a new one
+    next.reps = source.reps
+    next.kg = source.kg
+  } else {
+    // No blank slot to reuse — insert a genuine new duplicate row
+    form.value.sets.splice(index + 1, 0, { ...source })
+  }
 }
 
 function stepReps(index: number, delta: number) {
