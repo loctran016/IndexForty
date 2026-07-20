@@ -21,6 +21,10 @@ export default defineNuxtConfig({
     optimizeDeps: {
       include: ['@vue/devtools-core', '@vue/devtools-kit', '@internationalized/date', 'reka-ui'],
     },
+    analyze: {
+      template: 'json', // Outputs bundle data as raw JSON
+      filename: 'stats.json', // Path to write the JSON output
+  },
   },
   routeRules: {
     '/manifest.webmanifest': { ssr: false, prerender: false },
