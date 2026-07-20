@@ -209,16 +209,17 @@ const table = useVueTable({
           <thead>
             <tr v-for="headerGroup in table.getHeaderGroups()" :key="headerGroup.id">
               <th
-                v-for="header in headerGroup.headers"
-                :key="header.id"
-                class="text-left px-2 py-2 font-medium text-xs uppercase tracking-wide opacity-60 whitespace-nowrap"
-                :class="header.column.getIsPinned() ? 'sticky z-20 bg-white/90 dark:bg-stone-800/90' : ''"
-                :style="
-                  header.column.getIsPinned()
-                    ? { left: `${header.column.getStart('left')}px`, width: `${header.column.getSize()}px` }
-                    : { width: `${header.column.getSize()}px` }
-                "
-              >
+  v-for="header in headerGroup.headers"
+  :key="header.id"
+  class="text-left px-2 py-2 font-medium text-xs uppercase tracking-wide opacity-60 whitespace-nowrap"
+  :class="header.column.getIsPinned() ? 'sticky z-20 bg-white/20 dark:bg-stone-800/30' : ''"
+  :style="
+    header.column.getIsPinned()
+      ? { left: `${header.column.getStart('left')}px`, width: `${header.column.getSize()}px` }
+      : { width: `${header.column.getSize()}px` }
+  "
+>
+
                 <FlexRender :render="header.column.columnDef.header" :props="header.getContext()" />
               </th>
             </tr>
@@ -230,21 +231,22 @@ const table = useVueTable({
               class="border-t border-stone-800/10 dark:border-stone-100/10"
             >
               <td
-                v-for="cell in row.getVisibleCells()"
-                :key="cell.id"
-                class="px-2 py-2 whitespace-nowrap"
-                :class="[
-                  cell.column.getIsPinned()
-                    ? 'sticky z-10 bg-white/90 dark:bg-stone-800/90'
-                    : 'text-center opacity-80',
-                  cell.column.id === 'practice' ? 'font-medium' : '',
-                ]"
-                :style="
-                  cell.column.getIsPinned()
-                    ? { left: `${cell.column.getStart('left')}px`, width: `${cell.column.getSize()}px` }
-                    : { width: `${cell.column.getSize()}px` }
-                "
-              >
+  v-for="cell in row.getVisibleCells()"
+  :key="cell.id"
+  class="px-2 py-2 whitespace-nowrap"
+  :class="[
+    cell.column.getIsPinned()
+      ? 'sticky z-10 bg-white/20 dark:bg-stone-800/30'
+      : 'text-center opacity-80',
+    cell.column.id === 'practice' ? 'font-medium' : '',
+  ]"
+  :style="
+    cell.column.getIsPinned()
+      ? { left: `${cell.column.getStart('left')}px`, width: `${cell.column.getSize()}px` }
+      : { width: `${cell.column.getSize()}px` }
+  "
+>
+
                 <FlexRender :render="cell.column.columnDef.cell" :props="cell.getContext()" />
               </td>
             </tr>
@@ -252,14 +254,16 @@ const table = useVueTable({
         </table>
 
         <!-- Fade/blur mask where scrolling columns pass beneath the pinned region -->
-        <div
-          class="pointer-events-none absolute top-0 bottom-0 w-6 backdrop-blur-[1px] block dark:hidden"
-          style="left: 230px; background: linear-gradient(to right, rgba(255,255,255,0.7), transparent); z-index: 15;"
-        />
-        <div
-          class="pointer-events-none absolute top-0 bottom-0 w-6 backdrop-blur-[1px] hidden dark:block"
-          style="left: 230px; background: linear-gradient(to right, rgba(41,37,36,0.7), transparent); z-index: 15;"
-        />
+       <!-- Fade/blur mask where scrolling columns pass beneath the pinned region -->
+<div
+  class="pointer-events-none absolute top-0 bottom-0 w-16 backdrop-blur-md block dark:hidden"
+  style="left: 230px; background: linear-gradient(to right, rgba(255,255,255,0.55) 0%, rgba(255,255,255,0.25) 40%, transparent 100%); z-index: 15;"
+/>
+<div
+  class="pointer-events-none absolute top-0 bottom-0 w-16 backdrop-blur-md hidden dark:block"
+  style="left: 230px; background: linear-gradient(to right, rgba(28,25,23,0.55) 0%, rgba(28,25,23,0.25) 40%, transparent 100%); z-index: 15;"
+/>
+
       </div>
     </div>
   </div>
