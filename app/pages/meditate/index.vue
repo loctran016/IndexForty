@@ -153,6 +153,18 @@ const table = useVueTable({
   },
   getCoreRowModel: getCoreRowModel(),
 })
+
+const { exportToExcel } = useMeditationExport()
+
+async function handleExport() {
+  await exportToExcel({
+    year: selectedYear.value,
+    month: selectedMonth.value,
+    monthLabel: MONTH_NAMES[selectedMonth.value - 1],
+    dayNumbers: dayNumbers.value,
+    countForDay,
+  })
+}
 </script>
 
 <template>
@@ -202,6 +214,15 @@ const table = useVueTable({
               @update:model-value="(v) => (selectedYear = Number(v))"
               :options="availableYears.map(String)"
             />
+            <button
+              type="button"
+              class="p-2 rounded-lg border border-stone-800/20 dark:border-stone-100/20 hover:border-purple-400/50 hover:bg-purple-400/10 transition-colors cursor-pointer"
+              aria-label="Export to Excel"
+              title="Export to Excel"
+              @click="handleExport"
+            >
+              <div class="i-solar:file-download-outline text-lg" />
+            </button>
           </div>
           <template #fallback>
             <div
