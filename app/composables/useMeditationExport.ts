@@ -1,35 +1,29 @@
-import ExcelJS from 'exceljs'
+// app/composables/useMeditationExport.ts
 import { MEDITATION_PRACTICES } from '~/data/meditationPractices'
 
 export function useMeditationExport() {
-  async function exportToExcel({
-    year,
-    month,
-    monthLabel,
-    dayNumbers,
-    countForDay,
-    ownerName = '',
-  }) {
+  async function exportToExcel({ year, month, monthLabel, dayNumbers, countForDay, ownerName = '' }) {
+    // Loaded on demand — ExcelJS is a large, rarely-used dependency,
+    // so it shouldn't ship in the main bundle for every page.
+    const ExcelJS = (await import('exceljs')).default
+
     const workbook = new ExcelJS.Workbook()
     const sheet = workbook.addWorksheet('Practice Log')
 
-    const NUM_LEAD_COLS = 3 // #, Practice, Unit
+    const NUM_LEAD_COLS = 3
     const totalCols = NUM_LEAD_COLS + dayNumbers.length
 
-    // --- Title row (owner name), yellow fill ---
     sheet.mergeCells(1, 1, 1, totalCols)
     const titleCell = sheet.getCell(1, 1)
     titleCell.value = ownerName
     titleCell.font = { bold: true, size: 13 }
     titleCell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FFF4C430' } }
 
-    // --- Năm / Tháng rows ---
     sheet.getCell(2, 1).value = 'Năm'
     sheet.getCell(2, 4).value = year
     sheet.getCell(3, 1).value = 'Tháng'
     sheet.getCell(3, 4).value = month
 
-    // --- "Ngày" header row, blue fill ---
     const headerRowNum = 4
     sheet.getCell(headerRowNum, 1).value = 'Ngày'
     sheet.getCell(headerRowNum, 2).value = ''
@@ -44,13 +38,10 @@ export function useMeditationExport() {
       cell.alignment = { horizontal: 'center' }
     })
 
-    // --- One row per practice ---
-    // Grouping is my best guess from your screenshot, not exact —
-    // adjust `groupColor` below to match your real categories.
     const groupColor = (index) => {
-      if (index < 6) return null // no fill, matches top group in reference
-      if (index < 10) return 'FFF3D9E0' // light pink block
-      return 'FFDDEEDD' // light green block
+      if (index < 6) return null
+      if (index < 10) return 'FFF3D9E0'
+      return 'FFDDEEDD'
     }
 
     MEDITATION_PRACTICES.forEach((practice, idx) => {
@@ -74,7 +65,6 @@ export function useMeditationExport() {
       }
     })
 
-    // --- Column widths + frozen panes (matches the pinned-column UI) ---
     sheet.getColumn(1).width = 4
     sheet.getColumn(2).width = 26
     sheet.getColumn(3).width = 8
@@ -84,7 +74,6 @@ export function useMeditationExport() {
 
     sheet.views = [{ state: 'frozen', xSplit: NUM_LEAD_COLS, ySplit: headerRowNum }]
 
-    // --- Trigger browser download ---
     const buffer = await workbook.xlsx.writeBuffer()
     const blob = new Blob([buffer], {
       type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
