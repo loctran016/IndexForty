@@ -362,7 +362,7 @@ function isOverdue(dateStr: string | null): boolean {
               To-do
             </h2>
             <span class="text-xs opacity-50"
-              >{{ taskTodos.length + studyTodos.length + eventTodos.length }} items</span
+              >{{ taskTodos.length + eventTodos.length }} items</span
             >
           </div>
 
