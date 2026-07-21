@@ -28,6 +28,10 @@ const buttonClass = computed(() => {
   return ''
 })
 
+const visibleNavItems = computed(() =>
+  navItems.filter((item) => !['/musical', '/gallery'].includes(item.to)),
+)
+
 // const navItems = [
 //   { to: '/', icon: 'i-mdi:home', label: 'Home' },
 //   { to: '/fitness', icon: 'i-mdi:weight-lifter', label: 'Fitness' },
@@ -41,16 +45,17 @@ const buttonClass = computed(() => {
   <ul
     class="flex gap-1 sm:gap-1.5 items-center justify-center rounded-full border border-white/40 dark:border-white/10 bg-white/20 dark:bg-stone-500/20 backdrop-blur-md p-.75 sm:p-1 text-base lg:text-lg"
   >
-    <li v-for="item in navItems" :key="item.to">
+    <li v-for="item in visibleNavItems" :key="item.to">
       <NuxtLink
         :to="item.to"
         :aria-label="item.label"
         :title="item.label"
         active-class="bg-stone-800/10 dark:bg-stone-100/10"
         class="block rounded-full transition-colors"
-        :class="item.to === '/musical' || item.to === '/gallery' ? 'hidden sm:flex' : ''"
       >
-        <IconNavBarWrapper><div :class="item.icon" /></IconNavBarWrapper>
+        <IconNavBarWrapper>
+          <div :class="item.icon" />
+        </IconNavBarWrapper>
       </NuxtLink>
     </li>
     <div class="i-solar:hand-stars-bold hidden" />
