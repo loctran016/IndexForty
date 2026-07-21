@@ -36,16 +36,6 @@ const isDateUnavailable: CalendarRootProps['isDateUnavailable'] = (date) => {
   return date.day === 317
 }
 
-useHead({
-  title: 'Isolde',
-  meta: [
-    {
-      name: 'description',
-      content:
-        'Your personal isolate islands — tasks, sound, movement, and memory, each in its own calm, focused space.',
-    },
-  ],
-})
 import { getIsland } from '~/data/islands'
 
 const island = getIsland('/')!
@@ -104,7 +94,7 @@ interface TodoItem {
   id: number
   task: string
   done: boolean
-  type: 'task' | 'study' | 'event'
+  type: 'task' |  'event'
   due_date: string | null
   created_at: string
 }
@@ -123,7 +113,7 @@ const todos = ref<TodoItem[]>(todosData.value ? [...todosData.value] : [])
 
 // Filter by type
 const taskTodos = computed(() => todos.value.filter((t) => t.type === 'task' || !t.type))
-const studyTodos = computed(() => todos.value.filter((t) => t.type === 'study'))
+
 const eventTodos = computed(() => todos.value.filter((t) => t.type === 'event'))
 
 // Sort study and events by due date (null/overdue first, then upcoming)
@@ -136,7 +126,7 @@ function sortByDueDate(items: TodoItem[]) {
   })
 }
 
-const sortedStudyTodos = computed(() => sortByDueDate(studyTodos.value))
+
 const sortedEventTodos = computed(() => sortByDueDate(eventTodos.value))
 
 // Section flex values: Tasks 1, Study 2, Events 1
@@ -146,11 +136,6 @@ const sectionFlex = { task: 1.25, study: 2, event: 1 }
 
 const newTaskText = ref('')
 const addingTodo = ref(false)
-
-const showStudyForm = ref(false)
-const newStudyTask = ref('')
-const newStudyDueDate = ref('')
-const addingStudy = ref(false)
 
 const showEventForm = ref(false)
 const newEventTask = ref('')
@@ -176,32 +161,6 @@ async function addTodo() {
     console.error('Failed to add todo', e)
   } finally {
     addingTodo.value = false
-  }
-}
-
-async function addStudy() {
-  const task = newStudyTask.value.trim()
-  if (!task) return
-
-  addingStudy.value = true
-  try {
-    const dueDate = newStudyDueDate.value || null
-    const { data, error } = await supabase
-      .from('todo')
-      .insert({ task, done: false, type: 'study', due_date: dueDate })
-      .select('id, task, done, type, due_date, created_at')
-      .single()
-      .limit(50)
-
-    if (error) throw error
-    todos.value.push(data as TodoItem)
-    newStudyTask.value = ''
-    newStudyDueDate.value = ''
-    showStudyForm.value = false
-  } catch (e) {
-    console.error('Failed to add study', e)
-  } finally {
-    addingStudy.value = false
   }
 }
 
@@ -292,7 +251,7 @@ function isOverdue(dateStr: string | null): boolean {
 
 <template>
   <div
-    class="grid grid-cols-1 lt-sm:my-2 lg:grid-cols-4 lg:grid-rows-4 gap-3 p-3 sm:gap-4 sm:p-4 mx-auto font-sans dark:text-gray-100 sm:h-[calc(100vh-var(--header-height))] max-h-200vh"
+    class="grid grid-cols-1 lt-sm:my-2 lg:grid-cols-4 lg:grid-rows-5 gap-3 p-3 sm:gap-4 sm:p-4 mx-auto font-sans dark:text-gray-100 sm:h-[calc(100vh-var(--header-height))] max-h-200vh"
   >
     <ClientOnly>
       <TooltipProvider :delay-duration="150">
@@ -480,105 +439,7 @@ function isOverdue(dateStr: string | null): boolean {
               </form>
             </section>
 
-            <!-- STUDY (purple, with due dates) -->
-            <section class="flex flex-col min-h-0" :style="{ flex: sectionFlex.study }">
-              <h3
-                class="text-xs font-medium text-purple-600 dark:text-purple-400 uppercase tracking-wider mb-2 flex items-center gap-2 shrink-0"
-              >
-                <div class="i-mdi:book-open-outline text-sm" />
-                Study
-              </h3>
-              <PurpleScrollArea class="flex-1 min-h-0">
-                <ul class="flex flex-col gap-1.5">
-                  <li
-                    v-for="todo in sortedStudyTodos"
-                    :key="todo.id"
-                    class="flex items-center gap-3 group"
-                  >
-                    <CheckboxRoot
-                      :model-value="todo.done"
-                      class="shrink-0 w-5 h-5 rounded-md border border-purple-400/50 flex items-center justify-center data-[state=checked]:bg-purple-500 data-[state=checked]:border-purple-500 focus-visible:ring-2 focus-visible:ring-purple-400 focus-visible:ring-offset-2 outline-none cursor-pointer transition-colors"
-                      @update:model-value="(value) => toggleDone(todo, value === true)"
-                    >
-                      <CheckboxIndicator>
-                        <div class="i-mdi:check text-white text-sm" />
-                      </CheckboxIndicator>
-                    </CheckboxRoot>
-                    <div class="flex-1 min-w-0">
-                      <EditableRoot
-                        :model-value="todo.task"
-                        @update:model-value="(value) => saveTaskText(todo, String(value))"
-                      >
-                        <EditableArea>
-                          <EditablePreview
-                            :class="[
-                              'cursor-text text-sm break-words',
-                              todo.done ? 'line-through opacity-40' : '',
-                            ]"
-                          />
-                          <EditableInput
-                            class="w-full bg-transparent outline-none border-b border-purple-400 text-sm"
-                          />
-                        </EditableArea>
-                      </EditableRoot>
-                    </div>
-                    <span
-                      class="text-[11px] shrink-0"
-                      :class="
-                        isOverdue(todo.due_date) ? 'text-red-500 font-medium' : 'text-purple-500/70'
-                      "
-                    >
-                      {{ formatDueDate(todo.due_date) }}
-                    </span>
-                  </li>
-                  <li v-if="!studyTodos.length" class="text-xs opacity-40 py-1">
-                    No study items yet
-                  </li>
-                </ul>
-              </PurpleScrollArea>
-              <!-- Add study form -->
-              <div
-                v-if="showStudyForm"
-                class="mt-2 space-y-2 p-3 rounded-lg bg-purple-500/5 border border-purple-500/20 shrink-0"
-              >
-                <input
-                  v-model="newStudyTask"
-                  type="text"
-                  placeholder="Lecture / topic…"
-                  class="w-full bg-transparent outline-none border-b border-purple-400/30 focus:border-purple-500 px-1 py-0.5 text-sm"
-                />
-                <div class="flex gap-2 items-center">
-                  <input
-                    v-model="newStudyDueDate"
-                    type="date"
-                    class="flex-1 bg-transparent outline-none border-b border-purple-400/30 focus:border-purple-500 px-1 py-0.5 text-sm"
-                  />
-                  <button
-                    type="button"
-                    class="text-xs px-2 py-0.5 rounded-md bg-purple-500/20 text-purple-600 dark:text-purple-400 hover:bg-purple-500/30 transition-colors disabled:opacity-50 shrink-0"
-                    :disabled="addingStudy || !newStudyTask.trim()"
-                    @click="addStudy"
-                  >
-                    Save
-                  </button>
-                  <button
-                    type="button"
-                    class="text-xs px-2 py-0.5 rounded-md hover:bg-stone-200 dark:hover:bg-stone-700 transition-colors shrink-0"
-                    @click="showStudyForm = false"
-                  >
-                    Cancel
-                  </button>
-                </div>
-              </div>
-              <button
-                v-else
-                type="button"
-                class="mt-2 text-xs text-purple-500/60 hover:text-purple-500 transition-colors cursor-pointer shrink-0"
-                @click="showStudyForm = true"
-              >
-                + Add study item
-              </button>
-            </section>
+         
 
             <!-- EVENTS (pink, with due dates) -->
             <section class="flex flex-col min-h-0" :style="{ flex: sectionFlex.event }">
@@ -679,6 +540,32 @@ function isOverdue(dateStr: string | null): boolean {
             </section>
           </div>
         </div>
+<NuxtLink
+  to="/gallery"
+  class="card lg:col-start-1 lg:col-span-2 lg:row-start-5 relative overflow-hidden group flex items-center gap-3 p-4 hover:scale-[1.01] transition-transform duration-200"
+>
+  <div class="absolute inset-0 bg-gradient-to-br from-pink-400/20 to-purple-400/10 opacity-0 group-hover:opacity-100 transition-opacity" />
+  <div class="i-solar:gallery-round-bold text-3xl text-pink-500 shrink-0 relative" />
+  <div class="relative min-w-0">
+    <p class="font-medium truncate">Gallery</p>
+    <p class="text-xs opacity-60 truncate">Every photo, organized by folder and tag.</p>
+  </div>
+  <div class="i-mdi:chevron-right ml-auto text-xl opacity-40 group-hover:opacity-80 transition-opacity relative shrink-0" />
+</NuxtLink>
+
+<NuxtLink
+  to="/musical"
+  class="card lg:col-start-3 lg:col-span-2 lg:row-start-5 relative overflow-hidden group flex items-center gap-3 p-4 hover:scale-[1.01] transition-transform duration-200"
+>
+  <div class="absolute inset-0 bg-gradient-to-br from-purple-400/20 to-indigo-400/10 opacity-0 group-hover:opacity-100 transition-opacity" />
+  <div class="i-mdi:music-clef-treble text-3xl text-purple-500 shrink-0 relative" />
+  <div class="relative min-w-0">
+    <p class="font-medium truncate">Sheet Music</p>
+    <p class="text-xs opacity-60 truncate">Sheet music, rendered live, with a built-in metronome.</p>
+  </div>
+  <div class="i-mdi:chevron-right ml-auto text-xl opacity-40 group-hover:opacity-80 transition-opacity relative shrink-0" />
+</NuxtLink>
+
       </TooltipProvider>
     </ClientOnly>
   </div>
