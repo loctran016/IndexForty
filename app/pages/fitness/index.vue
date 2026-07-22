@@ -17,12 +17,21 @@ definePageMeta({ title: island.pageTitle, titleIcon: island.titleIcon })
 const TIME_ZONE = 'Asia/Ho_Chi_Minh'
 
 const { themePref } = useTheme()
+const colorMode = computed(() => themePref.value)
+
+// Shared by every ECharts option on this page. Safe here because it's
+// only ever read inside <ClientOnly>-rendered chart options, or passed
+// as a prop into a component that's itself only mounted client-side —
+// never used to drive SSR'd DOM directly.
 const prefersDark = usePreferredDark()
 
-// Removed needless colorMode computed – isDark references themePref.value directly
 const isDark = computed(
-  () => themePref.value === 'dark' || (themePref.value === 'system' && prefersDark.value),
+  () => colorMode.value === 'dark' || (colorMode.value === 'system' && prefersDark.value),
 )
+
+// add near your other refs
+const editingRecord = ref(null)
+const editDialogOpen = ref(false)
 
 const client = useSupabaseClient()
 const {
@@ -33,10 +42,9 @@ const {
 } = await useAsyncData(
   'strength-entries',
   async () => {
-    // Explicit column selection instead of select('*')
     const { data, error } = await client
       .from('strength')
-      .select('id, exercise, date, sets, created_at')
+      .select('*')
       .order('created_at', { ascending: false })
 
     if (error) throw error
@@ -48,45 +56,44 @@ const {
 const selectedMuscleGroups = ref([])
 
 // pins "today" to a single value shared between server render and client hydration
+// store as ISO string ✅
 const todayDate = useState('fitness-today', () => today(TIME_ZONE).toString())
 
 // reconstruct CalendarDate for comparisons
 const todayCalendarDate = computed(() => parseDate(todayDate.value))
 
-// Fast string comparison instead of parseDateTime for every item
 const todayStrengthExercises = computed(() => {
   return (strengthExercises.value ?? []).filter((item) => {
     if (!item?.date) return false
-    return item.date.slice(0, 10) === todayDate.value
+    const itemDate = parseDateTime(item.date)
+    return itemDate.compare(todayCalendarDate.value) === 0
   })
 })
 
-// Split Intl.DateTimeFormat into its own computed – explicit dependency, only runs once
-const todayDayName = computed(() => {
-  return new Intl.DateTimeFormat('en-US', { weekday: 'long' }).format(
+const todaySchedule = computed(() => {
+  const dayName = new Intl.DateTimeFormat('en-US', { weekday: 'long' }).format(
     todayCalendarDate.value.toDate(TIME_ZONE),
   )
+  return WEEK_SCHEDULE.find((d) => d.day === dayName) ?? null
 })
 
-const todaySchedule = computed(() => {
-  return WEEK_SCHEDULE.find((d) => d.day === todayDayName.value) ?? null
-})
+// --- Selected Exercise Improvement ---
 
 const selectedExercise = ref('DB Bench Press')
+// const selectedExercise = ref<StrengthExercise | null>('Incline DB Bench Press')
 
 const { currentStreak } = useWorkoutStats(strengthExercises, todayDate)
 
 const RECENT_WINDOW_DAYS = 30
 
-// Precompute cutoff ISO string once, then use cheap string comparison
 const splitTotals = computed(() => {
-  const cutoffDate = todayCalendarDate.value.subtract({ days: RECENT_WINDOW_DAYS })
-  const cutoffIso = cutoffDate.toString()
+  const cutoff = todayCalendarDate.value.subtract({ days: RECENT_WINDOW_DAYS })
   let push = 0
   let pull = 0
   for (const item of strengthExercises.value ?? []) {
     if (!item?.date) continue
-    if (item.date.slice(0, 10) < cutoffIso) continue
+    const d = parseDateTime(item.date)
+    if (d.compare(cutoff) < 0) continue
     const split = EXERCISE_TO_SPLIT[item.exercise]
     const setCount = item.sets?.length ?? 0
     if (split === 'Push') push += setCount
@@ -166,10 +173,12 @@ const splitOption = computed(() => {
       </h2>
 
       <template v-if="todaySchedule">
+        <!-- Rest / mobility day — show the note instead -->
         <p v-if="todaySchedule.note" class="text-sm opacity-70 mt-4 leading-relaxed">
           {{ todaySchedule.note }}
         </p>
 
+        <!-- Workout day — list exercises, each opening StrengthForm preset to it -->
         <ul v-else-if="todaySchedule.exercises" class="mt-4 flex flex-col gap-1.5">
           <li v-for="ex in todaySchedule.exercises" :key="ex.canonical">
             <StrengthForm :preset-exercise="ex.canonical">
@@ -194,8 +203,8 @@ const splitOption = computed(() => {
         </ul>
       </template>
     </div>
+    <!-- Streak + split, side by side below -->
 
-    <!-- Weight & BF -->
     <div
       class="lt-sm:col-span-2 lt-sm:min-h-24 sm:lt-lg:order-1 lg:col-span-2 lg:h-76 card flex flex-col"
     >
@@ -207,7 +216,7 @@ const splitOption = computed(() => {
       />
     </div>
 
-    <!-- Action buttons row 1 -->
+    <!-- Four action btns -->
     <div
       class="lt-sm:col-span-2 sm:lt-lg:order-0 lg:col-span-1 flex lg:flex-col gap-3 sm:gap-4 lt-md:h-25 text-gray-800 dark:text-gray-100"
     >
@@ -248,8 +257,6 @@ const splitOption = computed(() => {
         </button>
       </CardioForm>
     </div>
-
-    <!-- Action buttons row 2 -->
     <div
       class="lt-sm:col-span-2 sm:lt-lg:order-0 lg:col-span-1 flex lg:flex-col gap-3 sm:gap-4 lt-md:h-25 text-gray-800 dark:text-gray-100"
     >
@@ -284,7 +291,6 @@ const splitOption = computed(() => {
       </div>
     </div>
 
-    <!-- Push/Pull split -->
     <div class="lt-sm:col-span-2 sm:lt-lg:order-1 lg:col-span-2 lg:h-76 card">
       <h2 class="card-title !text-base mb-2">Push / Pull split</h2>
       <ClientOnly>
@@ -299,7 +305,6 @@ const splitOption = computed(() => {
       <p class="text-xs mt-1 opacity-90">Last {{ RECENT_WINDOW_DAYS }} days, by sets logged</p>
     </div>
 
-    <!-- Workout Calendar -->
     <LazyWorkoutCalendarHeatmap
       hydrate-on-visible
       :strength-exercises="strengthExercises ?? []"
@@ -308,7 +313,8 @@ const splitOption = computed(() => {
       class="col-span-2 lg:col-span-6"
     />
 
-    <!-- Muscle diagram -->
+    <!-- Muscle diagram + table -->
+
     <div class="col-span-2 sm:lt-lg:order-2 lg:col-span-3 xl:col-span-2 card">
       <h2 class="card-title">
         <div class="i-mdi:human" />
@@ -324,7 +330,6 @@ const splitOption = computed(() => {
       />
     </div>
 
-    <!-- Muscle table -->
     <div class="col-span-2 sm:lt-lg:order-2 lg:col-span-3 xl:col-span-4 card">
       <h2 class="card-title">
         <div class="i-solar:database-linear" />
@@ -344,6 +349,8 @@ const splitOption = computed(() => {
     </div>
 
     <!-- All Workouts -->
+
+    <!-- fitness.vue — replace the whole "All Workouts" block with -->
     <LazyAllWorkoutsGrid
       hydrate-on-visible
       :strength-exercises="strengthExercises ?? []"
