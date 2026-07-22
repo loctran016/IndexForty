@@ -89,7 +89,7 @@ const visibleNavItems = computed(() =>
         </li>
       </template>
     </ClientOnly>
-        <li v-for="item in visibleNavItems" :key="item.to">
+        <li>
       <NuxtLink
         to="/login"
         aria-label="Login"
