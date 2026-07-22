@@ -27,16 +27,15 @@ import {
   TooltipRoot,
   TooltipTrigger,
 } from 'reka-ui'
+import { getIsland } from '~/data/islands'
 
 const TIME_ZONE = 'Asia/Ho_Chi_Minh'
 const date = today(TIME_ZONE)
-const todayIso = computed(() => date.toString())
+const todayIso = date.toString()
 
 const isDateUnavailable: CalendarRootProps['isDateUnavailable'] = (date) => {
   return date.day === 317
 }
-
-import { getIsland } from '~/data/islands'
 
 const island = getIsland('/')!
 
@@ -69,8 +68,12 @@ const { data: events } = await useAsyncData('exams', async () => {
   return data as CalendarEvent[]
 })
 
+function pad2(n: number) {
+  return String(n).padStart(2, '0')
+}
+
 function dateKey(d: { year: number; month: number; day: number }) {
-  return `${d.year}-${d.month}-${d.day}`
+  return `${d.year}-${pad2(d.month)}-${pad2(d.day)}`
 }
 
 const eventsByDate = computed(() => {
@@ -94,7 +97,7 @@ interface TodoItem {
   id: number
   task: string
   done: boolean
-  type: 'task' |  'event'
+  type: 'task' | 'event'
   due_date: string | null
   created_at: string
 }
@@ -113,10 +116,9 @@ const todos = ref<TodoItem[]>(todosData.value ? [...todosData.value] : [])
 
 // Filter by type
 const taskTodos = computed(() => todos.value.filter((t) => t.type === 'task' || !t.type))
-
 const eventTodos = computed(() => todos.value.filter((t) => t.type === 'event'))
 
-// Sort study and events by due date (null/overdue first, then upcoming)
+// Sort events by due date (null/overdue first, then upcoming)
 function sortByDueDate(items: TodoItem[]) {
   return [...items].sort((a, b) => {
     if (!a.due_date && !b.due_date) return 0
@@ -126,11 +128,10 @@ function sortByDueDate(items: TodoItem[]) {
   })
 }
 
-
 const sortedEventTodos = computed(() => sortByDueDate(eventTodos.value))
 
-// Section flex values: Tasks 1, Study 2, Events 1
-const sectionFlex = { task: 1.25, study: 2, event: 1 }
+// Section flex values: Tasks 1, Events 1
+const sectionFlex = { task: 1.25, event: 1 }
 
 // --- Add new items ---
 
@@ -226,26 +227,23 @@ async function removeTodo(todo: TodoItem) {
   }
 }
 
-// --- Format helpers ---
+// --- Merged format helper (single parseDate call per item) ---
 
-function formatDueDate(dateStr: string | null): string {
-  if (!dateStr) return 'Today'
+function dueDateMeta(dateStr: string | null): { label: string; overdue: boolean } {
+  if (!dateStr) return { label: 'Today', overdue: false }
   const due = parseDate(dateStr)
   const todayDate = date
   const diff = due.compare(todayDate)
 
-  if (diff === 0) return 'Today'
-  if (diff === 1) return 'Tomorrow'
-  if (diff < 0) return `${Math.abs(diff)}d overdue`
+  if (diff === 0) return { label: 'Today', overdue: false }
+  if (diff === 1) return { label: 'Tomorrow', overdue: false }
+  if (diff < 0) return { label: `${Math.abs(diff)}d overdue`, overdue: true }
 
   const jsDate = due.toDate(TIME_ZONE)
-  return jsDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })
-}
-
-function isOverdue(dateStr: string | null): boolean {
-  if (!dateStr) return false
-  const due = parseDate(dateStr)
-  return due.compare(date) < 0
+  return {
+    label: jsDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }),
+    overdue: false,
+  }
 }
 </script>
 
@@ -309,31 +307,33 @@ function isOverdue(dateStr: string | null): boolean {
                     class="relative text-center text-base"
                   >
                     <TooltipRoot :disabled="!eventsForDate(weekDate).length">
-                      <TooltipTrigger as-child>
-                        <CalendarCellTrigger
-                          :day="weekDate"
-                          :month="month.value"
-                          :class="[
-                            'relative flex items-center justify-center rounded-full whitespace-nowrap text-sm font-normal w-10 h-10 outline-none focus-visible:ring-2 focus-visible:ring-purple-400 focus-visible:ring-offset-2 dark:focus-visible:ring-offset-stone-800 data-[outside-view]:text-stone-900/30 dark:data-[outside-view]:text-stone-50/30 data-[selected]:bg-purple-400/40 data-[selected]:text-purple-700 dark:data-[selected]:bg-purple-500/30 dark:data-[selected]:text-purple-300 data-[selected]:font-bold hover:bg-purple-700/20 dark:hover:bg-purple-400/20 data-[highlighted]:bg-purple-700/20 data-[unavailable]:pointer-events-none data-[unavailable]:text-stone-800/30 data-[unavailable]:line-through before:absolute before:top-[5px] before:hidden before:rounded-full before:w-1 before:h-1 before:bg-white data-[today]:before:block data-[today]:before:bg-purple-400/50 cursor-pointer',
-                            'after:absolute after:bottom-[5px] after:rounded-full after:w-1 after:h-1',
-                            eventsForDate(weekDate).length
-                              ? 'after:block after:bg-pink-500 ring-1 ring-pink-500/70 font-semibold !text-pink-600 dark:!text-pink-400 !bg-pink-400/40 hover:!bg-pink-400/60 dark:!bg-pink-500/30 dark:hover:!bg-pink-500/50 data-[selected]:!bg-pink-400/50 dark:data-[selected]:!bg-pink-500/40 data-[outside-view]:!bg-transparent data-[outside-view]:hover:!bg-transparent dark:data-[outside-view]:!bg-transparent dark:data-[outside-view]:hover:!bg-transparent data-[outside-view]:!ring-0 data-[outside-view]:after:!hidden data-[outside-view]:!text-stone-900/30 dark:data-[outside-view]:!text-stone-50/30 data-[outside-view]:!font-normal'
-                              : 'after:hidden',
-                          ]"
-                        />
-                      </TooltipTrigger>
-                      <TooltipPortal>
-                        <TooltipContent
-                          :side-offset="6"
-                          class="z-20 rounded-md bg-stone-900 text-stone-50 dark:bg-stone-100 dark:text-stone-900 px-3 py-2 text-sm shadow-lg max-w-64 space-y-1.5"
-                        >
-                          <div v-for="ev in eventsForDate(weekDate)" :key="ev.id">
-                            <p class="font-medium leading-snug">{{ ev.event }}</p>
-                            <p class="text-xs opacity-75">{{ ev.location }} · {{ ev.type }}</p>
-                          </div>
-                          <TooltipArrow class="fill-stone-900 dark:fill-stone-100" />
-                        </TooltipContent>
-                      </TooltipPortal>
+                      <template v-for="cellEvents in [eventsForDate(weekDate)]" :key="'events'">
+                        <TooltipTrigger as-child>
+                          <CalendarCellTrigger
+                            :day="weekDate"
+                            :month="month.value"
+                            :class="[
+                              'relative flex items-center justify-center rounded-full whitespace-nowrap text-sm font-normal w-10 h-10 outline-none focus-visible:ring-2 focus-visible:ring-purple-400 focus-visible:ring-offset-2 dark:focus-visible:ring-offset-stone-800 data-[outside-view]:text-stone-900/30 dark:data-[outside-view]:text-stone-50/30 data-[selected]:bg-purple-400/40 data-[selected]:text-purple-700 dark:data-[selected]:bg-purple-500/30 dark:data-[selected]:text-purple-300 data-[selected]:font-bold hover:bg-purple-700/20 dark:hover:bg-purple-400/20 data-[highlighted]:bg-purple-700/20 data-[unavailable]:pointer-events-none data-[unavailable]:text-stone-800/30 data-[unavailable]:line-through before:absolute before:top-[5px] before:hidden before:rounded-full before:w-1 before:h-1 before:bg-white data-[today]:before:block data-[today]:before:bg-purple-400/50 cursor-pointer',
+                              'after:absolute after:bottom-[5px] after:rounded-full after:w-1 after:h-1',
+                              cellEvents.length
+                                ? 'after:block after:bg-pink-500 ring-1 ring-pink-500/70 font-semibold !text-pink-600 dark:!text-pink-400 !bg-pink-400/40 hover:!bg-pink-400/60 dark:!bg-pink-500/30 dark:hover:!bg-pink-500/50 data-[selected]:!bg-pink-400/50 dark:data-[selected]:!bg-pink-500/40 data-[outside-view]:!bg-transparent data-[outside-view]:hover:!bg-transparent dark:data-[outside-view]:!bg-transparent dark:data-[outside-view]:hover:!bg-transparent data-[outside-view]:!ring-0 data-[outside-view]:after:!hidden data-[outside-view]:!text-stone-900/30 dark:data-[outside-view]:!text-stone-50/30 data-[outside-view]:!font-normal'
+                                : 'after:hidden',
+                            ]"
+                          />
+                        </TooltipTrigger>
+                        <TooltipPortal>
+                          <TooltipContent
+                            :side-offset="6"
+                            class="z-20 rounded-md bg-stone-900 text-stone-50 dark:bg-stone-100 dark:text-stone-900 px-3 py-2 text-sm shadow-lg max-w-64 space-y-1.5"
+                          >
+                            <div v-for="ev in cellEvents" :key="ev.id">
+                              <p class="font-medium leading-snug">{{ ev.event }}</p>
+                              <p class="text-xs opacity-75">{{ ev.location }} · {{ ev.type }}</p>
+                            </div>
+                            <TooltipArrow class="fill-stone-900 dark:fill-stone-100" />
+                          </TooltipContent>
+                        </TooltipPortal>
+                      </template>
                     </TooltipRoot>
                   </CalendarCell>
                 </CalendarGridRow>
@@ -439,8 +439,6 @@ function isOverdue(dateStr: string | null): boolean {
               </form>
             </section>
 
-         
-
             <!-- EVENTS (pink, with due dates) -->
             <section class="flex flex-col min-h-0" :style="{ flex: sectionFlex.event }">
               <h3
@@ -483,14 +481,14 @@ function isOverdue(dateStr: string | null): boolean {
                         </EditableArea>
                       </EditableRoot>
                     </div>
-                    <span
-                      class="text-[11px] shrink-0"
-                      :class="
-                        isOverdue(todo.due_date) ? 'text-red-500 font-medium' : 'text-pink-500/70'
-                      "
-                    >
-                      {{ formatDueDate(todo.due_date) }}
-                    </span>
+                    <template v-for="meta in [dueDateMeta(todo.due_date)]" :key="'date'">
+                      <span
+                        class="text-[11px] shrink-0"
+                        :class="meta.overdue ? 'text-red-500 font-medium' : 'text-pink-500/70'"
+                      >
+                        {{ meta.label }}
+                      </span>
+                    </template>
                   </li>
                   <li v-if="!eventTodos.length" class="text-xs opacity-40 py-1">No events yet</li>
                 </ul>
@@ -540,31 +538,32 @@ function isOverdue(dateStr: string | null): boolean {
             </section>
           </div>
         </div>
-<NuxtLink
-  to="/gallery"
-  class="card lg:col-start-1 lg:col-span-2 lg:row-start-5 relative overflow-hidden group flex items-center gap-3 p-4 hover:scale-[1.01] transition-transform duration-200"
->
-  <div class="absolute inset-0 bg-gradient-to-br from-pink-400/20 to-purple-400/10 opacity-0 group-hover:opacity-100 transition-opacity" />
-  <div class="i-solar:gallery-round-bold text-3xl text-pink-500 shrink-0 relative" />
-  <div class="relative min-w-0">
-    <p class="font-medium truncate">Gallery</p>
-    <p class="text-xs opacity-60 truncate">Every photo, organized by folder and tag.</p>
-  </div>
-  <div class="i-mdi:chevron-right ml-auto text-xl opacity-40 group-hover:opacity-80 transition-opacity relative shrink-0" />
-</NuxtLink>
 
-<NuxtLink
-  to="/musical"
-  class="card lg:col-start-3 lg:col-span-2 lg:row-start-5 relative overflow-hidden group flex items-center gap-3 p-4 hover:scale-[1.01] transition-transform duration-200"
->
-  <div class="absolute inset-0 bg-gradient-to-br from-purple-400/20 to-indigo-400/10 opacity-0 group-hover:opacity-100 transition-opacity" />
-  <div class="i-mdi:music-clef-treble text-3xl text-purple-500 shrink-0 relative" />
-  <div class="relative min-w-0">
-    <p class="font-medium truncate">Sheet Music</p>
-    <p class="text-xs opacity-60 truncate">Sheet music, rendered live, with a built-in metronome.</p>
-  </div>
-  <div class="i-mdi:chevron-right ml-auto text-xl opacity-40 group-hover:opacity-80 transition-opacity relative shrink-0" />
-</NuxtLink>
+        <NuxtLink
+          to="/gallery"
+          class="card lg:col-start-1 lg:col-span-2 lg:row-start-5 relative overflow-hidden group flex items-center gap-3 p-4 hover:scale-[1.01] transition-transform duration-200"
+        >
+          <div class="absolute inset-0 bg-gradient-to-br from-pink-400/20 to-purple-400/10 opacity-0 group-hover:opacity-100 transition-opacity" />
+          <div class="i-solar:gallery-round-bold text-3xl text-pink-500 shrink-0 relative" />
+          <div class="relative min-w-0">
+            <p class="font-medium truncate">Gallery</p>
+            <p class="text-xs opacity-60 truncate">Every photo, organized by folder and tag.</p>
+          </div>
+          <div class="i-mdi:chevron-right ml-auto text-xl opacity-40 group-hover:opacity-80 transition-opacity relative shrink-0" />
+        </NuxtLink>
+
+        <NuxtLink
+          to="/musical"
+          class="card lg:col-start-3 lg:col-span-2 lg:row-start-5 relative overflow-hidden group flex items-center gap-3 p-4 hover:scale-[1.01] transition-transform duration-200"
+        >
+          <div class="absolute inset-0 bg-gradient-to-br from-purple-400/20 to-indigo-400/10 opacity-0 group-hover:opacity-100 transition-opacity" />
+          <div class="i-mdi:music-clef-treble text-3xl text-purple-500 shrink-0 relative" />
+          <div class="relative min-w-0">
+            <p class="font-medium truncate">Sheet Music</p>
+            <p class="text-xs opacity-60 truncate">Sheet music, rendered live, with a built-in metronome.</p>
+          </div>
+          <div class="i-mdi:chevron-right ml-auto text-xl opacity-40 group-hover:opacity-80 transition-opacity relative shrink-0" />
+        </NuxtLink>
 
       </TooltipProvider>
     </ClientOnly>
