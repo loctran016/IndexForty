@@ -28,7 +28,6 @@ const { data: logs, refresh: refreshLogs } = await useAsyncData(
   { deep: false },
 )
 
-// practice_key -> { dateIso -> { id, count } }
 const logIndex = computed(() => {
   const map = {}
   for (const log of logs.value ?? []) {
@@ -72,21 +71,9 @@ function todayCountFor(key) {
   return logIndex.value[key]?.[todayIso.value]?.count ?? 0
 }
 
-// --- Month/year selector for the table view below ---
-
 const MONTH_NAMES = [
-  'January',
-  'February',
-  'March',
-  'April',
-  'May',
-  'June',
-  'July',
-  'August',
-  'September',
-  'October',
-  'November',
-  'December',
+  'January', 'February', 'March', 'April', 'May', 'June',
+  'July', 'August', 'September', 'October', 'November', 'December',
 ]
 
 const selectedMonth = useState('meditate-month', () => todayCalendarDate.value.month)
@@ -117,42 +104,40 @@ function countForDay(practiceKey, day) {
   return logIndex.value[practiceKey]?.[iso]?.count ?? null
 }
 
-// --- Pivoted table: rows = practices, columns = days of the selected month ---
-
 const tableData = computed(() =>
   MEDITATION_PRACTICES.map((practice) => {
     const row = { practice: practice.label, unit: practice.unit }
-    for (const day of dayNumbers.value) {
-      row[`d${day}`] = countForDay(practice.key, day)
-    }
+    for (const day of dayNumbers.value) row[`d${day}`] = countForDay(practice.key, day)
     return row
   }),
 )
 
 const columnHelper = createColumnHelper()
 
-// Column sizes (px)
+// Fixed column sizes (px) – required for sticky offsets and opacity calculations
 const PRACTICE_WIDTH = 150
 const UNIT_WIDTH = 80
 const DAY_WIDTH = 45
-
-const columnPinning = ref({ left: ['practice', 'unit'] })
 
 const tableColumns = computed(() => [
   columnHelper.accessor('practice', {
     header: 'Practice',
     size: PRACTICE_WIDTH,
-    enablePinning: true,
+    minSize: PRACTICE_WIDTH,
+    maxSize: PRACTICE_WIDTH,
   }),
   columnHelper.accessor('unit', {
     header: 'Unit',
     size: UNIT_WIDTH,
-    enablePinning: true,
+    minSize: UNIT_WIDTH,
+    maxSize: UNIT_WIDTH,
   }),
   ...dayNumbers.value.map((day) =>
     columnHelper.accessor(`d${day}`, {
       header: String(day),
       size: DAY_WIDTH,
+      minSize: DAY_WIDTH,
+      maxSize: DAY_WIDTH,
       cell: (info) => {
         const value = info.getValue()
         return value == null ? h('span', { class: 'opacity-20' }, '—') : value
@@ -165,9 +150,11 @@ const table = useVueTable({
   get data() { return tableData.value },
   get columns() { return tableColumns.value },
   getCoreRowModel: getCoreRowModel(),
-  state: { columnPinning },
-  onColumnPinningChange: (updater) => {
-    columnPinning.value = typeof updater === 'function' ? updater(columnPinning.value) : updater
+  // Pin the first two columns by default – this is the canonical TanStack way
+  initialState: {
+    columnPinning: {
+      left: ['practice', 'unit'],
+    },
   },
 })
 
@@ -182,7 +169,7 @@ async function handleExport() {
   })
 }
 
-// ---------- Dynamic opacity on scroll ----------
+// ---------- Dynamic opacity on scroll (unchanged) ----------
 const scrollContainer = ref(null)
 const columnOpacities = ref({})
 
@@ -191,14 +178,14 @@ function updateOpacities() {
   if (!container) return
 
   const scrollLeft = container.scrollLeft
-  const pinnedWidth = PRACTICE_WIDTH + UNIT_WIDTH // 230px
+  const pinnedWidth = PRACTICE_WIDTH + UNIT_WIDTH
 
   const newOpacities = {}
 
   for (const col of table.getVisibleFlatColumns()) {
     const colId = col.id
-    // Skip pinned columns
-    if (columnPinning.value.left?.includes(colId)) continue
+    // Use column.getIsPinned() – cleaner than checking the pinning array
+    if (col.getIsPinned()) continue
 
     const headerCell = container.querySelector(`th[data-column-id="${colId}"]`)
     if (!headerCell) continue
@@ -301,6 +288,7 @@ onBeforeUnmount(() => {
       </div>
 
       <div ref="scrollContainer" class="overflow-x-auto scrollbar-none mt-4">
+        <!-- border-separate + border-spacing: 0 is critical for sticky to work -->
         <table class="text-sm table-fixed border-separate" style="border-spacing: 0">
           <thead>
             <tr v-for="headerGroup in table.getHeaderGroups()" :key="headerGroup.id">
@@ -309,16 +297,14 @@ onBeforeUnmount(() => {
                 :key="header.id"
                 :data-column-id="header.column.id"
                 class="text-left px-2 py-2 font-medium text-xs uppercase tracking-wide opacity-60 whitespace-nowrap overflow-hidden text-ellipsis border-b border-stone-800/10 dark:border-stone-100/10"
-                :class="{
-                  'sticky z-10': header.column.getIsPinned(),
-                }"
                 :style="{
-                  width: `${header.column.columnDef.size}px`,
-                  minWidth: `${header.column.columnDef.size}px`,
-                  ...(header.column.getIsPinned() === 'left' ? { left: `${header.column.getStart('left')}px` } : {}),
-                  ...(columnOpacities[header.column.id] !== undefined
-                    ? { opacity: columnOpacities[header.column.id] }
-                    : {}),
+                  width: `${header.column.getSize()}px`,
+                  minWidth: `${header.column.getSize()}px`,
+                  maxWidth: `${header.column.getSize()}px`,
+                  position: header.column.getIsPinned() ? 'sticky' : undefined,
+                  left: header.column.getIsPinned() ? `${header.column.getStart('left')}px` : undefined,
+                  zIndex: header.column.getIsPinned() ? 1 : undefined,
+                  opacity: columnOpacities[header.column.id] ?? undefined,
                 }"
               >
                 <FlexRender :render="header.column.columnDef.header" :props="header.getContext()" />
@@ -335,17 +321,17 @@ onBeforeUnmount(() => {
                 :key="cell.id"
                 class="px-2 py-2 whitespace-nowrap overflow-hidden text-ellipsis border-b border-stone-800/10 dark:border-stone-100/10"
                 :class="{
-                  'sticky z-10': cell.column.getIsPinned(),
                   'text-center': !cell.column.getIsPinned(),
                   'font-medium': cell.column.id === 'practice',
                 }"
                 :style="{
-                  width: `${cell.column.columnDef.size}px`,
-                  minWidth: `${cell.column.columnDef.size}px`,
-                  ...(cell.column.getIsPinned() === 'left' ? { left: `${cell.column.getStart('left')}px` } : {}),
-                  ...(columnOpacities[cell.column.id] !== undefined
-                    ? { opacity: columnOpacities[cell.column.id] }
-                    : {}),
+                  width: `${cell.column.getSize()}px`,
+                  minWidth: `${cell.column.getSize()}px`,
+                  maxWidth: `${cell.column.getSize()}px`,
+                  position: cell.column.getIsPinned() ? 'sticky' : undefined,
+                  left: cell.column.getIsPinned() ? `${cell.column.getStart('left')}px` : undefined,
+                  zIndex: cell.column.getIsPinned() ? 1 : undefined,
+                  opacity: columnOpacities[cell.column.id] ?? undefined,
                 }"
               >
                 <FlexRender :render="cell.column.columnDef.cell" :props="cell.getContext()" />
