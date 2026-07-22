@@ -1,4 +1,5 @@
 <script setup>
+import { h } from 'vue'
 import { today, parseDate } from '@internationalized/date'
 import { createColumnHelper, FlexRender, getCoreRowModel, useVueTable } from '@tanstack/vue-table'
 import { MEDITATION_PRACTICES } from '~/data/meditationPractices'
@@ -18,16 +19,13 @@ const todayCalendarDate = computed(() => parseDate(todayIso.value))
 const { data: logs, refresh: refreshLogs } = await useAsyncData(
   'meditation-logs',
   async () => {
-    const { data, error } = await supabase
-      .from('meditation_logs')
-      .select('id, practice_key, date, count')
+    const { data, error } = await supabase.from('meditation_logs').select('id, practice_key, date, count')
     if (error) throw error
     return data ?? []
   },
   { deep: false },
 )
 
-// practice_key -> { dateIso -> { id, count } }
 const logIndex = computed(() => {
   const map = {}
   for (const log of logs.value ?? []) {
@@ -42,7 +40,6 @@ const pending = ref({})
 async function tapPractice(practice) {
   if (pending.value[practice.key]) return
   pending.value[practice.key] = true
-
   try {
     const existing = logIndex.value[practice.key]?.[todayIso.value]
     if (existing) {
@@ -52,11 +49,9 @@ async function tapPractice(practice) {
         .eq('id', existing.id)
       if (error) throw error
     } else {
-      const { error } = await supabase.from('meditation_logs').insert({
-        practice_key: practice.key,
-        date: todayIso.value,
-        count: practice.firstValue,
-      })
+      const { error } = await supabase
+        .from('meditation_logs')
+        .insert({ practice_key: practice.key, date: todayIso.value, count: practice.firstValue })
       if (error) throw error
     }
     await refreshLogs()
@@ -71,21 +66,9 @@ function todayCountFor(key) {
   return logIndex.value[key]?.[todayIso.value]?.count ?? 0
 }
 
-// --- Month/year selector for the table view below ---
-
 const MONTH_NAMES = [
-  'January',
-  'February',
-  'March',
-  'April',
-  'May',
-  'June',
-  'July',
-  'August',
-  'September',
-  'October',
-  'November',
-  'December',
+  'January', 'February', 'March', 'April', 'May', 'June',
+  'July', 'August', 'September', 'October', 'November', 'December',
 ]
 
 const selectedMonth = useState('meditate-month', () => todayCalendarDate.value.month)
@@ -93,9 +76,7 @@ const selectedYear = useState('meditate-year', () => todayCalendarDate.value.yea
 
 const availableYears = computed(() => {
   const years = new Set([todayCalendarDate.value.year])
-  for (const log of logs.value ?? []) {
-    years.add(Number(log.date.slice(0, 4)))
-  }
+  for (const log of logs.value ?? []) years.add(Number(log.date.slice(0, 4)))
   return [...years].sort((a, b) => b - a)
 })
 
@@ -116,41 +97,43 @@ function countForDay(practiceKey, day) {
   return logIndex.value[practiceKey]?.[iso]?.count ?? null
 }
 
-// --- Pivoted table: rows = practices, columns = days of the selected month ---
-
 const tableData = computed(() =>
   MEDITATION_PRACTICES.map((practice) => {
     const row = { practice: practice.label, unit: practice.unit }
-    for (const day of dayNumbers.value) {
-      row[`d${day}`] = countForDay(practice.key, day)
-    }
+    for (const day of dayNumbers.value) row[`d${day}`] = countForDay(practice.key, day)
     return row
   }),
 )
 
 const columnHelper = createColumnHelper()
 
+// Explicit pixel sizes — needed for table-fixed layout to size every
+// row's cells consistently, and for column.getStart('left') to compute
+// correct pinned offsets.
+const PRACTICE_WIDTH = 150
+const UNIT_WIDTH = 80
+const DAY_WIDTH = 48
+const PINNED_TOTAL_WIDTH = PRACTICE_WIDTH + UNIT_WIDTH
+
 const tableColumns = computed(() => [
-  columnHelper.accessor('practice', { header: 'Practice' }),
-  columnHelper.accessor('unit', { header: 'Unit' }),
+  columnHelper.accessor('practice', { header: 'Practice', size: PRACTICE_WIDTH }),
+  columnHelper.accessor('unit', { header: 'Unit', size: UNIT_WIDTH }),
   ...dayNumbers.value.map((day) =>
     columnHelper.accessor(`d${day}`, {
       header: String(day),
+      size: DAY_WIDTH,
       cell: (info) => {
         const value = info.getValue()
-        return value == null ? h('span', { class: 'opacity-20' }, '—') : value
+        return value == null ? h('span', { class: 'opacity-60' }, '—') : value
       },
     }),
   ),
 ])
 
 const table = useVueTable({
-  get data() {
-    return tableData.value
-  },
-  get columns() {
-    return tableColumns.value
-  },
+  get data() { return tableData.value },
+  get columns() { return tableColumns.value },
+  initialState: { columnPinning: { left: ['practice', 'unit'] } },
   getCoreRowModel: getCoreRowModel(),
 })
 
@@ -168,9 +151,7 @@ async function handleExport() {
 </script>
 
 <template>
-  <div
-    class="my-2 grid grid-cols-2 lg:grid-cols-6 gap-3 sm:gap-4 sm:py-4 mx-auto font-sans dark:text-gray-100"
-  >
+  <div class="my-2 grid grid-cols-2 lg:grid-cols-6 gap-3 sm:gap-4 sm:py-4 mx-auto font-sans dark:text-gray-100">
     <!-- Quick actions -->
     <div class="card col-span-full">
       <h2 class="card-title">
@@ -225,46 +206,61 @@ async function handleExport() {
             </button>
           </div>
           <template #fallback>
-            <div
-              class="h-9 w-48 rounded-xl border border-white/40 dark:border-white/10 bg-white/30 dark:bg-stone-700/10 animate-pulse"
-            />
+            <div class="h-9 w-48 rounded-xl border border-white/40 dark:border-white/10 bg-white/30 dark:bg-stone-700/10 animate-pulse" />
           </template>
         </ClientOnly>
       </div>
 
-      <div class="overflow-x-auto scrollbar-none mt-4">
-        <table class="text-sm border-collapse">
+      <div class="relative overflow-x-auto scrollbar-none mt-4">
+        <table class="text-sm table-fixed border-separate" style="border-spacing: 0">
           <thead>
             <tr v-for="headerGroup in table.getHeaderGroups()" :key="headerGroup.id">
               <th
-                v-for="(header, i) in headerGroup.headers"
+                v-for="header in headerGroup.headers"
                 :key="header.id"
-                class="text-left px-2 py-2 font-medium text-xs uppercase tracking-wide opacity-60 whitespace-nowrap"
-                :class="i === 0 ? 'sticky left-0 bg-inherit z-10' : ''"
+                class="text-left px-2 py-2 font-medium text-xs uppercase tracking-wide opacity-60 whitespace-nowrap overflow-hidden text-ellipsis border-b border-stone-800/10 dark:border-stone-100/10"
+                :class="header.column.getIsPinned() ? 'sticky z-20 bg-white/95 dark:bg-stone-800/95' : ''"
+                :style="{
+                  width: `${header.column.columnDef.size}px`,
+                  minWidth: `${header.column.columnDef.size}px`,
+                  ...(header.column.getIsPinned() ? { left: `${header.column.getStart('left')}px` } : {}),
+                }"
               >
                 <FlexRender :render="header.column.columnDef.header" :props="header.getContext()" />
               </th>
             </tr>
           </thead>
           <tbody>
-            <tr
-              v-for="row in table.getRowModel().rows"
-              :key="row.id"
-              class="border-t border-stone-800/10 dark:border-stone-100/10"
-            >
+            <tr v-for="row in table.getRowModel().rows" :key="row.id">
               <td
-                v-for="(cell, i) in row.getVisibleCells()"
+                v-for="cell in row.getVisibleCells()"
                 :key="cell.id"
-                class="px-2 py-2 whitespace-nowrap"
-                :class="
-                  i === 0 ? 'sticky left-0 bg-inherit z-10 font-medium' : 'text-center opacity-80'
-                "
+                class="px-2 py-2 whitespace-nowrap overflow-hidden text-ellipsis border-b border-stone-800/10 dark:border-stone-100/10"
+                :class="[
+                  cell.column.getIsPinned() ? 'sticky z-10 bg-white/95 dark:bg-stone-800/95' : 'text-center opacity-80',
+                  cell.column.id === 'practice' ? 'font-medium' : '',
+                ]"
+                :style="{
+                  width: `${cell.column.columnDef.size}px`,
+                  minWidth: `${cell.column.columnDef.size}px`,
+                  ...(cell.column.getIsPinned() ? { left: `${cell.column.getStart('left')}px` } : {}),
+                }"
               >
                 <FlexRender :render="cell.column.columnDef.cell" :props="cell.getContext()" />
               </td>
             </tr>
           </tbody>
         </table>
+
+        <!-- Static fade mask at the pinned/scrolling boundary — no JS, no scroll listener -->
+        <div
+          class="pointer-events-none absolute top-0 bottom-0 w-8 backdrop-blur-md block dark:hidden"
+          :style="{ left: `${PINNED_TOTAL_WIDTH}px`, background: 'linear-gradient(to right, rgba(255,255,255,0.6), transparent)', zIndex: 15 }"
+        />
+        <div
+          class="pointer-events-none absolute top-0 bottom-0 w-8 backdrop-blur-md hidden dark:block"
+          :style="{ left: `${PINNED_TOTAL_WIDTH}px`, background: 'linear-gradient(to right, rgba(28,25,23,0.6), transparent)', zIndex: 15 }"
+        />
       </div>
     </div>
   </div>
