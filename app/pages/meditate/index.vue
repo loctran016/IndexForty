@@ -104,6 +104,8 @@ function countForDay(practiceKey, day) {
   return logIndex.value[practiceKey]?.[iso]?.count ?? null
 }
 
+// --- Pivoted table ---
+
 const tableData = computed(() =>
   MEDITATION_PRACTICES.map((practice) => {
     const row = { practice: practice.label, unit: practice.unit }
@@ -114,7 +116,6 @@ const tableData = computed(() =>
 
 const columnHelper = createColumnHelper()
 
-// Fixed column sizes (px) – required for sticky offsets and opacity calculations
 const PRACTICE_WIDTH = 150
 const UNIT_WIDTH = 80
 const DAY_WIDTH = 45
@@ -150,7 +151,6 @@ const table = useVueTable({
   get data() { return tableData.value },
   get columns() { return tableColumns.value },
   getCoreRowModel: getCoreRowModel(),
-  // Pin the first two columns by default – this is the canonical TanStack way
   initialState: {
     columnPinning: {
       left: ['practice', 'unit'],
@@ -169,7 +169,27 @@ async function handleExport() {
   })
 }
 
-// ---------- Dynamic opacity on scroll (unchanged) ----------
+// ---------- Month-Year grouped select ----------
+
+// Generate grouped options: years as labels, options like "July 2026"
+const monthYearGroups = computed(() => {
+  return availableYears.value.map((year) => ({
+    label: String(year),
+    options: MONTH_NAMES.map((month, idx) => `${month} ${year}`).reverse(), // latest month first
+  }))
+})
+
+// Two‑way binding for the combined select
+const selectedMonthYear = computed({
+  get: () => `${MONTH_NAMES[selectedMonth.value - 1]} ${selectedYear.value}`,
+  set: (val) => {
+    const [monthName, yearStr] = val.split(' ')
+    selectedMonth.value = MONTH_NAMES.indexOf(monthName) + 1
+    selectedYear.value = Number(yearStr)
+  }
+})
+
+// ---------- Dynamic opacity on scroll ----------
 const scrollContainer = ref(null)
 const columnOpacities = ref({})
 
@@ -184,7 +204,6 @@ function updateOpacities() {
 
   for (const col of table.getVisibleFlatColumns()) {
     const colId = col.id
-    // Use column.getIsPinned() – cleaner than checking the pinning array
     if (col.getIsPinned()) continue
 
     const headerCell = container.querySelector(`th[data-column-id="${colId}"]`)
@@ -259,16 +278,8 @@ onBeforeUnmount(() => {
         </h2>
         <ClientOnly>
           <div class="flex items-center gap-2">
-            <Select
-              :model-value="MONTH_NAMES[selectedMonth - 1]"
-              @update:model-value="(v) => (selectedMonth = MONTH_NAMES.indexOf(v) + 1)"
-              :options="MONTH_NAMES"
-            />
-            <Select
-              :model-value="String(selectedYear)"
-              @update:model-value="(v) => (selectedYear = Number(v))"
-              :options="availableYears.map(String)"
-            />
+            <!-- Single grouped month-year select -->
+            <SelectGrouped v-model="selectedMonthYear" :groups="monthYearGroups" />
             <button
               type="button"
               class="p-2 rounded-lg border border-stone-800/20 dark:border-stone-100/20 hover:border-purple-400/50 hover:bg-purple-400/10 transition-colors cursor-pointer"
@@ -280,15 +291,12 @@ onBeforeUnmount(() => {
             </button>
           </div>
           <template #fallback>
-            <div
-              class="h-9 w-48 rounded-xl border border-white/40 dark:border-white/10 bg-white/30 dark:bg-stone-700/10 animate-pulse"
-            />
+            <div class="h-9 w-48 rounded-xl border border-white/40 dark:border-white/10 bg-white/30 dark:bg-stone-700/10 animate-pulse" />
           </template>
         </ClientOnly>
       </div>
 
       <div ref="scrollContainer" class="overflow-x-auto scrollbar-none mt-4">
-        <!-- border-separate + border-spacing: 0 is critical for sticky to work -->
         <table class="text-sm table-fixed border-separate" style="border-spacing: 0">
           <thead>
             <tr v-for="headerGroup in table.getHeaderGroups()" :key="headerGroup.id">
@@ -312,10 +320,7 @@ onBeforeUnmount(() => {
             </tr>
           </thead>
           <tbody>
-            <tr
-              v-for="row in table.getRowModel().rows"
-              :key="row.id"
-            >
+            <tr v-for="row in table.getRowModel().rows" :key="row.id">
               <td
                 v-for="cell in row.getVisibleCells()"
                 :key="cell.id"
