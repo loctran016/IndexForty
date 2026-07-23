@@ -20,8 +20,14 @@ watch(
   () => $pwa?.offlineReady,
   (ready) => {
     if (!ready) return
+
+    // Only show "Ready to use offline" toast on the very first install
+    const alreadyInstalled = localStorage.getItem('pwa-installed')
+    if (alreadyInstalled) return
+
     isFirstInstall.value = true
     showOfflineToast.value = true
+    localStorage.setItem('pwa-installed', 'true')
     offlineTimer = setTimeout(() => (showOfflineToast.value = false), 4000)
   },
 )
