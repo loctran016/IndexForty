@@ -30,8 +30,9 @@ import {
 import { getIsland } from '~/data/islands'
 
 const TIME_ZONE = 'Asia/Ho_Chi_Minh'
-const date = today(TIME_ZONE)
-const todayIso = date.toString()
+
+const todayDate = useState('home-today', () => today(TIME_ZONE).toString())
+const date = computed(() => parseDate(todayDate.value))
 
 const isDateUnavailable: CalendarRootProps['isDateUnavailable'] = (date) => {
   return date.day === 317
@@ -61,12 +62,21 @@ interface CalendarEvent {
 
 const supabase = useSupabaseClient()
 
-const { data: events } = await useAsyncData('exams', async () => {
-  const { data, error } = await supabase.from('exams').select('id, event, location, date, type')
-
-  if (error) throw error
-  return data as CalendarEvent[]
-})
+const [{ data: events }, { data: todosData }] = await Promise.all([
+  useAsyncData('exams', async () => {
+    const { data, error } = await supabase.from('exams').select('id, event, location, date, type')
+    if (error) throw error
+    return data as CalendarEvent[]
+  }),
+  useAsyncData('todo', async () => {
+    const { data, error } = await supabase
+      .from('todo')
+      .select('id, task, done, type, due_date, created_at')
+      .order('created_at', { ascending: true })
+    if (error) throw error
+    return data as TodoItem[]
+  }),
+])
 
 function pad2(n: number) {
   return String(n).padStart(2, '0')
@@ -101,16 +111,6 @@ interface TodoItem {
   due_date: string | null
   created_at: string
 }
-
-const { data: todosData } = await useAsyncData('todo', async () => {
-  const { data, error } = await supabase
-    .from('todo')
-    .select('id, task, done, type, due_date, created_at')
-    .order('created_at', { ascending: true })
-
-  if (error) throw error
-  return data as TodoItem[]
-})
 
 const todos = ref<TodoItem[]>(todosData.value ? [...todosData.value] : [])
 
@@ -251,9 +251,9 @@ function dueDateMeta(dateStr: string | null): { label: string; overdue: boolean 
   <div
     class="grid grid-cols-1 lt-sm:my-2 lg:grid-cols-4 lg:grid-rows-5 gap-3 p-3 sm:gap-4 sm:p-4 mx-auto font-sans dark:text-gray-100 sm:h-[calc(100vh-var(--header-height))] max-h-200vh"
   >
-    <ClientOnly>
-      <TooltipProvider :delay-duration="150">
-        <!-- Calendar: 3 rows x 2 cols, top-left -->
+    <TooltipProvider :delay-duration="150">
+      <!-- Calendar: 3 rows x 2 cols, top-left -->
+      <ClientOnly>
         <CalendarRoot
           v-slot="{ weekDays, grid }"
           :is-date-unavailable="isDateUnavailable"
@@ -341,60 +341,130 @@ function dueDateMeta(dateStr: string | null): { label: string; overdue: boolean 
             </CalendarGrid>
           </div>
         </CalendarRoot>
+        <template #fallback>
+          <div
+            class="card lg:col-start-1 lg:col-span-2 lg:row-start-1 lg:row-span-3 animate-pulse bg-white/20 dark:bg-stone-700/20"
+          />
+        </template>
+      </ClientOnly>
+      <!-- Holy days: 1 row x 2 cols, below calendar -->
+      <div class="card lg:col-start-1 lg:col-span-2 lg:row-start-4 lg:row-span-1">
+        <h2 class="card-title">
+          <div class="i-mdi:calendar-star" />
+          This week's holy days
+        </h2>
+        <TibetanHolyDays class="" />
+      </div>
 
-        <!-- Holy days: 1 row x 2 cols, below calendar -->
-        <div class="card lg:col-start-1 lg:col-span-2 lg:row-start-4 lg:row-span-1">
+      <!-- Todo: Expanded to 2 cols x 4 rows, replacing Pomodoro & Music -->
+      <div
+        class="card text-lg p-6 shadow-sm border flex flex-col gap-4 lg:col-start-3 lg:col-span-2 lg:row-start-1 lg:row-span-4 overflow-hidden"
+      >
+        <!-- Header - static -->
+        <div class="flex items-center justify-between shrink-0">
           <h2 class="card-title">
-            <div class="i-mdi:calendar-star" />
-            This week's holy days
+            <div class="i-mdi:text-box-edit" />
+            To-do
           </h2>
-          <TibetanHolyDays class="" />
+          <span class="text-xs opacity-50">{{ taskTodos.length + eventTodos.length }} items</span>
         </div>
 
-        <!-- Todo: Expanded to 2 cols x 4 rows, replacing Pomodoro & Music -->
-        <div
-          class="card text-lg p-6 shadow-sm border flex flex-col gap-4 lg:col-start-3 lg:col-span-2 lg:row-start-1 lg:row-span-4 overflow-hidden"
-        >
-          <!-- Header - static -->
-          <div class="flex items-center justify-between shrink-0">
-            <h2 class="card-title">
-              <div class="i-mdi:text-box-edit" />
-              To-do
-            </h2>
-            <span class="text-xs opacity-50"
-              >{{ taskTodos.length + eventTodos.length }} items</span
+        <!-- Sections with proportional heights, no outer scroll -->
+        <div class="flex flex-col gap-5 flex-1 min-h-0">
+          <!-- TASKS (no due date) -->
+          <section class="flex flex-col min-h-0" :style="{ flex: sectionFlex.task }">
+            <h3
+              class="text-xs font-medium opacity-50 uppercase tracking-wider mb-2 flex items-center gap-2 shrink-0"
             >
-          </div>
-
-          <!-- Sections with proportional heights, no outer scroll -->
-          <div class="flex flex-col gap-5 flex-1 min-h-0">
-            <!-- TASKS (no due date) -->
-            <section class="flex flex-col min-h-0" :style="{ flex: sectionFlex.task }">
-              <h3
-                class="text-xs font-medium opacity-50 uppercase tracking-wider mb-2 flex items-center gap-2 shrink-0"
-              >
-                <div class="i-mdi:checkbox-outline text-sm" />
-                Tasks
-              </h3>
-              <PurpleScrollArea class="flex-1 min-h-0">
-                <ul class="flex flex-col gap-1.5">
-                  <li
-                    v-for="todo in taskTodos"
-                    :key="todo.id"
-                    class="flex items-center gap-3 group"
+              <div class="i-mdi:checkbox-outline text-sm" />
+              Tasks
+            </h3>
+            <PurpleScrollArea class="flex-1 min-h-0">
+              <ul class="flex flex-col gap-1.5">
+                <li v-for="todo in taskTodos" :key="todo.id" class="flex items-center gap-3 group">
+                  <CheckboxRoot
+                    :model-value="todo.done"
+                    class="shrink-0 w-5 h-5 rounded-md border border-stone-800/40 dark:border-stone-100/40 flex items-center justify-center data-[state=checked]:bg-purple-500 data-[state=checked]:border-purple-500 focus-visible:ring-2 focus-visible:ring-purple-400 focus-visible:ring-offset-2 outline-none cursor-pointer transition-colors"
+                    @update:model-value="(value) => toggleDone(todo, value === true)"
                   >
-                    <CheckboxRoot
-                      :model-value="todo.done"
-                      class="shrink-0 w-5 h-5 rounded-md border border-stone-800/40 dark:border-stone-100/40 flex items-center justify-center data-[state=checked]:bg-purple-500 data-[state=checked]:border-purple-500 focus-visible:ring-2 focus-visible:ring-purple-400 focus-visible:ring-offset-2 outline-none cursor-pointer transition-colors"
-                      @update:model-value="(value) => toggleDone(todo, value === true)"
-                    >
-                      <CheckboxIndicator>
-                        <div class="i-mdi:check text-white text-sm" />
-                      </CheckboxIndicator>
-                    </CheckboxRoot>
+                    <CheckboxIndicator>
+                      <div class="i-mdi:check text-white text-sm" />
+                    </CheckboxIndicator>
+                  </CheckboxRoot>
+                  <EditableRoot
+                    :model-value="todo.task"
+                    class="flex-1 min-w-0"
+                    @update:model-value="(value) => saveTaskText(todo, String(value))"
+                  >
+                    <EditableArea>
+                      <EditablePreview
+                        :class="[
+                          'cursor-text text-sm break-words',
+                          todo.done ? 'line-through opacity-40' : '',
+                        ]"
+                      />
+                      <EditableInput
+                        class="w-full bg-transparent outline-none border-b border-purple-400 text-sm"
+                      />
+                    </EditableArea>
+                  </EditableRoot>
+                  <button
+                    type="button"
+                    class="opacity-0 group-hover:opacity-100 transition-opacity text-stone-500 hover:text-red-500 shrink-0"
+                    aria-label="Remove task"
+                    @click="removeTodo(todo)"
+                  >
+                    <div class="i-mdi:close text-base" />
+                  </button>
+                </li>
+                <li v-if="!taskTodos.length" class="text-xs opacity-40 py-1">No tasks yet</li>
+              </ul>
+            </PurpleScrollArea>
+            <!-- Add task form – always visible -->
+            <form class="flex gap-2 mt-2 shrink-0" @submit.prevent="addTodo">
+              <input
+                v-model="newTaskText"
+                type="text"
+                placeholder="Add a task…"
+                class="flex-1 bg-transparent outline-none border-b border-stone-800/20 dark:border-stone-100/20 focus:border-purple-500 transition-colors px-1 py-0.5 text-sm"
+              />
+              <button
+                type="submit"
+                :disabled="addingTodo || !newTaskText.trim()"
+                class="text-xs px-2 py-0.5 rounded-md border border-stone-800/20 dark:border-stone-100/20 hover:border-purple-500 hover:text-purple-500 transition-colors disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer shrink-0"
+              >
+                Add
+              </button>
+            </form>
+          </section>
+
+          <!-- EVENTS (pink, with due dates) -->
+          <section class="flex flex-col min-h-0" :style="{ flex: sectionFlex.event }">
+            <h3
+              class="text-xs font-medium text-pink-600 dark:text-pink-400 uppercase tracking-wider mb-2 flex items-center gap-2 shrink-0"
+            >
+              <div class="i-mdi:calendar-star text-sm" />
+              Important Events
+            </h3>
+            <PurpleScrollArea class="flex-1 min-h-0">
+              <ul class="flex flex-col gap-1.5">
+                <li
+                  v-for="todo in sortedEventTodos"
+                  :key="todo.id"
+                  class="flex items-center gap-3 group"
+                >
+                  <CheckboxRoot
+                    :model-value="todo.done"
+                    class="shrink-0 w-5 h-5 rounded-md border border-pink-400/50 flex items-center justify-center data-[state=checked]:bg-pink-500 data-[state=checked]:border-pink-500 focus-visible:ring-2 focus-visible:ring-pink-400 focus-visible:ring-offset-2 outline-none cursor-pointer transition-colors"
+                    @update:model-value="(value) => toggleDone(todo, value === true)"
+                  >
+                    <CheckboxIndicator>
+                      <div class="i-mdi:check text-white text-sm" />
+                    </CheckboxIndicator>
+                  </CheckboxRoot>
+                  <div class="flex-1 min-w-0">
                     <EditableRoot
                       :model-value="todo.task"
-                      class="flex-1 min-w-0"
                       @update:model-value="(value) => saveTaskText(todo, String(value))"
                     >
                       <EditableArea>
@@ -405,168 +475,105 @@ function dueDateMeta(dateStr: string | null): { label: string; overdue: boolean 
                           ]"
                         />
                         <EditableInput
-                          class="w-full bg-transparent outline-none border-b border-purple-400 text-sm"
+                          class="w-full bg-transparent outline-none border-b border-pink-400 text-sm"
                         />
                       </EditableArea>
                     </EditableRoot>
-                    <button
-                      type="button"
-                      class="opacity-0 group-hover:opacity-100 transition-opacity text-stone-500 hover:text-red-500 shrink-0"
-                      aria-label="Remove task"
-                      @click="removeTodo(todo)"
+                  </div>
+                  <template v-for="meta in [dueDateMeta(todo.due_date)]" :key="'date'">
+                    <span
+                      class="text-[11px] shrink-0"
+                      :class="meta.overdue ? 'text-red-500 font-medium' : 'text-pink-500/70'"
                     >
-                      <div class="i-mdi:close text-base" />
-                    </button>
-                  </li>
-                  <li v-if="!taskTodos.length" class="text-xs opacity-40 py-1">No tasks yet</li>
-                </ul>
-              </PurpleScrollArea>
-              <!-- Add task form – always visible -->
-              <form class="flex gap-2 mt-2 shrink-0" @submit.prevent="addTodo">
+                      {{ meta.label }}
+                    </span>
+                  </template>
+                </li>
+                <li v-if="!eventTodos.length" class="text-xs opacity-40 py-1">No events yet</li>
+              </ul>
+            </PurpleScrollArea>
+            <!-- Add event form -->
+            <div
+              v-if="showEventForm"
+              class="mt-2 space-y-2 p-3 rounded-lg bg-pink-500/5 border border-pink-500/20 shrink-0"
+            >
+              <input
+                v-model="newEventTask"
+                type="text"
+                placeholder="Event name…"
+                class="w-full bg-transparent outline-none border-b border-pink-400/30 focus:border-pink-500 px-1 py-0.5 text-sm"
+              />
+              <div class="flex gap-2 items-center">
                 <input
-                  v-model="newTaskText"
-                  type="text"
-                  placeholder="Add a task…"
-                  class="flex-1 bg-transparent outline-none border-b border-stone-800/20 dark:border-stone-100/20 focus:border-purple-500 transition-colors px-1 py-0.5 text-sm"
+                  v-model="newEventDueDate"
+                  type="date"
+                  class="flex-1 bg-transparent outline-none border-b border-pink-400/30 focus:border-pink-500 px-1 py-0.5 text-sm"
                 />
                 <button
-                  type="submit"
-                  :disabled="addingTodo || !newTaskText.trim()"
-                  class="text-xs px-2 py-0.5 rounded-md border border-stone-800/20 dark:border-stone-100/20 hover:border-purple-500 hover:text-purple-500 transition-colors disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer shrink-0"
+                  type="button"
+                  class="text-xs px-2 py-0.5 rounded-md bg-pink-500/20 text-pink-600 dark:text-pink-400 hover:bg-pink-500/30 transition-colors disabled:opacity-50 shrink-0"
+                  :disabled="addingEvent || !newEventTask.trim()"
+                  @click="addEvent"
                 >
-                  Add
+                  Save
                 </button>
-              </form>
-            </section>
-
-            <!-- EVENTS (pink, with due dates) -->
-            <section class="flex flex-col min-h-0" :style="{ flex: sectionFlex.event }">
-              <h3
-                class="text-xs font-medium text-pink-600 dark:text-pink-400 uppercase tracking-wider mb-2 flex items-center gap-2 shrink-0"
-              >
-                <div class="i-mdi:calendar-star text-sm" />
-                Important Events
-              </h3>
-              <PurpleScrollArea class="flex-1 min-h-0">
-                <ul class="flex flex-col gap-1.5">
-                  <li
-                    v-for="todo in sortedEventTodos"
-                    :key="todo.id"
-                    class="flex items-center gap-3 group"
-                  >
-                    <CheckboxRoot
-                      :model-value="todo.done"
-                      class="shrink-0 w-5 h-5 rounded-md border border-pink-400/50 flex items-center justify-center data-[state=checked]:bg-pink-500 data-[state=checked]:border-pink-500 focus-visible:ring-2 focus-visible:ring-pink-400 focus-visible:ring-offset-2 outline-none cursor-pointer transition-colors"
-                      @update:model-value="(value) => toggleDone(todo, value === true)"
-                    >
-                      <CheckboxIndicator>
-                        <div class="i-mdi:check text-white text-sm" />
-                      </CheckboxIndicator>
-                    </CheckboxRoot>
-                    <div class="flex-1 min-w-0">
-                      <EditableRoot
-                        :model-value="todo.task"
-                        @update:model-value="(value) => saveTaskText(todo, String(value))"
-                      >
-                        <EditableArea>
-                          <EditablePreview
-                            :class="[
-                              'cursor-text text-sm break-words',
-                              todo.done ? 'line-through opacity-40' : '',
-                            ]"
-                          />
-                          <EditableInput
-                            class="w-full bg-transparent outline-none border-b border-pink-400 text-sm"
-                          />
-                        </EditableArea>
-                      </EditableRoot>
-                    </div>
-                    <template v-for="meta in [dueDateMeta(todo.due_date)]" :key="'date'">
-                      <span
-                        class="text-[11px] shrink-0"
-                        :class="meta.overdue ? 'text-red-500 font-medium' : 'text-pink-500/70'"
-                      >
-                        {{ meta.label }}
-                      </span>
-                    </template>
-                  </li>
-                  <li v-if="!eventTodos.length" class="text-xs opacity-40 py-1">No events yet</li>
-                </ul>
-              </PurpleScrollArea>
-              <!-- Add event form -->
-              <div
-                v-if="showEventForm"
-                class="mt-2 space-y-2 p-3 rounded-lg bg-pink-500/5 border border-pink-500/20 shrink-0"
-              >
-                <input
-                  v-model="newEventTask"
-                  type="text"
-                  placeholder="Event name…"
-                  class="w-full bg-transparent outline-none border-b border-pink-400/30 focus:border-pink-500 px-1 py-0.5 text-sm"
-                />
-                <div class="flex gap-2 items-center">
-                  <input
-                    v-model="newEventDueDate"
-                    type="date"
-                    class="flex-1 bg-transparent outline-none border-b border-pink-400/30 focus:border-pink-500 px-1 py-0.5 text-sm"
-                  />
-                  <button
-                    type="button"
-                    class="text-xs px-2 py-0.5 rounded-md bg-pink-500/20 text-pink-600 dark:text-pink-400 hover:bg-pink-500/30 transition-colors disabled:opacity-50 shrink-0"
-                    :disabled="addingEvent || !newEventTask.trim()"
-                    @click="addEvent"
-                  >
-                    Save
-                  </button>
-                  <button
-                    type="button"
-                    class="text-xs px-2 py-0.5 rounded-md hover:bg-stone-200 dark:hover:bg-stone-700 transition-colors shrink-0"
-                    @click="showEventForm = false"
-                  >
-                    Cancel
-                  </button>
-                </div>
+                <button
+                  type="button"
+                  class="text-xs px-2 py-0.5 rounded-md hover:bg-stone-200 dark:hover:bg-stone-700 transition-colors shrink-0"
+                  @click="showEventForm = false"
+                >
+                  Cancel
+                </button>
               </div>
-              <button
-                v-else
-                type="button"
-                class="mt-2 text-xs text-pink-500/60 hover:text-pink-500 transition-colors cursor-pointer shrink-0"
-                @click="showEventForm = true"
-              >
-                + Add event
-              </button>
-            </section>
-          </div>
+            </div>
+            <button
+              v-else
+              type="button"
+              class="mt-2 text-xs text-pink-500/60 hover:text-pink-500 transition-colors cursor-pointer shrink-0"
+              @click="showEventForm = true"
+            >
+              + Add event
+            </button>
+          </section>
         </div>
+      </div>
 
-        <NuxtLink
-          to="/gallery"
-          class="card lg:col-start-1 lg:col-span-2 lg:row-start-5 relative overflow-hidden group flex items-center gap-3 p-4 hover:scale-[1.01] transition-transform duration-200"
-        >
-          <div class="absolute inset-0 bg-gradient-to-br from-pink-400/20 to-purple-400/10 opacity-0 group-hover:opacity-100 transition-opacity" />
-          <div class="i-solar:gallery-round-bold text-3xl text-pink-500 shrink-0 relative" />
-          <div class="relative min-w-0">
-            <p class="font-medium truncate">Gallery</p>
-            <p class="text-xs opacity-60 truncate">Every photo, organized by folder and tag.</p>
-          </div>
-          <div class="i-mdi:chevron-right ml-auto text-xl opacity-40 group-hover:opacity-80 transition-opacity relative shrink-0" />
-        </NuxtLink>
+      <NuxtLink
+        to="/gallery"
+        class="card lg:col-start-1 lg:col-span-2 lg:row-start-5 relative overflow-hidden group flex items-center gap-3 p-4 hover:scale-[1.01] transition-transform duration-200"
+      >
+        <div
+          class="absolute inset-0 bg-gradient-to-br from-pink-400/20 to-purple-400/10 opacity-0 group-hover:opacity-100 transition-opacity"
+        />
+        <div class="i-solar:gallery-round-bold text-3xl text-pink-500 shrink-0 relative" />
+        <div class="relative min-w-0">
+          <p class="font-medium truncate">Gallery</p>
+          <p class="text-xs opacity-60 truncate">Every photo, organized by folder and tag.</p>
+        </div>
+        <div
+          class="i-mdi:chevron-right ml-auto text-xl opacity-40 group-hover:opacity-80 transition-opacity relative shrink-0"
+        />
+      </NuxtLink>
 
-        <NuxtLink
-          to="/musical"
-          class="card lg:col-start-3 lg:col-span-2 lg:row-start-5 relative overflow-hidden group flex items-center gap-3 p-4 hover:scale-[1.01] transition-transform duration-200"
-        >
-          <div class="absolute inset-0 bg-gradient-to-br from-purple-400/20 to-indigo-400/10 opacity-0 group-hover:opacity-100 transition-opacity" />
-          <div class="i-mdi:music-clef-treble text-3xl text-purple-500 shrink-0 relative" />
-          <div class="relative min-w-0">
-            <p class="font-medium truncate">Sheet Music</p>
-            <p class="text-xs opacity-60 truncate">Sheet music, rendered live, with a built-in metronome.</p>
-          </div>
-          <div class="i-mdi:chevron-right ml-auto text-xl opacity-40 group-hover:opacity-80 transition-opacity relative shrink-0" />
-        </NuxtLink>
-
-      </TooltipProvider>
-    </ClientOnly>
+      <NuxtLink
+        to="/musical"
+        class="card lg:col-start-3 lg:col-span-2 lg:row-start-5 relative overflow-hidden group flex items-center gap-3 p-4 hover:scale-[1.01] transition-transform duration-200"
+      >
+        <div
+          class="absolute inset-0 bg-gradient-to-br from-purple-400/20 to-indigo-400/10 opacity-0 group-hover:opacity-100 transition-opacity"
+        />
+        <div class="i-mdi:music-clef-treble text-3xl text-purple-500 shrink-0 relative" />
+        <div class="relative min-w-0">
+          <p class="font-medium truncate">Sheet Music</p>
+          <p class="text-xs opacity-60 truncate">
+            Sheet music, rendered live, with a built-in metronome.
+          </p>
+        </div>
+        <div
+          class="i-mdi:chevron-right ml-auto text-xl opacity-40 group-hover:opacity-80 transition-opacity relative shrink-0"
+        />
+      </NuxtLink>
+    </TooltipProvider>
   </div>
 </template>
 
