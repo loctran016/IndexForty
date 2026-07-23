@@ -21,10 +21,26 @@ export default defineNuxtConfig({
     optimizeDeps: {
       include: ['@vue/devtools-core', '@vue/devtools-kit', '@internationalized/date', 'reka-ui'],
     },
+
+    build: {
+      rollupOptions: {
+        output: {
+          manualChunks(id) {
+            if (id.includes('echarts') || id.includes('zrender')) return 'vendor-echarts'
+            if (id.includes('exceljs')) return 'vendor-excel'
+            if (id.includes('@nuxtjs/cloudinary') || id.includes('cloudinary'))
+              return 'vendor-cloudinary'
+            if (id.includes('reka-ui')) return 'vendor-reka'
+          },
+        },
+      },
+    },
+  },
+  build: {
     analyze: {
-    template: 'raw-data',   // was 'json' — invalid
-    filename: 'stats.json',
-  }
+      template: 'raw-data', // was 'json' — invalid
+      filename: 'stats.json',
+    },
   },
   routeRules: {
     '/manifest.webmanifest': { ssr: false, prerender: false },
