@@ -263,7 +263,7 @@ const dueDateMetaMap = computed(() => {
         <CalendarRoot
           v-slot="{ weekDays, grid }"
           :default-value="date"
-          class="sm:text-lg card lg:col-start-1 lg:col-span-2 lg:row-start-1 lg:row-span-3"
+          class="sm:text-lg card lg:col-start-1 lg:col-span-2 lg:row-start-1 lg:row-span-4"
           fixed-weeks
           weekdayFormat="short"
           :week-starts-on="1"
@@ -357,7 +357,7 @@ const dueDateMetaMap = computed(() => {
       </ClientOnly>
 
       <!-- Holy days: 1 row x 2 cols, below calendar -->
-      <div class="card lg:col-start-1 lg:col-span-2 lg:row-start-4 lg:row-span-1">
+      <div class="card lg:col-start-1 lg:col-span-2 lg:row-start-5 lg:row-span-1">
         <h2 class="card-title">
           <div class="i-mdi:calendar-star" />
           This week's holy days
@@ -367,7 +367,7 @@ const dueDateMetaMap = computed(() => {
 
       <!-- Todo: Expanded to 2 cols x 4 rows, replacing Pomodoro & Music -->
       <div
-        class="card text-lg p-6 shadow-sm border flex flex-col gap-4 lg:col-start-3 lg:col-span-2 lg:row-start-1 lg:row-span-4 overflow-hidden"
+        class="card text-lg p-6 shadow-sm border flex flex-col gap-4 lg:col-start-3 lg:col-span-2 lg:row-start-1 lg:row-span-3 overflow-hidden"
       >
         <!-- Header - static -->
         <div class="flex items-center justify-between shrink-0">
@@ -489,16 +489,11 @@ const dueDateMetaMap = computed(() => {
                       </EditableArea>
                     </EditableRoot>
                   </div>
-                  <span
-                    class="text-[11px] shrink-0"
-                    :class="
-                      dueDateMetaMap.get(todo.id)?.overdue
-                        ? 'text-red-500 font-medium'
-                        : 'text-pink-500/70'
-                    "
-                  >
-                    {{ dueDateMetaMap.get(todo.id)?.label }}
-                  </span>
+                  <template v-for="meta in [dueDateMetaMap.get(todo.id)]" :key="todo.id + '-meta'">
+                    <span :class="meta?.overdue ? 'text-red-500 font-medium' : 'text-pink-500/70'">
+                      {{ meta?.label }}
+                    </span>
+                  </template>
                 </li>
                 <li v-if="!eventTodos.length" class="text-xs opacity-40 py-1">No events yet</li>
               </ul>
@@ -551,7 +546,7 @@ const dueDateMetaMap = computed(() => {
 
       <NuxtLink
         to="/gallery"
-        class="card lg:col-start-1 lg:col-span-2 lg:row-start-5 relative overflow-hidden group flex items-center gap-3 p-4 hover:scale-[1.01] transition-transform duration-200"
+        class="card lg:col-start-3 lg:col-span-2 lg:row-start-4 relative overflow-hidden group flex items-center gap-3 p-4 hover:scale-[1.01] transition-transform duration-200"
       >
         <div
           class="absolute inset-0 bg-gradient-to-br from-pink-400/20 to-purple-400/10 opacity-0 group-hover:opacity-100 transition-opacity"

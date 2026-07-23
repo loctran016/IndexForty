@@ -22,9 +22,9 @@ export default defineNuxtConfig({
       include: ['@vue/devtools-core', '@vue/devtools-kit', '@internationalized/date', 'reka-ui'],
     },
     analyze: {
-      template: 'json', // Outputs bundle data as raw JSON
-      filename: 'stats.json', // Path to write the JSON output
-  },
+    template: 'raw-data',   // was 'json' — invalid
+    filename: 'stats.json',
+  }
   },
   routeRules: {
     '/manifest.webmanifest': { ssr: false, prerender: false },
@@ -81,7 +81,8 @@ export default defineNuxtConfig({
       name: 'Isolde',
       short_name: 'Isolde',
       theme_color: '#a855f7',
-      background_color: '#1c1917',
+      background_color: '#a855f7',
+      //   background_color: '#1c1917',
     },
     pwaAssets: {
       image: 'public/logo.svg',
@@ -89,6 +90,7 @@ export default defineNuxtConfig({
     workbox: {
       globPatterns: ['**/*.{js,css,html,png,svg,ico,woff2}'],
       navigateFallback: '/',
+      navigateFallbackDenylist: [/^\/api\//], // optional, good practice
     },
     client: {
       installPrompt: true,
@@ -97,6 +99,7 @@ export default defineNuxtConfig({
     devOptions: {
       enabled: true,
       type: 'module',
+      suppressWarnings: true,
     },
   },
 })
