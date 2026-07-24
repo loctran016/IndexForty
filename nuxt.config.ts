@@ -17,6 +17,15 @@ export default defineNuxtConfig({
     'nuxt-easy-lightbox',
     '@vercel/speed-insights',
   ],
+
+  routeRules: {
+    // ISR on static content pages – regenerate every 2 minutes
+    '/musical': { swr: 120 },
+    '/gallery': { swr: 120 },
+
+    // All other pages remain dynamic SSR (default)
+    // '/fitness': { ssr: true },   ← implicit, no rule needed
+  },
   vite: {
     optimizeDeps: {
       include: ['@vue/devtools-core', '@vue/devtools-kit', '@internationalized/date', 'reka-ui'],
